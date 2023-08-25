@@ -19,4 +19,70 @@ public class DB {
             System.out.println("SQLiteError: " + e.getMessage());
         }
     }
+
+    public static void createUserTable() {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.execute("CREATE TABLE IF NOT EXISTS user (" + "username TEXT UNIQUE NOT NULL PRIMARY KEY,"
+                            + "password TEXT NOT NULL CHECK(LENGTH(password) > 6),"
+                            + "fname TEXT NOT NULL CHECK(LENGTH(fname) > 2),"
+                            + "lname TEXT NOT NULL CHECK(LENGTH(lname) > 2)" + ")");
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+        }
+    }
+
+    public static User insertUser(String username, String password, String fname, String lname) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                            "INSERT INTO user (username, password, fname, lname) VALUES (?, ?, ?, ?)");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, fname);
+            stmt.setString(4, lname);
+            stmt.executeUpdate();
+            return new User(username, fname, lname);
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static HashMap<String, User> getAllUsers() {
+        HashMap<String, User> users = new HashMap<String, User>();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT username, fname, lname FROM user");
+            while (rs.next()) {
+                String username = rs.getString("username");
+                String fname = rs.getString("fname");
+                String lname = rs.getString("lname");
+                users.put(username, new User(username, fname, lname));
+            }
+            return users;
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static User loginUser(String username, String password) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                            "SELECT username, fname, lname FROM user WHERE username = ? AND password = ?");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String user = rs.getString("username");
+                String fname = rs.getString("fname");
+                String lname = rs.getString("lname");
+                return new User(user, fname, lname);
+            }
+            return null;
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+            return null;
+        }
+    }
 }
