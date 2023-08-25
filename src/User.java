@@ -20,4 +20,10 @@ public class User {
     public String getLastName() {
         return this.lname;
     }
+
+    public void displayDetails() {
+        System.out.println("Username: " + this.username);
+        System.out.println("First Name: " + this.fname);
+        System.out.println("Last Name: " + this.lname);
+    }
 }
