@@ -1,4 +1,6 @@
 .DS_Store
+*.properties
+*.dylib
 *.class
 *.db
 *.jar
