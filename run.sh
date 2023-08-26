@@ -9,10 +9,10 @@ cd $SCRIPT_DIR
 
 # Compile java code
 # javac -d bin -cp lib/sqlite-jdbc-3.42.0.0.jar:bin src/*.java
-javac -d bin -cp lib/sqlite-jdbc-3.42.0.0.jar:lib/javafx/*:bin src/*.java
+javac -d bin -cp lib/sqlite-jdbc-3.42.0.0.jar:lib/javafx/* src/*.java
 
 # Run the program
-java --module-path lib/javafx --add-modules javafx.controls,javafx.fxml -cp lib/sqlite-jdbc-3.42.0.0.jar:lib/javafx/*:bin Main $1
+java --module-path lib/javafx --add-modules javafx.controls,javafx.fxml -cp lib/sqlite-jdbc-3.42.0.0.jar:lib/javafx/*:resources:bin Main $1
 
 # cleanup bin files
 [ -d "./bin" ] && rm -r bin
