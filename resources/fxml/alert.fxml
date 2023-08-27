@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+
+<fx:root fx:id="container" alignment="CENTER_LEFT" style="-fx-border-color: #8CA1AB80; -fx-background-color: #B2CCD880; -fx-border-width: 1; -fx-border-radius: 4;" type="HBox" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text fx:id="content" fill="#6C97AC" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+   </children>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+</fx:root>
