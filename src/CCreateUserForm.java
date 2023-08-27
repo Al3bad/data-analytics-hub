@@ -1,7 +1,7 @@
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 
 public class CCreateUserForm extends VBox {
-    private Parent component;
+    private VBox component;
 
     @FXML
     private TextField username;
@@ -29,6 +29,9 @@ public class CCreateUserForm extends VBox {
     @FXML
     private Button cancelBtn;
 
+    @FXML
+    private VBox statusContainer;
+
     public CCreateUserForm() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/create-user-form.fxml"));
         fxmlLoader.setRoot(this);
@@ -47,17 +50,37 @@ public class CCreateUserForm extends VBox {
     }
 
     private void createUser() {
+        String username = this.username.getText();
+        String password = this.password.getText();
+        String fname = this.fname.getText();
+        String lname = this.lname.getText();
+
         // TODO: validate form
-        System.out.println(username.getText() + fname.getText() + lname.getText() + password.getText());
+        // ...
+
+        // TODO: hanlde invalid form - show error message in GUI
+        // ...
 
         // TODO: handle valid form
         // ...
 
-        // TODO: hanlde invalid form
-        // ...
+        // Insert user to db
+        User newUser = DB.insertUser(username, password, fname, lname);
+
+        // TODO: show msg in GUI
+        if (newUser == null) {
+            this.statusContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+        } else {
+            this.statusContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
+            // reset text fields
+            this.username.setText("");
+            this.password.setText("");
+            this.fname.setText("");
+            this.lname.setText("");
+        }
     }
 
-    public Parent getComponent() {
+    public VBox getComponent() {
         return this.component;
     }
 }

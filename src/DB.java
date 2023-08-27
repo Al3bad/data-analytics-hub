@@ -23,7 +23,8 @@ public class DB {
     public static void createUserTable() {
         try {
             Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE IF NOT EXISTS user (" + "username TEXT UNIQUE NOT NULL PRIMARY KEY,"
+            stmt.execute("CREATE TABLE IF NOT EXISTS user ("
+                            + "username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),"
                             + "password TEXT NOT NULL CHECK(LENGTH(password) > 6),"
                             + "fname TEXT NOT NULL CHECK(LENGTH(fname) > 2),"
                             + "lname TEXT NOT NULL CHECK(LENGTH(lname) > 2)" + ")");
@@ -43,7 +44,7 @@ public class DB {
             stmt.executeUpdate();
             return new User(username, fname, lname);
         } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
