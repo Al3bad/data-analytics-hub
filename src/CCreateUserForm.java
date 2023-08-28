@@ -1,7 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -27,12 +26,12 @@ public class CCreateUserForm extends VBox {
     private Button createBtn;
 
     @FXML
-    private Button cancelBtn;
+    private Button loginBtn;
 
     @FXML
     private VBox statusContainer;
 
-    public CCreateUserForm() {
+    public CCreateUserForm(Function func) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/create-user-form.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -41,12 +40,13 @@ public class CCreateUserForm extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        setupElements();
+        setupElements(func);
     }
 
-    private void setupElements() {
+    private void setupElements(Function func) {
         // Bind events to event handlers
         createBtn.onMouseClickedProperty().set(event -> createUser());
+        loginBtn.onMouseClickedProperty().set(event -> func.run());
     }
 
     private void createUser() {

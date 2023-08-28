@@ -1,0 +1,1 @@
+- Logo created by [Shopify - Hatchful](https://www.shopify.com/tools/logo-maker)

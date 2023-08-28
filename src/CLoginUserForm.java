@@ -7,6 +7,13 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
+// reference:
+//    - https://www.w3docs.com/snippets/java/how-to-pass-a-function-as-a-parameter-in-java.html
+@FunctionalInterface
+interface Function {
+    void run();
+}
+
 public class CLoginUserForm extends VBox {
     private VBox component;
 
@@ -20,12 +27,12 @@ public class CLoginUserForm extends VBox {
     private Button loginBtn;
 
     @FXML
-    private Button cancelBtn;
+    private Button registerBtn;
 
     @FXML
     private VBox statusContainer;
 
-    public CLoginUserForm() {
+    public CLoginUserForm(Function func) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/login-user-form.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -34,12 +41,13 @@ public class CLoginUserForm extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        setupElements();
+        setupElements(func);
     }
 
-    private void setupElements() {
+    private void setupElements(Function func) {
         // Bind events to event handlers
         loginBtn.onMouseClickedProperty().set(event -> createUser());
+        registerBtn.onMouseClickedProperty().set(event -> func.run());
     }
 
     private void createUser() {

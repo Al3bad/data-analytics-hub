@@ -37,8 +37,8 @@
             </VBox>
             <HBox prefWidth="130.0" spacing="12.0">
                <children>
-                  <Button fx:id="createBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #333; -fx-border-radius: 4; -fx-text-fill: white; -fx-border-color: #333;" text="Create" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="cancelBtn" cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: none; -fx-border-radius: 4; -fx-border-color: #333; -fx-text-fill: #333;" text="Home" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="createBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #333; -fx-border-radius: 4; -fx-text-fill: white; -fx-border-color: #333;" text="Sign Up" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="loginBtn" cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: none; -fx-border-radius: 4; -fx-border-color: #333; -fx-text-fill: #333;" text="Login" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <VBox fx:id="statusContainer" prefWidth="200.0" spacing="4.0">

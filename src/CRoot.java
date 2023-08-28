@@ -26,7 +26,8 @@ public class CRoot extends AnchorPane {
 
     private void setupElements() {
         // Bind events to event handlers
-        main.getChildren().add(new CCreateUserForm().getComponent());
+        // main.getChildren().add(new CCreateUserForm().getComponent());
+        // main.getChildren().add(new CLoginUserForm().getComponent());
     }
 
     public Parent getComponent() {

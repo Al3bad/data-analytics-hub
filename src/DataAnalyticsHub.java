@@ -1,9 +1,9 @@
 import java.sql.SQLException;
 import java.util.HashMap;
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * Flow of the main program
@@ -13,15 +13,20 @@ import javafx.stage.Stage;
  */
 public class DataAnalyticsHub extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = new CRoot().getComponent();
-        Scene scene = new Scene(root, 600, 300);
+    public void start(Stage stage) throws Exception {
+        double minWidth = 650;
+        double minHeight = 400;
+        AnchorPane portalScene = new CPortalScene().getComponent();
+        Scene scene = new Scene(portalScene, minWidth, minHeight);
         // Setting the title to Stage.
-        primaryStage.setTitle("Data Analytics Hub");
+        stage.setTitle("Data Analytics Hub");
+        // Setting min width and height to stage
+        stage.setMinWidth(minWidth);
+        stage.setMinHeight(minHeight);
         // Adding the scene to Stage
-        primaryStage.setScene(scene);
+        stage.setScene(scene);
         // Displaying the contents of the stage
-        primaryStage.show();
+        stage.show();
     }
 
     public void run(String sqliteFilename) {
