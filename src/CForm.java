@@ -1,8 +1,10 @@
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.util.HashMap;
 
 public abstract class CForm extends VBox {
     // reference:
@@ -25,10 +27,11 @@ public abstract class CForm extends VBox {
 
     protected Function primaryBtnHandler;
     protected Function secondryBtnHandler;
+    protected HashMap<String, TextField> textFieldElements = new HashMap<String, TextField>();
 
     public CForm(String fxmlFilePath) {
-        loadComponent(fxmlFilePath);
-        setupComponent();
+        this.loadComponent(fxmlFilePath);
+        this.setupComponent();
     }
 
     private void loadComponent(String fxmlFilePath) {
@@ -46,6 +49,20 @@ public abstract class CForm extends VBox {
         // Bind events to event handlers
         this.primaryBtn.onMouseClickedProperty().set(event -> primaryBtnHandler.run());
         this.secondryBtn.onMouseClickedProperty().set(event -> secondryBtnHandler.run());
+    }
+
+    protected void resetTextFieldStyles() {
+        for (TextField textField : this.textFieldElements.values()) {
+            textField.getStyleClass().remove("error");
+        }
+    }
+
+    protected void setTextFieldErrorStyles(HashMap<String, String> errors) {
+        for (String textFieldId : errors.keySet()) {
+            if (this.textFieldElements.get(textFieldId) != null) {
+                this.textFieldElements.get(textFieldId).getStyleClass().add("error");
+            }
+        }
     }
 
     public VBox getComponent() {

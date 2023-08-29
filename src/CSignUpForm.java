@@ -21,6 +21,10 @@ public class CSignUpForm extends CForm {
         super("fxml/signup-form.fxml");
         this.primaryBtnHandler = () -> this.createUser();
         this.secondryBtnHandler = secondaryBtnHandler;
+        this.textFieldElements.put("username", username);
+        this.textFieldElements.put("password", password);
+        this.textFieldElements.put("fname", fname);
+        this.textFieldElements.put("lname", lname);
         this.setupComponent();
     }
 
@@ -37,32 +41,19 @@ public class CSignUpForm extends CForm {
         String lname = this.lname.getText();
 
         // Validate & parse form
-        this.username.getStyleClass().remove("error");
-        this.fname.getStyleClass().remove("error");
-        this.lname.getStyleClass().remove("error");
-        this.password.getStyleClass().remove("error");
+        this.resetTextFieldStyles();
         try {
             userDetails = CSignUpForm.parseForm(username, fname, lname, password);
         } catch (InvalidFormException e) {
             // change border color of the text input to red
-            if (e.getErrors().get("username") != null) {
-                this.username.getStyleClass().add("error");
-            }
-            if (e.getErrors().get("fname") != null) {
-                this.fname.getStyleClass().add("error");
-            }
-            if (e.getErrors().get("lname") != null) {
-                this.lname.getStyleClass().add("error");
-            }
-            if (e.getErrors().get("password") != null) {
-                this.password.getStyleClass().add("error");
-            }
+            this.setTextFieldErrorStyles(e.getErrors());
             this.statusContainer.getChildren().setAll(new CAlert("Invalid username or password!", "error"));
             return false;
         }
 
         // Insert user to db
-        User newUser = DB.insertUser(username, password, fname, lname);
+        User newUser = DB.insertUser(userDetails.getUsername(), userDetails.getPassword(), userDetails.getFirstName(),
+                        userDetails.getLastName());
 
         if (newUser == null) {
             this.statusContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));

@@ -13,34 +13,25 @@ public class CLoginForm extends CForm {
 
     public CLoginForm(Function secondaryBtnHandler) {
         super("fxml/login-form.fxml");
+        // setting up some properties in the parent class
         this.primaryBtnHandler = () -> this.loginUser();
         this.secondryBtnHandler = secondaryBtnHandler;
-        this.setupComponent();
-    }
-
-    private void setupComponent() {
-        // Bind events to event handlers
-        System.out.println("Login");
+        this.textFieldElements.put("username", username);
+        this.textFieldElements.put("password", password);
     }
 
     private Boolean loginUser() {
         UserCreds userCreds;
-        String username = this.username.getText().trim();
+        String username = this.username.getText();
         String password = this.password.getText();
 
         // Validate & parse form
-        this.username.getStyleClass().remove("error");
-        this.password.getStyleClass().remove("error");
+        this.resetTextFieldStyles();
         try {
             userCreds = CLoginForm.parseForm(username, password);
         } catch (InvalidFormException e) {
             // change border color of the text input to red
-            if (e.getErrors().get("username") != null) {
-                this.username.getStyleClass().add("error");
-            }
-            if (e.getErrors().get("password") != null) {
-                this.password.getStyleClass().add("error");
-            }
+            this.setTextFieldErrorStyles(e.getErrors());
             this.statusContainer.getChildren().setAll(new CAlert("Invalid username or password!", "error"));
             return false;
         }
