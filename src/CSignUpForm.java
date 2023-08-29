@@ -1,15 +1,8 @@
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-
-public class CCreateUserForm extends VBox {
-    private VBox component;
-
+public class CSignUpForm extends CForm {
     @FXML
     private TextField username;
 
@@ -22,31 +15,16 @@ public class CCreateUserForm extends VBox {
     @FXML
     private TextField lname;
 
-    @FXML
-    private Button createBtn;
-
-    @FXML
-    private Button loginBtn;
-
-    @FXML
-    private VBox statusContainer;
-
-    public CCreateUserForm(Function func) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/create-user-form.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-        try {
-            this.component = fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        setupElements(func);
+    public CSignUpForm(Function secondaryBtnHandler) {
+        super("fxml/signup-form.fxml");
+        this.primaryBtnHandler = () -> this.createUser();
+        this.secondryBtnHandler = secondaryBtnHandler;
+        this.setupComponent();
     }
 
-    private void setupElements(Function func) {
+    private void setupComponent() {
         // Bind events to event handlers
-        createBtn.onMouseClickedProperty().set(event -> createUser());
-        loginBtn.onMouseClickedProperty().set(event -> func.run());
+        System.out.println("Signup");
     }
 
     private void createUser() {
@@ -78,9 +56,5 @@ public class CCreateUserForm extends VBox {
             this.fname.setText("");
             this.lname.setText("");
         }
-    }
-
-    public VBox getComponent() {
-        return this.component;
     }
 }

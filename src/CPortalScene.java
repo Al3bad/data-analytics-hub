@@ -25,15 +25,14 @@ public class CPortalScene extends AnchorPane {
 
     private void setupElements() {
         // Bind events to event handlers
-        // main.getChildren().add(new CCreateUserForm().getComponent());
-        container.getChildren().add(new CLoginUserForm(() -> this.changeForm(false)).getComponent());
+        container.getChildren().add(new CLoginForm(() -> this.changeForm(false)).getComponent());
     }
 
     private void changeForm(Boolean displayRegForm) {
         if (displayRegForm == true) {
-            container.getChildren().setAll(new CLoginUserForm(() -> this.changeForm(false)).getComponent());
+            container.getChildren().setAll(new CLoginForm(() -> this.changeForm(false)).getComponent());
         } else {
-            container.getChildren().setAll(new CCreateUserForm(() -> this.changeForm(true)).getComponent());
+            container.getChildren().setAll(new CSignUpForm(() -> this.changeForm(true)).getComponent());
         }
     }
 
