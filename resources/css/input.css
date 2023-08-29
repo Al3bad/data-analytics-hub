@@ -1,0 +1,10 @@
+.input {
+  -fx-border-color: #00000022;
+  -fx-background-color: #ffffff;
+  -fx-border-width: 1;
+  -fx-border-radius: 2;
+}
+
+.input.error {
+  -fx-border-color: #ab908cc0;
+}

@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,29 +23,62 @@ public class CLoginForm extends CForm {
         System.out.println("Login");
     }
 
-    private void loginUser() {
-        String username = this.username.getText();
+    private Boolean loginUser() {
+        UserCreds userCreds;
+        String username = this.username.getText().trim();
         String password = this.password.getText();
 
-        // TODO: validate form
-        // ...
+        // Validate & parse form
+        this.username.getStyleClass().remove("error");
+        this.password.getStyleClass().remove("error");
+        try {
+            userCreds = CLoginForm.parseForm(username, password);
+        } catch (InvalidFormException e) {
+            // change border color of the text input to red
+            if (e.getErrors().get("username") != null) {
+                this.username.getStyleClass().add("error");
+            }
+            if (e.getErrors().get("password") != null) {
+                this.password.getStyleClass().add("error");
+            }
+            this.statusContainer.getChildren().setAll(new CAlert("Invalid username or password!", "error"));
+            return false;
+        }
 
-        // TODO: hanlde invalid form - show error message in GUI
-        // ...
-
-        // TODO: handle valid form
-        // ...
-
-        // Insert user to db
-        User user = DB.loginUser(username, password);
+        // Get user from DB
+        User user = DB.loginUser(userCreds.getUsername(), userCreds.getPassword());
 
         if (user == null) {
             this.statusContainer.getChildren().setAll(new CAlert("Incorrect username or password!", "error"));
+            return false;
         } else {
             this.statusContainer.getChildren().setAll(new CAlert("You're successfully logged in", "success"));
+            // TODO: navigate to dashboard scene
             // reset text fields
             this.username.setText("");
             this.password.setText("");
         }
+        return true;
+    }
+
+    private static UserCreds parseForm(String username, String password) throws InvalidFormException {
+        HashMap<String, String> errors = new HashMap<String, String>();
+        try {
+            username = Parser.parseStr(username);
+        } catch (Exception e) {
+            errors.put("username", "Username cannot be empty");
+        }
+
+        try {
+            password = Parser.parsePassword(password);
+        } catch (Exception e) {
+            errors.put("password", e.getMessage());
+        }
+
+        if (errors.size() > 0) {
+            throw new InvalidFormException("Invalid form!", errors);
+        }
+
+        return new UserCreds(username, password);
     }
 }

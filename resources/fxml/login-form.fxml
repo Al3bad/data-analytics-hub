@@ -14,13 +14,13 @@
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Username" />
-                  <TextField fx:id="username" style="-fx-border-color: #00000022; -fx-background-color: #ffffff; -fx-border-radius: 2; -fx-border-width: 1;" />
+                  <TextField fx:id="username" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Password" />
-                  <PasswordField fx:id="password" style="-fx-border-color: #00000022; -fx-background-color: #ffffff; -fx-border-radius: 2; -fx-border-width: 1;" />
+                  <PasswordField fx:id="password" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox fx:id="statusContainer" prefWidth="200.0" spacing="4.0">
