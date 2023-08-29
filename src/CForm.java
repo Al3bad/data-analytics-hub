@@ -25,8 +25,6 @@ public abstract class CForm extends VBox {
     @FXML
     protected VBox statusContainer;
 
-    protected Function primaryBtnHandler;
-    protected Function secondryBtnHandler;
     protected HashMap<String, TextField> textFieldElements = new HashMap<String, TextField>();
 
     public CForm(String fxmlFilePath) {
@@ -47,8 +45,8 @@ public abstract class CForm extends VBox {
 
     private void setupComponent() {
         // Bind events to event handlers
-        this.primaryBtn.onMouseClickedProperty().set(event -> primaryBtnHandler.run());
-        this.secondryBtn.onMouseClickedProperty().set(event -> secondryBtnHandler.run());
+        this.primaryBtn.onMouseClickedProperty().set(event -> onSubmit());
+        this.secondryBtn.onMouseClickedProperty().set(event -> onCancel());
     }
 
     protected void resetTextFieldStyles() {
@@ -64,6 +62,10 @@ public abstract class CForm extends VBox {
             }
         }
     }
+
+    protected abstract Boolean onSubmit();
+
+    protected abstract void onCancel();
 
     public VBox getComponent() {
         return this.component;

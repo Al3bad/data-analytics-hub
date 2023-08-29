@@ -17,9 +17,10 @@ public class CSignUpForm extends CForm {
     @FXML
     private TextField lname;
 
+    private Function secondryBtnHandler;
+
     public CSignUpForm(Function secondaryBtnHandler) {
         super("fxml/signup-form.fxml");
-        this.primaryBtnHandler = () -> this.createUser();
         this.secondryBtnHandler = secondaryBtnHandler;
         this.textFieldElements.put("username", username);
         this.textFieldElements.put("password", password);
@@ -33,7 +34,7 @@ public class CSignUpForm extends CForm {
         System.out.println("Signup");
     }
 
-    private Boolean createUser() {
+    protected Boolean onSubmit() {
         User userDetails;
         String username = this.username.getText();
         String password = this.password.getText();
@@ -68,6 +69,10 @@ public class CSignUpForm extends CForm {
             this.lname.setText("");
         }
         return true;
+    }
+
+    protected void onCancel() {
+        this.secondryBtnHandler.run();
     }
 
     private static User parseForm(String username, String fname, String lname, String password)

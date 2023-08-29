@@ -11,16 +11,18 @@ public class CLoginForm extends CForm {
     @FXML
     private PasswordField password;
 
+    private Function secondaryBtnHandler;
+
     public CLoginForm(Function secondaryBtnHandler) {
         super("fxml/login-form.fxml");
         // setting up some properties in the parent class
-        this.primaryBtnHandler = () -> this.loginUser();
-        this.secondryBtnHandler = secondaryBtnHandler;
+        this.secondaryBtnHandler = secondaryBtnHandler;
         this.textFieldElements.put("username", username);
         this.textFieldElements.put("password", password);
     }
 
-    private Boolean loginUser() {
+    @Override
+    protected Boolean onSubmit() {
         UserCreds userCreds;
         String username = this.username.getText();
         String password = this.password.getText();
@@ -50,6 +52,11 @@ public class CLoginForm extends CForm {
             this.password.setText("");
         }
         return true;
+    }
+
+    @Override
+    protected void onCancel() {
+        this.secondaryBtnHandler.run();
     }
 
     private static UserCreds parseForm(String username, String password) throws InvalidFormException {
