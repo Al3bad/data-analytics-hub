@@ -10,13 +10,13 @@ cd $SCRIPT_DIR
 # Compile java code
 # javac -d bin -cp lib/sqlite-jdbc-3.42.0.0.jar:bin src/*.java
 SRC_FILES=$(find ./src/dev/alabbad -name "*.java")
-javac -d bin -cp ./lib/sqlite-jdbc-3.42.0.0.jar:./lib/javafx/* $SRC_FILES
+javac -d ./bin -cp ./lib/sqlite-jdbc/*:./lib/javafx/* $SRC_FILES
 
 # Run the program
 java \
 	--module-path ./lib/javafx \
 	--add-modules javafx.controls,javafx.fxml \
-	-cp lib/sqlite-jdbc-3.42.0.0.jar:lib/javafx:src/dev/alabbad/resources:bin dev.alabbad.DataAnalyticsHub.Main $1
+	-cp ./lib/sqlite-jdbc/*:./lib/javafx/*:resources:bin dev.alabbad.DataAnalyticsHub.Main $1
 
 # cleanup bin files
 [ -d "./bin" ] && rm -r bin
