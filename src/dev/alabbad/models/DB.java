@@ -1,8 +1,10 @@
+package dev.alabbad.models;
+
 import java.util.HashMap;
 import java.sql.*;
 
 public class DB {
-    static Connection conn = null;
+    private static Connection conn = null;
 
     /**
      * Connect to a sample database
@@ -18,6 +20,10 @@ public class DB {
         } catch (SQLException e) {
             System.out.println("SQLiteError: " + e.getMessage());
         }
+    }
+
+    public static Connection getConnection() {
+        return conn;
     }
 
     public static void createUserTable() {

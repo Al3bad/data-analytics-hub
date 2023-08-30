@@ -1,5 +1,7 @@
+package dev.alabbad.models;
+
 public class UserCreds {
-    private String username;
+    protected String username;
     private String password;
 
     public UserCreds(String username, String password) {

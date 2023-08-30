@@ -1,4 +1,4 @@
-import java.util.HashMap;
+package dev.alabbad.utils;
 
 public class Parser {
     /**

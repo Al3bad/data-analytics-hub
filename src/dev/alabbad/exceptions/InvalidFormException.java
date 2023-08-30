@@ -1,3 +1,5 @@
+package dev.alabbad.exceptions;
+
 import java.util.HashMap;
 
 public class InvalidFormException extends Exception {

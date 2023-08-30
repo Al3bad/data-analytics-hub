@@ -1,3 +1,5 @@
+package dev.alabbad.contorllers;
+
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +14,7 @@ public class CRoot extends AnchorPane {
     private VBox main;
 
     public CRoot() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/root.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/root.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

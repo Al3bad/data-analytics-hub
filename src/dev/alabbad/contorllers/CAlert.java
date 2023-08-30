@@ -1,3 +1,5 @@
+package dev.alabbad.contorllers;
+
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +15,7 @@ public class CAlert extends HBox {
     private Text content;
 
     public CAlert(String content, String type) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/alert.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/alert.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

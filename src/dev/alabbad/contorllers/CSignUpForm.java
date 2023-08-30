@@ -1,5 +1,11 @@
+package dev.alabbad.contorllers;
+
 import java.util.HashMap;
 
+import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.models.DB;
+import dev.alabbad.models.User;
+import dev.alabbad.utils.Parser;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -20,7 +26,7 @@ public class CSignUpForm extends CForm {
     private Function secondryBtnHandler;
 
     public CSignUpForm(Function secondaryBtnHandler) {
-        super("fxml/signup-form.fxml");
+        super("/views/signup-form.fxml");
         this.secondryBtnHandler = secondaryBtnHandler;
         this.textFieldElements.put("username", username);
         this.textFieldElements.put("password", password);

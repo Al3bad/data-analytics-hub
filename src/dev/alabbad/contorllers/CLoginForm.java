@@ -1,3 +1,11 @@
+package dev.alabbad.contorllers;
+
+import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.models.DB;
+import dev.alabbad.models.UserCreds;
+import dev.alabbad.models.User;
+import dev.alabbad.utils.Parser;
+
 import java.util.HashMap;
 
 import javafx.fxml.FXML;
@@ -14,7 +22,7 @@ public class CLoginForm extends CForm {
     private Function secondaryBtnHandler;
 
     public CLoginForm(Function secondaryBtnHandler) {
-        super("fxml/login-form.fxml");
+        super("/views/login-form.fxml");
         // setting up some properties in the parent class
         this.secondaryBtnHandler = secondaryBtnHandler;
         this.textFieldElements.put("username", username);

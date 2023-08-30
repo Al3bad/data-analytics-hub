@@ -1,3 +1,5 @@
+package dev.alabbad.contorllers;
+
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +13,7 @@ public class CPortalScene extends AnchorPane {
     private VBox container;
 
     public CPortalScene() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/portal-scene.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/portal-scene.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

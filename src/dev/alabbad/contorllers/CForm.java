@@ -1,3 +1,5 @@
+package dev.alabbad.contorllers;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;

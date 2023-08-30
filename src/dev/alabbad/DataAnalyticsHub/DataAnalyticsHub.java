@@ -1,5 +1,12 @@
+package dev.alabbad.DataAnalyticsHub;
+
+import dev.alabbad.contorllers.CPortalScene;
+import dev.alabbad.models.DB;
+import dev.alabbad.models.User;
+
 import java.sql.SQLException;
 import java.util.HashMap;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,7 +49,7 @@ public class DataAnalyticsHub extends Application {
         launch();
         // Close connection
         try {
-            DB.conn.close();
+            DB.getConnection().close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
