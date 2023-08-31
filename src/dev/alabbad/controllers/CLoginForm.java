@@ -1,6 +1,7 @@
-package dev.alabbad.contorllers;
+package dev.alabbad.controllers;
 
 import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.UserCreds;
 import dev.alabbad.models.User;
@@ -9,6 +10,7 @@ import dev.alabbad.utils.Parser;
 import java.util.HashMap;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -53,11 +55,10 @@ public class CLoginForm extends CForm {
             this.statusContainer.getChildren().setAll(new CAlert("Incorrect username or password!", "error"));
             return false;
         } else {
-            this.statusContainer.getChildren().setAll(new CAlert("You're successfully logged in", "success"));
-            // TODO: navigate to dashboard scene
-            // reset text fields
-            this.username.setText("");
-            this.password.setText("");
+            // navigate to dashboard scene
+            AppState.getInstance().setUser(user);
+            Scene dashboardScene = new Scene(new DashboardSceneController().getComponent());
+            AppState.getInstance().switchScene(dashboardScene, 800, 400, true);
         }
         return true;
     }

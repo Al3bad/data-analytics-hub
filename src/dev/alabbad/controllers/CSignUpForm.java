@@ -1,12 +1,14 @@
-package dev.alabbad.contorllers;
+package dev.alabbad.controllers;
 
 import java.util.HashMap;
 
 import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -67,12 +69,9 @@ public class CSignUpForm extends CForm {
             return false;
         } else {
             this.statusContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
-            // TODO: navigate to dashboard scene
-            // reset text fields
-            this.username.setText("");
-            this.password.setText("");
-            this.fname.setText("");
-            this.lname.setText("");
+            AppState.getInstance().setUser(newUser);
+            Scene dashboardScene = new Scene(new DashboardSceneController().getComponent());
+            AppState.getInstance().switchScene(dashboardScene, 800, 400, true);
         }
         return true;
     }

@@ -1,4 +1,4 @@
-package dev.alabbad.contorllers;
+package dev.alabbad.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

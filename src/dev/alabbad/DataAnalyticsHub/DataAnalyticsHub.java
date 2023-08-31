@@ -1,6 +1,7 @@
 package dev.alabbad.DataAnalyticsHub;
 
-import dev.alabbad.contorllers.CPortalScene;
+import dev.alabbad.controllers.CPortalScene;
+import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 
@@ -21,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 public class DataAnalyticsHub extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        AppState.getInstance().setStage(stage);
         double minWidth = 650;
         double minHeight = 400;
         AnchorPane portalScene = new CPortalScene().getComponent();

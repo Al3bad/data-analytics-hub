@@ -1,4 +1,4 @@
-package dev.alabbad.contorllers;
+package dev.alabbad.controllers;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
