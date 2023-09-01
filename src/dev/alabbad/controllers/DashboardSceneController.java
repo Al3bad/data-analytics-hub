@@ -45,6 +45,6 @@ public class DashboardSceneController extends AnchorPane {
 
     @FXML
     public void onEditBtnClicked(MouseEvent event) {
-        // AppState.getInstance().switchScene(new Scene(), true);
+        AppState.getInstance().switchScene(new Scene(new EditProfileFormController()), true);
     }
 }

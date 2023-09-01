@@ -15,16 +15,16 @@ import javafx.scene.input.MouseEvent;
 
 public class SignupFormController extends FormController {
     @FXML
-    private TextField username;
+    protected TextField username;
 
     @FXML
-    private PasswordField password;
+    protected PasswordField password;
 
     @FXML
-    private TextField fname;
+    protected TextField fname;
 
     @FXML
-    private TextField lname;
+    protected TextField lname;
 
     public SignupFormController() {
         super("/views/signup-form.fxml");
@@ -32,20 +32,9 @@ public class SignupFormController extends FormController {
 
     @FXML
     protected Boolean onSubmitBtnClicked(MouseEvent event) {
-        User userDetails;
-        String username = this.username.getText();
-        String password = this.password.getText();
-        String fname = this.fname.getText();
-        String lname = this.lname.getText();
+        User userDetails = this.validateForm();
 
-        // Validate & parse form
-        this.resetTextFieldStyles();
-        try {
-            userDetails = SignupFormController.parseForm(username, fname, lname, password);
-        } catch (InvalidFormException e) {
-            // change border color of the text input to red
-            this.setTextFieldErrorStyles(e.getErrors());
-            this.statusContainer.getChildren().setAll(new CAlert("Invalid username or password!", "error"));
+        if (userDetails == null) {
             return false;
         }
 
@@ -69,6 +58,24 @@ public class SignupFormController extends FormController {
     protected void onCancelBtnClicked(MouseEvent event) {
         Scene portalScene = new Scene(new CPortalScene(new LoginFormController()));
         AppState.getInstance().switchScene(portalScene, false);
+    }
+
+    protected User validateForm() {
+        String username = this.username.getText();
+        String password = this.password.getText();
+        String fname = this.fname.getText();
+        String lname = this.lname.getText();
+
+        // Validate & parse form
+        this.resetTextFieldStyles();
+        try {
+            return SignupFormController.parseForm(username, fname, lname, password);
+        } catch (InvalidFormException e) {
+            // change border color of the text input to red
+            this.setTextFieldErrorStyles(e.getErrors());
+            this.statusContainer.getChildren().setAll(new CAlert("Invalid username or password!", "error"));
+            return null;
+        }
     }
 
     private static User parseForm(String username, String fname, String lname, String password)

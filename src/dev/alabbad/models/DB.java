@@ -1,6 +1,9 @@
 package dev.alabbad.models;
 
 import java.util.HashMap;
+
+import dev.alabbad.exceptions.UserNotFoundException;
+
 import java.sql.*;
 
 public class DB {
@@ -48,6 +51,27 @@ public class DB {
             stmt.setString(3, fname);
             stmt.setString(4, lname);
             stmt.executeUpdate();
+            return new User(username, fname, lname);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static User updateUser(String currentUsername, String username, String password, String fname, String lname)
+                    throws UserNotFoundException {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                            "UPDATE user SET username=?,password=?,fname=?,lname=? WHERE LOWER(username) = LOWER(?)");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, fname);
+            stmt.setString(4, lname);
+            stmt.setString(5, currentUsername);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new UserNotFoundException("[ERROR-DB] User does not exists!");
+            }
             return new User(username, fname, lname);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
