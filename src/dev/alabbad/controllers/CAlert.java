@@ -55,8 +55,4 @@ public class CAlert extends HBox {
 
         this.content.setText(content);
     }
-
-    public HBox getComponent() {
-        return this.container;
-    }
 }

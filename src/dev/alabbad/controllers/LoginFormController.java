@@ -13,26 +13,22 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
-public class CLoginForm extends CForm {
+public class LoginFormController extends FormController {
     @FXML
     private TextField username;
 
     @FXML
     private PasswordField password;
 
-    private Function secondaryBtnHandler;
-
-    public CLoginForm(Function secondaryBtnHandler) {
+    public LoginFormController() {
         super("/views/login-form.fxml");
-        // setting up some properties in the parent class
-        this.secondaryBtnHandler = secondaryBtnHandler;
-        this.textFieldElements.put("username", username);
-        this.textFieldElements.put("password", password);
     }
 
+    @FXML
     @Override
-    protected Boolean onSubmit() {
+    protected Boolean onSubmitBtnClicked(MouseEvent event) {
         UserCreds userCreds;
         String username = this.username.getText();
         String password = this.password.getText();
@@ -40,7 +36,7 @@ public class CLoginForm extends CForm {
         // Validate & parse form
         this.resetTextFieldStyles();
         try {
-            userCreds = CLoginForm.parseForm(username, password);
+            userCreds = LoginFormController.parseForm(username, password);
         } catch (InvalidFormException e) {
             // change border color of the text input to red
             this.setTextFieldErrorStyles(e.getErrors());
@@ -57,15 +53,17 @@ public class CLoginForm extends CForm {
         } else {
             // navigate to dashboard scene
             AppState.getInstance().setUser(user);
-            Scene dashboardScene = new Scene(new DashboardSceneController().getComponent());
-            AppState.getInstance().switchScene(dashboardScene, 800, 400, true);
+            Scene dashboardScene = new Scene(new DashboardSceneController());
+            AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;
     }
 
+    @FXML
     @Override
-    protected void onCancel() {
-        this.secondaryBtnHandler.run();
+    protected void onCancelBtnClicked(MouseEvent event) {
+        Scene portalScene = new Scene(new CPortalScene(new SignupFormController()));
+        AppState.getInstance().switchScene(portalScene, false);
     }
 
     private static UserCreds parseForm(String username, String password) throws InvalidFormException {

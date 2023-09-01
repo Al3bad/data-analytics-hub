@@ -7,39 +7,20 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 public class CPortalScene extends AnchorPane {
-    private AnchorPane component;
-
     @FXML
     private VBox container;
 
-    public CPortalScene() {
+    public CPortalScene(VBox form) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/portal-scene.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
         try {
-            this.component = fxmlLoader.load();
+            fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        setupElements();
-    }
-
-    private void setupElements() {
-        // Bind events to event handlers
-        container.getChildren().add(new CLoginForm(() -> this.changeForm(false)).getComponent());
-    }
-
-    private void changeForm(Boolean displayRegForm) {
-        if (displayRegForm == true) {
-            container.getChildren().setAll(new CLoginForm(() -> this.changeForm(false)).getComponent());
-        } else {
-            container.getChildren().setAll(new CSignUpForm(() -> this.changeForm(true)).getComponent());
-        }
-    }
-
-    public AnchorPane getComponent() {
-        return this.component;
+        container.getChildren().add(form);
     }
 
     public VBox getContainer() {

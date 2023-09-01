@@ -1,6 +1,6 @@
 package dev.alabbad.models;
 
-import dev.alabbad.controllers.CLoginForm;
+import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.CPortalScene;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -34,18 +34,14 @@ public class AppState {
         this.stage = stage;
     }
 
-    public void switchScene(Scene scene, double minWidth, double minHeight, Boolean loginIsRequired) {
+    public void switchScene(Scene scene, Boolean loginIsRequired) {
         if (loginIsRequired && this.loggedInUser == null) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Login is required");
             alert.setContentText("Something worng happend! Please contact the developer");
             alert.showAndWait();
-            minWidth = 650;
-            minHeight = 400;
-            scene = new Scene(new CPortalScene(), minWidth, minHeight);
+            scene = new Scene(new CPortalScene(new LoginFormController()));
         }
         this.stage.setScene(scene);
-        this.stage.setMinWidth(minWidth);
-        this.stage.setMinHeight(minHeight);
     }
 }

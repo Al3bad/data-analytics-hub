@@ -2,22 +2,16 @@ package dev.alabbad.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
-public abstract class CForm extends VBox {
-    // reference:
-    // https://www.w3docs.com/snippets/java/how-to-pass-a-function-as-a-parameter-in-java.html
-    @FunctionalInterface
-    interface Function {
-        void run();
-    }
-
-    protected VBox component;
-
+public abstract class FormController extends VBox {
     @FXML
     protected Button primaryBtn;
 
@@ -29,26 +23,24 @@ public abstract class CForm extends VBox {
 
     protected HashMap<String, TextField> textFieldElements = new HashMap<String, TextField>();
 
-    public CForm(String fxmlFilePath) {
-        this.loadComponent(fxmlFilePath);
-        this.setupComponent();
-    }
-
-    private void loadComponent(String fxmlFilePath) {
+    public FormController(String fxmlFilePath) {
+        // Load from FXML
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlFilePath));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         try {
-            this.component = fxmlLoader.load();
+            fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-    }
+        // get all TextField in the form
+        Set<Node> textFields = this.lookupAll(".input");
+        // put TextField element in the HashMap
+        for (Node textField : textFields) {
+            String id = ((TextField) textField).getId();
+            this.textFieldElements.put(id, (TextField) textField);
+        }
 
-    private void setupComponent() {
-        // Bind events to event handlers
-        this.primaryBtn.onMouseClickedProperty().set(event -> onSubmit());
-        this.secondryBtn.onMouseClickedProperty().set(event -> onCancel());
     }
 
     protected void resetTextFieldStyles() {
@@ -65,11 +57,9 @@ public abstract class CForm extends VBox {
         }
     }
 
-    protected abstract Boolean onSubmit();
+    @FXML
+    protected abstract Boolean onSubmitBtnClicked(MouseEvent event);
 
-    protected abstract void onCancel();
-
-    public VBox getComponent() {
-        return this.component;
-    }
+    @FXML
+    protected abstract void onCancelBtnClicked(MouseEvent event);
 }

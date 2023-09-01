@@ -7,24 +7,18 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 public class DashboardSceneController extends AnchorPane {
     @FXML
-    private AnchorPane component;
-
-    @FXML
     private Text fullName;
 
     @FXML
     private Text username;
-
-    @FXML
-    private Text numOfPosts;
 
     @FXML
     private ListView<String> postContainer;
@@ -43,13 +37,14 @@ public class DashboardSceneController extends AnchorPane {
         // Setup
         User user = AppState.getInstance().getUser();
         if (user != null) {
-            this.fullName.setText(user.getFirstName() + " " + user.getLastName());
-            this.username.setText(user.getUsername());
-            this.numOfPosts.setText("0");
+            this.fullName.setText("Hello " + user.getFirstName() + " " + user.getLastName());
+            this.username.setText("@" + user.getUsername());
+            // this.numOfPosts.setText("0");
         }
     }
 
-    public AnchorPane getComponent() {
-        return this.component;
+    @FXML
+    public void onEditBtnClicked(MouseEvent event) {
+        // AppState.getInstance().switchScene(new Scene(), true);
     }
 }

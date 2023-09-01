@@ -1,5 +1,6 @@
 package dev.alabbad.DataAnalyticsHub;
 
+import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.CPortalScene;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
@@ -25,7 +26,7 @@ public class DataAnalyticsHub extends Application {
         AppState.getInstance().setStage(stage);
         double minWidth = 650;
         double minHeight = 400;
-        AnchorPane portalScene = new CPortalScene().getComponent();
+        AnchorPane portalScene = new CPortalScene(new LoginFormController());
         Scene scene = new Scene(portalScene, minWidth, minHeight);
         // Setting the title to Stage.
         stage.setTitle("Data Analytics Hub");

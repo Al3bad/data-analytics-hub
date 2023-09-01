@@ -40,8 +40,8 @@
             </VBox>
             <VBox spacing="8.0">
                <children>
-                  <Button fx:id="primaryBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #333; -fx-border-radius: 4; -fx-text-fill: white; -fx-border-color: #333;" text="Sign Up" />
-                  <Button fx:id="secondryBtn" cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: none; -fx-border-radius: 4; -fx-border-color: #333; -fx-text-fill: #333;" text="Login" />
+                  <Button fx:id="primaryBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onSubmitBtnClicked" style="-fx-background-color: #333; -fx-border-radius: 4; -fx-text-fill: white; -fx-border-color: #333;" text="Sign Up" />
+                  <Button fx:id="secondryBtn" cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onCancelBtnClicked" style="-fx-background-color: none; -fx-border-radius: 4; -fx-border-color: #333; -fx-text-fill: #333;" text="Login" />
                </children>
             </VBox>
          </children>

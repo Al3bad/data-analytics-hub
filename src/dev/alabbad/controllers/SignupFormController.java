@@ -11,8 +11,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
-public class CSignUpForm extends CForm {
+public class SignupFormController extends FormController {
     @FXML
     private TextField username;
 
@@ -25,24 +26,12 @@ public class CSignUpForm extends CForm {
     @FXML
     private TextField lname;
 
-    private Function secondryBtnHandler;
-
-    public CSignUpForm(Function secondaryBtnHandler) {
+    public SignupFormController() {
         super("/views/signup-form.fxml");
-        this.secondryBtnHandler = secondaryBtnHandler;
-        this.textFieldElements.put("username", username);
-        this.textFieldElements.put("password", password);
-        this.textFieldElements.put("fname", fname);
-        this.textFieldElements.put("lname", lname);
-        this.setupComponent();
     }
 
-    private void setupComponent() {
-        // Bind events to event handlers
-        System.out.println("Signup");
-    }
-
-    protected Boolean onSubmit() {
+    @FXML
+    protected Boolean onSubmitBtnClicked(MouseEvent event) {
         User userDetails;
         String username = this.username.getText();
         String password = this.password.getText();
@@ -52,7 +41,7 @@ public class CSignUpForm extends CForm {
         // Validate & parse form
         this.resetTextFieldStyles();
         try {
-            userDetails = CSignUpForm.parseForm(username, fname, lname, password);
+            userDetails = SignupFormController.parseForm(username, fname, lname, password);
         } catch (InvalidFormException e) {
             // change border color of the text input to red
             this.setTextFieldErrorStyles(e.getErrors());
@@ -70,14 +59,16 @@ public class CSignUpForm extends CForm {
         } else {
             this.statusContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
             AppState.getInstance().setUser(newUser);
-            Scene dashboardScene = new Scene(new DashboardSceneController().getComponent());
-            AppState.getInstance().switchScene(dashboardScene, 800, 400, true);
+            Scene dashboardScene = new Scene(new DashboardSceneController());
+            AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;
     }
 
-    protected void onCancel() {
-        this.secondryBtnHandler.run();
+    @FXML
+    protected void onCancelBtnClicked(MouseEvent event) {
+        Scene portalScene = new Scene(new CPortalScene(new LoginFormController()));
+        AppState.getInstance().switchScene(portalScene, false);
     }
 
     private static User parseForm(String username, String fname, String lname, String password)
@@ -113,5 +104,4 @@ public class CSignUpForm extends CForm {
 
         return new User(username, fname, lname, password);
     }
-
 }
