@@ -1,0 +1,15 @@
+.tab {
+  -fx-border-radius: 0;
+  -fx-background-color: none;
+  -fx-cursor: hand;
+  -fx-text-fill: #00000030;
+}
+
+.tab.seperator {
+  -fx-border-width: 0 1 0 0;
+  -fx-border-color: #cccccc80;
+}
+
+.tab.active {
+  -fx-text-fill: black;
+}
