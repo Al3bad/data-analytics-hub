@@ -84,19 +84,20 @@ public class MainSceneController extends AnchorPane {
             ((RadioButton) textField).getStyleClass().remove("radio-button");
         }
 
+        // the behaviour of tabs was inspired by this post (reference):
+        // - https://stackoverflow.com/a/71167686/10823489
         this.tapMap.put(this.dashboardTab, new VBox(new Text("Dashboard")));
-        this.tapMap.put(this.addPostTab, new VBox(new Text("Add Post")));
+        this.tapMap.put(this.addPostTab, new NewPostFormController());
         this.tapMap.put(this.deletePostTab, new VBox(new Text("Delete Post")));
         this.tapMap.put(this.getPostTab, new VBox(new Text("get Post")));
         this.tapMap.put(this.getMostLikedPostsTab, new VBox(new Text("Get Most Liked Posts")));
         this.tapMap.put(this.getMostSharedPostsTab, new VBox(new Text("Get Most Shared Posts")));
         this.tapMap.put(this.editProfileTab, new EditProfileFormController());
 
-        displaySelectedPane();
+        displaySelectedTab();
         this.actionsGroup.selectedToggleProperty()
-                        .addListener((observable, oldValue, newValue) -> displaySelectedPane());
+                        .addListener((observable, oldValue, newValue) -> displaySelectedTab());
 
-        // Setup
         User user = AppState.getInstance().getUser();
         if (user != null) {
             this.fullName.setText("Hello " + user.getFirstName() + " " + user.getLastName());
@@ -104,7 +105,7 @@ public class MainSceneController extends AnchorPane {
         }
     }
 
-    private void displaySelectedPane() {
+    private void displaySelectedTab() {
         this.container.getChildren().setAll(this.tapMap.get(this.actionsGroup.getSelectedToggle()));
     }
 

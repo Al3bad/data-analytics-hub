@@ -57,6 +57,13 @@ public abstract class FormController extends VBox {
         }
     }
 
+    protected void resetTextFields() {
+        this.resetTextFieldStyles();
+        for (TextField textField : this.textFieldElements.values()) {
+            textField.setText("");
+        }
+    }
+
     @FXML
     protected abstract Boolean onSubmitBtnClicked(MouseEvent event);
 

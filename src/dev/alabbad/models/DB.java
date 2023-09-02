@@ -116,4 +116,9 @@ public class DB {
             return null;
         }
     }
+
+    public static Post insertPost(String content, String username, int likes, int shares, String dateTime) {
+        // TODO:
+        return new Post(1, content, username, likes, shares, dateTime);
+    }
 }
