@@ -48,7 +48,7 @@ public class SignupFormController extends FormController {
         } else {
             this.statusContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
             AppState.getInstance().setUser(newUser);
-            Scene dashboardScene = new Scene(new DashboardSceneController());
+            Scene dashboardScene = new Scene(new MainSceneController());
             AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;

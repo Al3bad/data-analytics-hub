@@ -1,3 +1,7 @@
+.tab-container {
+  -fx-padding: 8 0;
+}
+
 .tab {
   -fx-border-radius: 0;
   -fx-background-color: none;
@@ -5,11 +9,15 @@
   -fx-text-fill: #00000030;
 }
 
-.tab.seperator {
-  -fx-border-width: 0 1 0 0;
-  -fx-border-color: #cccccc80;
+.tab:selected {
+  -fx-text-fill: black;
 }
 
 .tab.active {
   -fx-text-fill: black;
+}
+
+.seperator {
+  -fx-border-width: 0 0 1 0;
+  -fx-border-color: #cccccc80;
 }

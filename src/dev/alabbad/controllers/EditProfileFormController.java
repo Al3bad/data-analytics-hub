@@ -10,11 +10,11 @@ import javafx.scene.input.MouseEvent;
 public class EditProfileFormController extends SignupFormController {
     public EditProfileFormController() {
         super();
-        this.setStyle("-fx-padding: 64;");
-
         // TODO: add field for old & new password
         // TODO: make sure that user creds are valid before updating
         // TODO: handle some errors properly
+
+        this.secondryBtn.setVisible(false);
 
         User loggedinUser = AppState.getInstance().getUser();
         this.username.setText(loggedinUser.getUsername());
@@ -43,7 +43,7 @@ public class EditProfileFormController extends SignupFormController {
             } else {
                 this.statusContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
                 AppState.getInstance().setUser(updatedUser);
-                Scene dashboardScene = new Scene(new DashboardSceneController());
+                Scene dashboardScene = new Scene(new MainSceneController());
                 AppState.getInstance().switchScene(dashboardScene, true);
             }
         } catch (UserNotFoundException e) {
@@ -55,7 +55,7 @@ public class EditProfileFormController extends SignupFormController {
 
     @Override
     protected void onCancelBtnClicked(MouseEvent event) {
-        Scene dashboardScene = new Scene(new DashboardSceneController());
-        AppState.getInstance().switchScene(dashboardScene, true);
+        // Scene dashboardScene = new Scene(new DashboardSceneController());
+        // AppState.getInstance().switchScene(dashboardScene, true);
     }
 }

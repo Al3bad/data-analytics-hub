@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="AnchorPane" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane layoutX="159.0" layoutY="180.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="440.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints />
+        </rowConstraints>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="14.0" style="-fx-padding: 16;">
+               <children>
+                  <Circle fill="#e1e1e1" radius="24.0" stroke="#0000001a" strokeType="INSIDE" strokeWidth="2.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Circle>
+                  <VBox alignment="CENTER_LEFT" spacing="4.0">
+                     <children>
+                        <Text fx:id="fullName" strokeType="OUTSIDE" strokeWidth="0.0" text="full name">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="username" opacity="0.35" strokeType="OUTSIDE" strokeWidth="0.0" text="username">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox fx:id="tabs" style="-fx-border-color: #ccccccF0; -fx-border-width: 1 0 1 0; -fx-padding: 16; -fx-spacing: 8;" GridPane.rowIndex="1">
+               <children>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="dashboardTab" mnemonicParsing="false" selected="true" styleClass="tab" stylesheets="@../css/tab.css" text="Dashboard">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="actionsGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="addPostTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Add post" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="deletePostTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Delete post" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="getPostTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Get post" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="getMostLikedPostsTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Get most liked posts" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <RadioButton fx:id="getMostSharedPostsTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Get most shared posts" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="8.0" styleClass="tab-container" stylesheets="@../css/tab.css">
+                     <children>
+                        <ImageView fitWidth="16.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/square.and.pencil@2x.png" />
+                           </image>
+                           <effect>
+                              <Blend mode="DIFFERENCE" />
+                           </effect>
+                        </ImageView>
+                        <RadioButton fx:id="editProfileTab" mnemonicParsing="false" styleClass="tab" stylesheets="@../css/tab.css" text="Edit profile" toggleGroup="$actionsGroup" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox style="-fx-padding: 16; -fx-spacing: 8;" GridPane.rowIndex="2">
+               <children>
+                  <HBox onMouseClicked="#onLogoutBtnClicked" spacing="8.0" style="-fx-padding: 4 0; -fx-cursor: hand;">
+                     <children>
+                        <ImageView fitWidth="16.0" opacity="0.5" pickOnBounds="true" preserveRatio="true" style="-fx-effect: innershadow(gaussian, red, 20, 0, 0, 0);">
+                           <image>
+                              <Image url="@../images/rectangle.portrait.and.arrow.right@2x.png" />
+                           </image>
+                           <effect>
+                              <Blend mode="DIFFERENCE" />
+                           </effect>
+                        </ImageView>
+                        <Text opacity="0.35" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-effect: innershadow(gaussian, red, 20, 0, 0, 0);" text="Logout">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+               </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </VBox>
+            <VBox fx:id="container" style="-fx-border-width: 0 0 0 1; -fx-border-color: #ccccccf0; -fx-padding: 32;" GridPane.columnIndex="1" GridPane.rowSpan="2147483647" />
+         </children>
+      </GridPane>
+   </children>
+</fx:root>

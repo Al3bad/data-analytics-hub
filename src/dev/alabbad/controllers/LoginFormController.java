@@ -24,6 +24,9 @@ public class LoginFormController extends FormController {
 
     public LoginFormController() {
         super("/views/login-form.fxml");
+        // NOTE: remove this later
+        this.username.setText("xv");
+        this.password.setText("1234567");
     }
 
     @FXML
@@ -53,7 +56,7 @@ public class LoginFormController extends FormController {
         } else {
             // navigate to dashboard scene
             AppState.getInstance().setUser(user);
-            Scene dashboardScene = new Scene(new DashboardSceneController());
+            Scene dashboardScene = new Scene(new MainSceneController());
             AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;
