@@ -5,6 +5,7 @@ import java.io.IOException;
 import dev.alabbad.models.Post;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -16,7 +17,7 @@ public class PostController extends VBox {
     private Text id;
 
     @FXML
-    private Text content;
+    private Label content;
 
     @FXML
     private Text likes;
