@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
@@ -61,6 +63,13 @@ public abstract class FormController extends VBox {
         this.resetTextFieldStyles();
         for (TextField textField : this.textFieldElements.values()) {
             textField.setText("");
+        }
+    }
+
+    @FXML
+    protected void onKeyPressed(KeyEvent event) {
+        if (event.getCode().equals(KeyCode.ENTER)) {
+            this.onSubmitBtnClicked(null);
         }
     }
 

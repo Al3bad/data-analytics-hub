@@ -13,25 +13,25 @@
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Username" />
-                  <TextField fx:id="username" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="username" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="First Name" />
-                  <TextField fx:id="fname" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="fname" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Last Name" />
-                  <TextField fx:id="lname" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="lname" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Password" />
-                  <PasswordField fx:id="password" styleClass="input" stylesheets="@../css/input.css" />
+                  <PasswordField fx:id="password" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox fx:id="statusContainer" prefWidth="200.0" spacing="4.0">

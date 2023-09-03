@@ -1,0 +1,17 @@
+.button {
+  -fx-border-radius: 4;
+  -fx-text-fill: white;
+  -fx-border-color: #333333;
+  -fx-background-color: #333333;
+  -fx-cursor: hand;
+}
+
+.button.primary {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+}
+
+.button.secondary {
+  -fx-background-color: none;
+  -fx-text-fill: #333333;
+}

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Text?>
+
+<fx:root style="-fx-border-color: #ccccccF0; -fx-border-radius: 4; -fx-background-color: #ffffff40; -fx-border-width: 1;" type="VBox" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+    <HBox style="-fx-padding: 16; -fx-border-width: 0 0 1 0; -fx-border-color: #cccccc80;">
+        <children>
+            <HBox alignment="CENTER_LEFT" style="-fx-spacing: 8; -fx-opacity: .5;">
+                <children>
+                <ImageView fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/person.fill@2x.png" />
+                    </image>
+                    <effect>
+                        <Blend mode="DIFFERENCE" />
+                    </effect>
+                </ImageView>
+                <Text fx:id="author" strokeType="OUTSIDE" strokeWidth="0.0" text="author" />
+                </children>
+            </HBox>
+            <Pane HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" style="-fx-spacing: 4; -fx-opacity: .5;">
+                <children>
+                <ImageView fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/number.circle.fill@2x.png" />
+                    </image>
+                    <effect>
+                        <Blend mode="DIFFERENCE" />
+                    </effect>
+                </ImageView>
+                <Text fx:id="id" strokeType="OUTSIDE" strokeWidth="0.0" text="id" />
+                </children>
+            </HBox>
+        </children>
+    </HBox>
+    <VBox style="-fx-padding: 16;">
+        <children>
+            <Text fx:id="content" strokeType="OUTSIDE" strokeWidth="0.0" text="content" />
+        </children>
+    </VBox>
+    <HBox style="-fx-padding: 16; -fx-border-width: 1 0 0 0; -fx-border-color: #cccccc80; -fx-spacing: 32;">
+        <children>
+            <HBox alignment="CENTER_LEFT" style="-fx-spacing: 8; -fx-opacity: .5;">
+                <children>
+                <ImageView fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/heart.fill@2x.png" />
+                    </image>
+                    <effect>
+                        <DropShadow>
+                            <color>
+                            <Color opacity="0.5028680562973022" />
+                            </color>
+                        </DropShadow>
+                    </effect>
+                </ImageView>
+                <Text fx:id="likes" strokeType="OUTSIDE" strokeWidth="0.0" text="100" />
+                </children>
+                <effect>
+                <InnerShadow choke="1.0">
+                    <color>
+                        <Color red="1.0" green="0.2083333283662796" blue="0.2083333283662796" />
+                    </color>
+                </InnerShadow>
+                </effect>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" style="-fx-spacing: 8;">
+                <children>
+                <ImageView fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../images/arrowshape.turn.up.right.circle.fill@2x.png" />
+                    </image>
+                    <effect>
+                        <DropShadow>
+                            <color>
+                            <Color opacity="0.30000001192092896" />
+                            </color>
+                        </DropShadow>
+                    </effect>
+                </ImageView>
+                <Text fx:id="shares" strokeType="OUTSIDE" strokeWidth="0.0" text="1000" />
+                </children>
+                <effect>
+                <InnerShadow choke="1.0">
+                    <color>
+                        <Color red="0.445499986410141" green="0.6935705542564392" blue="0.8100000023841858" />
+                    </color>
+                </InnerShadow>
+                </effect>
+            </HBox>
+            <Pane HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" style="-fx-spacing: 8; -fx-opacity: .5;">
+               <children>
+                  <ImageView fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/calendar.badge.clock@2x.png" />
+                     </image>
+                     <effect>
+                        <Blend mode="DIFFERENCE" />
+                     </effect>
+                  </ImageView>
+                  <Text fx:id="dateTime" strokeType="OUTSIDE" strokeWidth="0.0" text="date/time" />
+               </children>
+            </HBox>
+        </children>
+    </HBox>
+    </children>
+</fx:root>

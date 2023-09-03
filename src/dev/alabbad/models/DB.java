@@ -2,6 +2,7 @@ package dev.alabbad.models;
 
 import java.util.HashMap;
 
+import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UserNotFoundException;
 
 import java.sql.*;
@@ -96,6 +97,37 @@ public class DB {
         }
     }
 
+    public static Post getPost(int id, String author) throws PostNotFoundException, SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM post WHERE id = ? AND author = ?");
+        stmt.setInt(1, id);
+        stmt.setString(2, author);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            String content = rs.getString("content");
+            int likes = rs.getInt("likes");
+            int shares = rs.getInt("shares");
+            String dateTime = rs.getString("dateTime");
+            return new Post(id, content, author, likes, shares, dateTime);
+        }
+        throw new PostNotFoundException("[ERROR-DB] Post not found!");
+    }
+
+    public static Boolean deletePost(int id, String author) throws PostNotFoundException {
+        try {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
+            stmt.setInt(1, id);
+            stmt.setString(2, author);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new PostNotFoundException("[ERROR-DB] Post not found!");
+            }
+            return true;
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+            return null;
+        }
+    }
+
     public static int getLastInsertedRowID() throws SQLException {
         ResultSet rs = conn.createStatement().executeQuery("SELECT last_insert_rowid() as id");
         if (!rs.next()) {
@@ -116,7 +148,7 @@ public class DB {
             stmt.setString(5, currentUsername);
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new UserNotFoundException("[ERROR-DB] User does not exists!");
+                throw new UserNotFoundException("[ERROR-DB] User not found!");
             }
             return new User(username, fname, lname);
         } catch (SQLException e) {

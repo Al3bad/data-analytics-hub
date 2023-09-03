@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
@@ -13,25 +12,25 @@
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Content" />
-                  <TextField fx:id="content" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="content" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Likes" />
-                  <TextField fx:id="likes" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="likes" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                   <Label text="Shares" />
-                  <TextField fx:id="shares" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="shares" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox prefWidth="200.0" spacing="4.0">
                <children>
                  <Label text="Date/Time" />
-                  <TextField fx:id="dateTime" styleClass="input" stylesheets="@../css/input.css" />
+                  <TextField fx:id="dateTime" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" />
                </children>
             </VBox>
             <VBox fx:id="statusContainer" prefWidth="200.0" spacing="4.0">
