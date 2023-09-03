@@ -42,6 +42,25 @@ public class DB {
         }
     }
 
+    public static void createPostTable() {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.execute("""
+                            CREATE TABLE IF NOT EXISTS post (
+                                id INTEGER NOT NULL UNIQUE PRIMARY KEY,
+                                content TEXT NOT NULL,
+                                author TEXT NOT NULL,
+                                likes INTEGER NOT NULL,
+                                shares INTEGER NOT NULL,
+                                dateTime STRING NOT NULL,
+                                FOREIGN KEY (author) REFERENCES user (username)
+                            );
+                            """);
+        } catch (SQLException e) {
+            System.out.println("SQLiteError: " + e.getMessage());
+        }
+    }
+
     public static User insertUser(String username, String password, String fname, String lname) {
         try {
             PreparedStatement stmt = conn.prepareStatement(
@@ -56,6 +75,33 @@ public class DB {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    public static Post insertPost(String content, String author, int likes, int shares, String dateTime) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement("""
+                            INSERT INTO post (content, author, likes, shares, dateTime)
+                            VALUES (?, ?, ?, ?, ?);
+                            """);
+            stmt.setString(1, content);
+            stmt.setString(2, author);
+            stmt.setInt(3, likes);
+            stmt.setInt(4, shares);
+            stmt.setString(5, dateTime);
+            stmt.executeUpdate();
+            return new Post(getLastInsertedRowID(), content, author, likes, shares, dateTime);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static int getLastInsertedRowID() throws SQLException {
+        ResultSet rs = conn.createStatement().executeQuery("SELECT last_insert_rowid() as id");
+        if (!rs.next()) {
+            throw new SQLException("Last inserted ID is not found!");
+        }
+        return rs.getInt("id");
     }
 
     public static User updateUser(String currentUsername, String username, String password, String fname, String lname)
@@ -115,10 +161,5 @@ public class DB {
             System.out.println("SQLiteError: " + e.getMessage());
             return null;
         }
-    }
-
-    public static Post insertPost(String content, String username, int likes, int shares, String dateTime) {
-        // TODO:
-        return new Post(1, content, username, likes, shares, dateTime);
     }
 }

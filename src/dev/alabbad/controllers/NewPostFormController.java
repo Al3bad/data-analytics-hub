@@ -47,10 +47,10 @@ public class NewPostFormController extends FormController {
         newPost.displayDetails();
 
         if (newPost == null) {
-            this.statusContainer.getChildren().setAll(new CAlert("Something wronghappend!", "error"));
+            this.statusContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
             return false;
         } else {
-            this.statusContainer.getChildren().setAll(new CAlert("Post has beensuccessfully created!", "success"));
+            this.statusContainer.getChildren().setAll(new CAlert("Post has been successfully created!", "success"));
             resetTextFields();
         }
         return true;
