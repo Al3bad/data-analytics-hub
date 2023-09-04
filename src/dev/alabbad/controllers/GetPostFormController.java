@@ -1,15 +1,16 @@
 package dev.alabbad.controllers;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
-import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -21,7 +22,10 @@ public class GetPostFormController extends VBox {
     private TextField postId;
 
     @FXML
-    private VBox container;
+    protected Button primaryBtn;
+
+    @FXML
+    protected VBox container;
 
     public GetPostFormController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/get-post.fxml"));
@@ -33,19 +37,22 @@ public class GetPostFormController extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        this.primaryBtn.setText("Get Post");
     }
 
     @FXML
     private Boolean onGetPostBtnClicked(MouseEvent event) {
         try {
             int postId = Parser.parseInt(this.postId.getText(), 0);
-            User user = AppState.getInstance().getUser();
+            String username = AppState.getInstance().getUser().getUsername();
             // Get post from DB
-            Post post = DB.getPost(postId, user.getUsername());
-            this.container.getChildren().setAll(new PostController(post));
+            this.onSubmitHandler(postId, username);
             return true;
         } catch (PostNotFoundException e) {
             this.container.getChildren().setAll(new CAlert("Post not found!", "info"));
+        } catch (SQLException e) {
+            this.container.getChildren().setAll(new CAlert("Something wrong happends! [DB]", "error"));
         } catch (Exception e) {
             this.container.getChildren().setAll(new CAlert("Invalid value! ID must be a positive integer!", "error"));
         }
@@ -59,4 +66,8 @@ public class GetPostFormController extends VBox {
         }
     }
 
+    protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {
+        Post post = DB.getPost(postId, username);
+        this.container.getChildren().setAll(new PostController(post));
+    }
 }

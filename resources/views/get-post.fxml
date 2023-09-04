@@ -15,7 +15,7 @@
             <HBox style="-fx-spacing: 16;" VBox.vgrow="ALWAYS">
                <children>
                   <TextField fx:id="postId" onKeyPressed="#onKeyPressed" styleClass="input" stylesheets="@../css/input.css" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onMouseClicked="#onGetPostBtnClicked" stylesheets="@../css/button.css" text="Get Post">
+                  <Button fx:id="primaryBtn" mnemonicParsing="false" onMouseClicked="#onGetPostBtnClicked" stylesheets="@../css/button.css" text="Button">
                      <styleClass>
                         <String fx:value="button" />
                         <String fx:value="primary" />

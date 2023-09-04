@@ -112,20 +112,15 @@ public class DB {
         throw new PostNotFoundException("[ERROR-DB] Post not found!");
     }
 
-    public static Boolean deletePost(int id, String author) throws PostNotFoundException {
-        try {
-            PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
-            stmt.setInt(1, id);
-            stmt.setString(2, author);
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new PostNotFoundException("[ERROR-DB] Post not found!");
-            }
-            return true;
-        } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
-            return null;
+    public static Boolean deletePost(int id, String author) throws PostNotFoundException, SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
+        stmt.setInt(1, id);
+        stmt.setString(2, author);
+        int affectedRows = stmt.executeUpdate();
+        if (affectedRows == 0) {
+            throw new PostNotFoundException("[ERROR-DB] Post not found!");
         }
+        return true;
     }
 
     public static int getLastInsertedRowID() throws SQLException {
