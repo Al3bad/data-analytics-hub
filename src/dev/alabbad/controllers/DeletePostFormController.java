@@ -9,12 +9,11 @@ public class DeletePostFormController extends GetPostFormController {
     public DeletePostFormController() {
         super();
         this.primaryBtn.setText("Delete Post");
-
     }
 
     @Override
     protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {
         DB.deletePost(postId, username);
-        this.container.getChildren().setAll(new CAlert("The post has been successfully deleted!", "success"));
+        this.afterContainer.getChildren().setAll(new CAlert("The post has been successfully deleted!", "success"));
     }
 }

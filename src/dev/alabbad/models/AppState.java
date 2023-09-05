@@ -1,7 +1,7 @@
 package dev.alabbad.models;
 
-import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.CPortalScene;
+import dev.alabbad.controllers.LoginFormController;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;

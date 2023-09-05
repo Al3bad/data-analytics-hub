@@ -2,15 +2,19 @@ package dev.alabbad.DataAnalyticsHub;
 
 import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.CPortalScene;
+import dev.alabbad.controllers.FormController;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 
@@ -26,6 +30,9 @@ public class DataAnalyticsHub extends Application {
         AppState.getInstance().setStage(stage);
         double minWidth = 650;
         double minHeight = 400;
+        LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
+        textFieldElements.put("username", new TextField());
+        textFieldElements.put("password", new PasswordField());
         AnchorPane portalScene = new CPortalScene(new LoginFormController());
         Scene scene = new Scene(portalScene, minWidth, minHeight);
         // Setting the title to Stage.

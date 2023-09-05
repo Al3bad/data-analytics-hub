@@ -1,6 +1,7 @@
 package dev.alabbad.controllers;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.InvalidFormException;
 import dev.alabbad.models.AppState;
@@ -9,30 +10,26 @@ import dev.alabbad.models.Post;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 public class NewPostFormController extends FormController {
-    @FXML
-    protected TextField content;
-
-    @FXML
-    protected TextField likes;
-
-    @FXML
-    protected TextField shares;
-
-    @FXML
-    protected TextField dateTime;
-
     public NewPostFormController() {
-        super("/views/new-post-form.fxml");
-        this.secondryBtn.setVisible(false);
-        this.primaryBtn.setText("Post");
+        super(createTextFieldElements(), new Button("Post"));
+    }
+
+    public static LinkedHashMap<String, TextField> createTextFieldElements() {
+        LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
+        textFieldElements.put("content", new TextField());
+        textFieldElements.put("likes", new TextField());
+        textFieldElements.put("shares", new TextField());
+        textFieldElements.put("dateTime", new TextField());
+        return textFieldElements;
     }
 
     @FXML
-    public Boolean onSubmitBtnClicked(MouseEvent event) {
+    public Boolean onPrimaryBtnClicked(MouseEvent event) {
         Post postDetails = this.validateForm();
         User user = AppState.getInstance().getUser();
 
@@ -47,25 +44,23 @@ public class NewPostFormController extends FormController {
         newPost.displayDetails();
 
         if (newPost == null) {
-            this.statusContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+            this.beforeContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
             return false;
         } else {
-            this.statusContainer.getChildren().setAll(new CAlert("Post has been successfully created!", "success"));
+            this.beforeContainer.getChildren().setAll(new CAlert("Post has been successfully created!", "success"));
             resetTextFields();
         }
         return true;
     }
 
-    @FXML
-    public void onCancelBtnClicked(MouseEvent event) {
-        System.out.println("Add button clicked!");
+    public void onSecondaryBtnClicked(MouseEvent event) {
     }
 
     protected Post validateForm() {
-        String content = this.content.getText();
-        String likes = this.likes.getText();
-        String shares = this.shares.getText();
-        String dateTime = this.dateTime.getText();
+        String content = this.textFieldElements.get("content").getText();
+        String likes = this.textFieldElements.get("likes").getText();
+        String shares = this.textFieldElements.get("shares").getText();
+        String dateTime = this.textFieldElements.get("dateTime").getText();
 
         // Validate & parse form
         this.resetTextFieldStyles();
@@ -74,7 +69,7 @@ public class NewPostFormController extends FormController {
         } catch (InvalidFormException e) {
             // change border color of the text input to red
             this.setTextFieldErrorStyles(e.getErrors());
-            this.statusContainer.getChildren().setAll(new CAlert("Invalid post!", "error"));
+            this.beforeContainer.getChildren().setAll(new CAlert("Invalid post!", "error"));
             return null;
         }
     }

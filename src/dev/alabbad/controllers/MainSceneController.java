@@ -90,8 +90,8 @@ public class MainSceneController extends AnchorPane {
         this.tapMap.put(this.addPostTab, new NewPostFormController());
         this.tapMap.put(this.deletePostTab, new DeletePostFormController());
         this.tapMap.put(this.getPostTab, new GetPostFormController());
-        this.tapMap.put(this.getMostLikedPostsTab, new VBox(new Text("Get Most Liked Posts")));
-        this.tapMap.put(this.getMostSharedPostsTab, new VBox(new Text("Get Most Shared Posts")));
+        this.tapMap.put(this.getMostLikedPostsTab, new GetMostLikedPostsController());
+        this.tapMap.put(this.getMostSharedPostsTab, new GetMostSharedPostsController());
         this.tapMap.put(this.editProfileTab, new EditProfileFormController());
 
         displaySelectedTab();

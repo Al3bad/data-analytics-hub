@@ -1,48 +1,83 @@
 package dev.alabbad.controllers;
 
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.LinkedHashMap;
 
 public abstract class FormController extends VBox {
-    @FXML
+    protected VBox beforeContainer = new VBox();
+    protected VBox btnGroup;
     protected Button primaryBtn;
+    protected Button secondaryBtn;
+    protected VBox afterContainer = new VBox();
 
-    @FXML
-    protected Button secondryBtn;
+    protected LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
 
-    @FXML
-    protected VBox statusContainer;
+    public FormController(LinkedHashMap<String, TextField> textFields, Button primaryBtn) {
+        this.textFieldElements = textFields;
+        this.primaryBtn = primaryBtn;
 
-    protected HashMap<String, TextField> textFieldElements = new HashMap<String, TextField>();
+        this.setupForm();
+    }
 
-    public FormController(String fxmlFilePath) {
-        // Load from FXML
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlFilePath));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
+    public FormController(LinkedHashMap<String, TextField> textFields, Button primaryBtn, Button secondaryBtn) {
+        this.textFieldElements = textFields;
+        this.primaryBtn = primaryBtn;
+        this.secondaryBtn = secondaryBtn;
+
+        this.setupForm();
+        this.setupButton(this.secondaryBtn, "secondaryBtn", "secondary");
+        this.secondaryBtn.onMouseClickedProperty().set(event -> this.onSecondaryBtnClicked(event));
+        this.btnGroup.getChildren().add(this.secondaryBtn);
+    }
+
+    protected void setupForm() {
+        this.getChildren().removeAll();
+        // construct input fields
+        VBox inputs = new VBox();
+        inputs.setSpacing(8);
+        inputs.setId("inputGroup");
+
+        for (String id : this.textFieldElements.keySet()) {
+            System.out.println(id);
+            VBox inputContainer = new VBox();
+            Label label = new Label(id);
+            TextField textField = this.textFieldElements.get(id);
+            textField.setId(id);
+            textField.getStylesheets().add("/css/input.css");
+            textField.getStyleClass().add("input");
+            textField.onKeyPressedProperty().set(event -> this.onKeyPressed(event));
+            inputContainer.getChildren().addAll(label, textField);
+            inputs.getChildren().add(inputContainer);
         }
-        // get all TextField in the form
-        Set<Node> textFields = this.lookupAll(".input");
-        // put TextField element in the HashMap
-        for (Node textField : textFields) {
-            String id = ((TextField) textField).getId();
-            this.textFieldElements.put(id, (TextField) textField);
-        }
 
+        // construct buttons
+        this.btnGroup = new VBox();
+        this.btnGroup.setId("btnGroup");
+        this.btnGroup.setSpacing(8);
+
+        this.setupButton(this.primaryBtn, "primaryBtn", "primary");
+        this.primaryBtn.onMouseClickedProperty().set(event -> this.onPrimaryBtnClicked(event));
+        this.btnGroup.getChildren().add(primaryBtn);
+
+        // put everything together
+        this.setSpacing(8);
+        this.setPrefWidth(200);
+        this.getChildren().setAll(inputs, this.beforeContainer, this.btnGroup, this.afterContainer);
+    }
+
+    protected void setupButton(Button btn, String id, String type) {
+        btn.setId(id);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.getStylesheets().add("/css/button.css");
+        btn.getStyleClass().add("button");
+        btn.getStyleClass().add(type);
     }
 
     protected void resetTextFieldStyles() {
@@ -66,16 +101,13 @@ public abstract class FormController extends VBox {
         }
     }
 
-    @FXML
     protected void onKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
-            this.onSubmitBtnClicked(null);
+            this.onPrimaryBtnClicked(null);
         }
     }
 
-    @FXML
-    protected abstract Boolean onSubmitBtnClicked(MouseEvent event);
+    protected abstract Boolean onPrimaryBtnClicked(MouseEvent event);
 
-    @FXML
-    protected abstract void onCancelBtnClicked(MouseEvent event);
+    protected abstract void onSecondaryBtnClicked(MouseEvent event);
 }
