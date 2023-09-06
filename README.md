@@ -38,7 +38,3 @@ There are two ways to run the program:
 ```
 
 You should also be able to run the script from anywhere in the file system but you need to specify the correct path to this script.
-
-# Acknowledgment
-
-- Logo created by [Shopify - Hatchful](https://www.shopify.com/tools/logo-maker)
