@@ -78,17 +78,24 @@ public class DB {
         }
     }
 
-    public static Post insertPost(String content, String author, int likes, int shares, String dateTime) {
+    public static Post insertPost(int id, String content, String author, int likes, int shares, String dateTime) {
         try {
             PreparedStatement stmt = conn.prepareStatement("""
-                            INSERT INTO post (content, author, likes, shares, dateTime)
-                            VALUES (?, ?, ?, ?, ?);
+                            INSERT INTO post (id,content, author, likes, shares, dateTime)
+                            VALUES (?, ?, ?, ?, ?, ?);
                             """);
-            stmt.setString(1, content);
-            stmt.setString(2, author);
-            stmt.setInt(3, likes);
-            stmt.setInt(4, shares);
-            stmt.setString(5, dateTime);
+            if (id == -1) {
+                // auto generate id
+                stmt.setNull(1, Types.NULL);
+            } else {
+                // use the provided id
+                stmt.setInt(1, id);
+            }
+            stmt.setString(2, content);
+            stmt.setString(3, author);
+            stmt.setInt(4, likes);
+            stmt.setInt(5, shares);
+            stmt.setString(6, dateTime);
             stmt.executeUpdate();
             return new Post(getLastInsertedRowID(), content, author, likes, shares, dateTime);
         } catch (SQLException e) {

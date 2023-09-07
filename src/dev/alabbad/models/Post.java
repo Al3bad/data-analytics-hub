@@ -51,7 +51,7 @@ public class Post {
     }
 
     public void setID(int iD) {
-        ID = iD;
+        this.ID = iD;
     }
 
     public void setContent(String content) {
