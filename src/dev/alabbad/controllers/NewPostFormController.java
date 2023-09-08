@@ -1,124 +1,62 @@
 package dev.alabbad.controllers;
 
-import java.util.HashMap;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.exceptions.InvalidFormException;
-import dev.alabbad.models.AppState;
+import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
-import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 public class NewPostFormController extends FormController {
+    // TextField IDs & Labels
+    private final static String ID = "ID";
+    private final static String AUTHOR = "Author";
+    private final static String CONTENT = "Content";
+    private final static String LIKES = "Likes";
+    private final static String SHARES = "Shares";
+    private final static String DATETIME = "Date/Time";
+
     public NewPostFormController() {
         super(createTextFieldElements(), new Button("Post"));
     }
 
-    public static LinkedHashMap<String, TextField> createTextFieldElements() {
-        LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
-        textFieldElements.put("ID", new TextField());
-        textFieldElements.put("Content", new TextField());
-        textFieldElements.put("Likes", new TextField());
-        textFieldElements.put("Shares", new TextField());
-        textFieldElements.put("Date/Time", new TextField());
+    public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
+        LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
+        textFieldElements.put(ID, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0, true)));
+        textFieldElements.put(AUTHOR, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
+        textFieldElements.put(CONTENT, new ExtendedTextField<String>((val) -> Parser.parseStr(val, true)));
+        textFieldElements.put(LIKES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
+        textFieldElements.put(SHARES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
+        textFieldElements.put(DATETIME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, true)));
         return textFieldElements;
     }
 
-    @FXML
+    @Override
     public Boolean onPrimaryBtnClicked(MouseEvent event) {
-        Post postDetails = this.validateForm();
-        User user = AppState.getInstance().getUser();
-
-        if (postDetails == null) {
+        if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
+
+        int id = (int) this.textFieldElements.get(ID).getParsedVal();
+        String author = (String) this.textFieldElements.get(AUTHOR).getParsedVal();
+        String content = (String) this.textFieldElements.get(CONTENT).getParsedVal();
+        int likes = (int) this.textFieldElements.get(LIKES).getParsedVal();
+        int shares = (int) this.textFieldElements.get(SHARES).getParsedVal();
+        String dateTime = (String) this.textFieldElements.get(DATETIME).getParsedVal();
 
         // Insert user to db
-        System.out.println(postDetails.getID());
-        Post newPost = DB.insertPost(postDetails.getID(), postDetails.getContent(), user.getUsername(),
-                        postDetails.getLikes(), postDetails.getShares(), postDetails.getDateTime());
-
-        newPost.displayDetails();
-
-        if (newPost == null) {
-            this.beforeContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
-            return false;
-        } else {
+        try {
+            Post newPost = DB.insertPost(id, content, author, likes, shares, dateTime);
+            newPost.displayDetails();
             this.beforeContainer.getChildren().setAll(new CAlert("Post has been successfully created!", "success"));
             resetTextFields();
+            return true;
+        } catch (SQLException e) {
+            this.beforeContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+            return false;
         }
-        return true;
-    }
-
-    public void onSecondaryBtnClicked(MouseEvent event) {
-    }
-
-    protected Post validateForm() {
-        String id = this.textFieldElements.get("ID").getText().trim();
-        String content = this.textFieldElements.get("Content").getText();
-        String likes = this.textFieldElements.get("Likes").getText();
-        String shares = this.textFieldElements.get("Shares").getText();
-        String dateTime = this.textFieldElements.get("Date/Time").getText();
-
-        // Validate & parse form
-        this.resetTextFieldStyles();
-        try {
-            return NewPostFormController.parseForm(id, content, likes, shares, dateTime);
-        } catch (InvalidFormException e) {
-            // change border color of the text input to red
-            this.setTextFieldErrorStyles(e.getErrors());
-            this.beforeContainer.getChildren().setAll(new CAlert("Invalid post!", "error"));
-            return null;
-        }
-    }
-
-    private static Post parseForm(String id, String content, String likes, String shares, String dateTime)
-                    throws InvalidFormException {
-        Post post = new Post();
-        HashMap<String, String> errors = new HashMap<String, String>();
-        try {
-            if (id.length() != 0) {
-                post.setID(Parser.parseInt(id, 0));
-            } else {
-                post.setID(-1);
-            }
-        } catch (Exception e) {
-            errors.put("ID", "ID must be a positive integer");
-        }
-
-        try {
-            post.setContent(Parser.parseStr(content, true));
-        } catch (Exception e) {
-            errors.put("Content", "Content cannot be empty");
-        }
-
-        try {
-            post.setLikes(Parser.parseInt(likes, 0));
-        } catch (Exception e) {
-            errors.put("Likes", "Likes must be positive integer");
-        }
-
-        try {
-            post.setShares(Parser.parseInt(shares, 0));
-        } catch (Exception e) {
-            errors.put("Shares", "Shares must be positive integer");
-        }
-
-        try {
-            post.setDateTime(Parser.parseDateTime(dateTime));
-        } catch (Exception e) {
-            errors.put("Date/Time", e.getMessage());
-        }
-
-        if (errors.size() > 0) {
-            throw new InvalidFormException("Invalid form!", errors);
-        }
-
-        return post;
     }
 }

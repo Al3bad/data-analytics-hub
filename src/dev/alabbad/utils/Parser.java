@@ -78,4 +78,11 @@ public class Parser {
             throw new Exception("Invalid number! Value must be integer");
         }
     }
+
+    public static int parseInt(String integerStr, int min, Boolean allowEmpty) throws Exception {
+        if (allowEmpty == true && integerStr.trim().length() == 0) {
+            return -1;
+        }
+        return parseInt(integerStr, min);
+    }
 }

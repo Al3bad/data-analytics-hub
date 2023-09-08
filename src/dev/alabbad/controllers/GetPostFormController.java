@@ -3,30 +3,37 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 public class GetPostFormController extends FormController {
+    // TextField IDs & Labels
+    private final static String POSTID = "Post ID";
+
     public GetPostFormController() {
         super(createTextFieldElements(), new Button("Get Post"));
     }
 
-    public static LinkedHashMap<String, TextField> createTextFieldElements() {
-        LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
-        textFieldElements.put("postId", new TextField());
+    public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
+        LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
+        textFieldElements.put(POSTID, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
         return textFieldElements;
     }
 
     @Override
     protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+        if (this.validateForm(this.afterContainer) == false) {
+            return false;
+        }
+
         try {
-            int postId = Parser.parseInt(this.textFieldElements.get("postId").getText(), 0);
+            int postId = (int) this.textFieldElements.get(POSTID).getParsedVal();
             String username = AppState.getInstance().getUser().getUsername();
             // Get post from DB
             this.onSubmitHandler(postId, username);
@@ -40,10 +47,6 @@ public class GetPostFormController extends FormController {
                             .setAll(new CAlert("Invalid value! ID must be a positive integer!", "error"));
         }
         return false;
-    }
-
-    @Override
-    protected void onSecondaryBtnClicked(MouseEvent event) {
     }
 
     protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {

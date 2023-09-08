@@ -1,14 +1,18 @@
 package dev.alabbad.controllers;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
+import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.exceptions.InvalidFormException;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public abstract class FormController extends VBox {
     protected VBox beforeContainer = new VBox();
@@ -17,16 +21,16 @@ public abstract class FormController extends VBox {
     protected Button secondaryBtn;
     protected VBox afterContainer = new VBox();
 
-    protected LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
+    protected LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<>();
 
-    public FormController(LinkedHashMap<String, TextField> textFields, Button primaryBtn) {
+    public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn) {
         this.textFieldElements = textFields;
         this.primaryBtn = primaryBtn;
 
         this.setupForm();
     }
 
-    public FormController(LinkedHashMap<String, TextField> textFields, Button primaryBtn, Button secondaryBtn) {
+    public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn, Button secondaryBtn) {
         this.textFieldElements = textFields;
         this.primaryBtn = primaryBtn;
         this.secondaryBtn = secondaryBtn;
@@ -101,6 +105,39 @@ public abstract class FormController extends VBox {
         }
     }
 
+    protected Boolean validateForm(VBox container) {
+        // Validate & parse form
+        this.resetTextFieldStyles();
+
+        try {
+            return this.parseForm();
+        } catch (InvalidFormException e) {
+            // change border color of the text input to red
+            this.setTextFieldErrorStyles(e.getErrors());
+            container.getChildren().setAll(new CAlert("Invalid post!", "error"));
+            return false;
+        }
+    }
+
+    private Boolean parseForm() throws InvalidFormException {
+        HashMap<String, String> errors = new HashMap<String, String>();
+        for (String textFieldId : this.textFieldElements.keySet()) {
+            try {
+                if ((TextField) this.textFieldElements.get(textFieldId) instanceof PasswordField) {
+                    System.out.println("IT's a PasswordField");
+                }
+                this.textFieldElements.get(textFieldId).parse();
+            } catch (Exception e) {
+                errors.put(textFieldId, e.getMessage());
+            }
+        }
+
+        if (errors.size() > 0) {
+            throw new InvalidFormException("Invalid form!", errors);
+        }
+        return true;
+    }
+
     protected void onKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
             this.onPrimaryBtnClicked(null);
@@ -109,5 +146,7 @@ public abstract class FormController extends VBox {
 
     protected abstract Boolean onPrimaryBtnClicked(MouseEvent event);
 
-    protected abstract void onSecondaryBtnClicked(MouseEvent event);
+    protected void onSecondaryBtnClicked(MouseEvent event) {
+        System.out.println("Secondary btn is clicked!");
+    }
 }
