@@ -12,8 +12,8 @@ public class DeletePostFormController extends GetPostFormController {
     }
 
     @Override
-    protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {
-        DB.deletePost(postId, username);
+    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException {
+        DB.deletePost(postId);
         this.afterContainer.getChildren().setAll(new CAlert("The post has been successfully deleted!", "success"));
     }
 }

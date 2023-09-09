@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.exceptions.PostNotFoundException;
-import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
@@ -34,9 +33,8 @@ public class GetPostFormController extends FormController {
 
         try {
             int postId = (int) this.textFieldElements.get(POSTID).getParsedVal();
-            String username = AppState.getInstance().getUser().getUsername();
             // Get post from DB
-            this.onSubmitHandler(postId, username);
+            this.onSubmitHandler(postId);
             return true;
         } catch (PostNotFoundException e) {
             this.afterContainer.getChildren().setAll(new CAlert("Post not found!", "info"));
@@ -49,8 +47,8 @@ public class GetPostFormController extends FormController {
         return false;
     }
 
-    protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {
-        Post post = DB.getPost(postId, username);
+    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException {
+        Post post = DB.getPost(postId);
         this.afterContainer.getChildren().setAll(new PostController(post));
     }
 }

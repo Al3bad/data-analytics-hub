@@ -39,7 +39,7 @@ public class PostController extends VBox {
             throw new RuntimeException(exception);
         }
 
-        this.author.setText(post.getAuthor());
+        this.author.setText("@" + post.getAuthor());
         this.id.setText(Integer.toString(post.getID()));
         this.content.setText(post.getContent());
         this.likes.setText(Integer.toString(post.getLikes()));

@@ -54,7 +54,6 @@ public class DB {
                                 likes INTEGER NOT NULL,
                                 shares INTEGER NOT NULL,
                                 dateTime STRING NOT NULL,
-                                FOREIGN KEY (author) REFERENCES user (username)
                             );
                             """);
         } catch (SQLException e) {
@@ -100,13 +99,13 @@ public class DB {
         return new Post(getLastInsertedRowID(), content, author, likes, shares, dateTime);
     }
 
-    public static Post getPost(int id, String author) throws PostNotFoundException, SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM post WHERE id = ? AND author = ?");
+    public static Post getPost(int id) throws PostNotFoundException, SQLException {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM post WHERE id = ?");
         stmt.setInt(1, id);
-        stmt.setString(2, author);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             String content = rs.getString("content");
+            String author = rs.getString("author");
             int likes = rs.getInt("likes");
             int shares = rs.getInt("shares");
             String dateTime = rs.getString("dateTime");
@@ -115,10 +114,9 @@ public class DB {
         throw new PostNotFoundException("[ERROR-DB] Post not found!");
     }
 
-    public static Boolean deletePost(int id, String author) throws PostNotFoundException, SQLException {
-        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
+    public static Boolean deletePost(int id) throws PostNotFoundException, SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ?");
         stmt.setInt(1, id);
-        stmt.setString(2, author);
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
             throw new PostNotFoundException("[ERROR-DB] Post not found!");
