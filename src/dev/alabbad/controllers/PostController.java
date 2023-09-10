@@ -28,6 +28,9 @@ public class PostController extends VBox {
     @FXML
     private Text dateTime;
 
+    @FXML
+    private VBox container;
+
     public PostController(Post post) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/post.fxml"));
         fxmlLoader.setRoot(this);

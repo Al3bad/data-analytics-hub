@@ -45,9 +45,9 @@
             </HBox>
         </children>
     </HBox>
-    <VBox style="-fx-padding: 16;">
+    <VBox fx:id="container" style="-fx-padding: 16;" VBox.vgrow="ALWAYS">
         <children>
-            <Label fx:id="content" text="content" wrapText="true" />
+            <Label fx:id="content" alignment="TOP_LEFT" text="content" wrapText="true" VBox.vgrow="ALWAYS" maxHeight="Infinity" />
         </children>
     </VBox>
     <HBox style="-fx-padding: 16; -fx-border-width: 1 0 0 0; -fx-border-color: #cccccc80; -fx-spacing: 32;">

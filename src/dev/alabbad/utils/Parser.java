@@ -31,6 +31,13 @@ public class Parser {
         return validStr;
     }
 
+    public static String parseStr(String str, Boolean allowSpace, Boolean allowEmpty) throws Exception {
+        if (allowEmpty == true && str.trim().length() == 0) {
+            return "";
+        }
+        return parseStr(str, allowSpace);
+    }
+
     public static String parsePassword(String str) throws Exception {
         if (str.trim().length() < 6) {
             throw new Exception("Password must have a least 6 charachters!");

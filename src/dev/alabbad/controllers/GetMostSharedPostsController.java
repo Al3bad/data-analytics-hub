@@ -2,6 +2,7 @@ package dev.alabbad.controllers;
 
 import java.sql.SQLException;
 
+import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.models.DB;
 
@@ -11,8 +12,8 @@ public class GetMostSharedPostsController extends GetMostLikedPostsController {
         this.primaryBtn.setText("Get Most Shared Posts");
     }
 
-    protected void onSubmitHandler(int postId, String username) throws PostNotFoundException, SQLException {
-        // Post post = DB.getPost(postId, username);
-        // this.afterContainer.getChildren().setAll(new PostController(post));
+    protected void onSubmitHandler(String author, int limit)
+                    throws PostNotFoundException, SQLException, InvalidArgumentException {
+        this.displayResult(author, DB.getPosts("shares", author, limit));
     }
 }
