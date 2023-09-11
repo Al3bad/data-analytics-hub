@@ -16,7 +16,8 @@ public class GetPostFormController extends FormController {
     private final static String POSTID = "Post ID";
 
     public GetPostFormController() {
-        super(createTextFieldElements(), new Button("Get Post"));
+        super(createTextFieldElements(), new Button("Get Post"), new Button("Export Post"));
+        this.secondaryBtn.setDisable(true);
     }
 
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
@@ -35,6 +36,7 @@ public class GetPostFormController extends FormController {
             int postId = (int) this.textFieldElements.get(POSTID).getParsedVal();
             // Get post from DB
             this.onSubmitHandler(postId);
+            this.secondaryBtn.setDisable(false);
             return true;
         } catch (PostNotFoundException e) {
             this.afterContainer.getChildren().setAll(new CAlert("Post not found!", "info"));
@@ -47,7 +49,13 @@ public class GetPostFormController extends FormController {
         return false;
     }
 
+    @Override
+    protected void onSecondaryBtnClicked(MouseEvent event) {
+        // TODO: export post
+    }
+
     protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException {
+        this.secondaryBtn.setDisable(true);
         Post post = DB.getPost(postId);
         this.afterContainer.getChildren().setAll(new PostController(post));
     }

@@ -9,6 +9,7 @@ public class DeletePostFormController extends GetPostFormController {
     public DeletePostFormController() {
         super();
         this.primaryBtn.setText("Delete Post");
+        this.btnGroup.getChildren().remove(1);
     }
 
     @Override
