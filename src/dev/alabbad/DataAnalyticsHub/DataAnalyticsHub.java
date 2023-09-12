@@ -34,16 +34,15 @@ public class DataAnalyticsHub extends Application {
         textFieldElements.put("username", new TextField());
         textFieldElements.put("password", new PasswordField());
         AnchorPane portalScene = new CPortalScene(new LoginFormController());
-        Scene scene = new Scene(portalScene, minWidth, minHeight);
+        Scene scene = new Scene(portalScene);
         // Setting the title to Stage.
         stage.setTitle("Data Analytics Hub");
         // Setting min width and height to stage
-        stage.setMinWidth(minWidth);
-        stage.setMinHeight(minHeight);
-        // Adding the scene to Stage
-        stage.setScene(scene);
+        AppState.getInstance().getStage().setMinWidth(minWidth);
+        AppState.getInstance().getStage().setMinHeight(minHeight);
+        AppState.getInstance().switchScene(scene, false);
         // Displaying the contents of the stage
-        stage.show();
+        AppState.getInstance().getStage().show();
     }
 
     public void run(String sqliteFilename) {

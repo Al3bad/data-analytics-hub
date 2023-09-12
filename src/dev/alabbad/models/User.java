@@ -1,21 +1,18 @@
 package dev.alabbad.models;
 
-public class User extends UserCreds {
-    private String fname;
-    private String lname;
+public class User {
+    protected String username;
+    protected String fname;
+    protected String lname;
 
     public User(String username, String fname, String lname) {
-        super(username, null);
         this.username = username;
         this.fname = fname;
         this.lname = lname;
     }
 
-    public User(String username, String fname, String lname, String password) {
-        super(username, password);
-        this.username = username;
-        this.fname = fname;
-        this.lname = lname;
+    public String getUsername() {
+        return this.username;
     }
 
     public String getFirstName() {

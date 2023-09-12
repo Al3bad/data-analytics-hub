@@ -35,11 +35,15 @@ public class DB {
     public static void createUserTable() {
         try {
             Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE IF NOT EXISTS user ("
-                            + "username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),"
-                            + "password TEXT NOT NULL CHECK(LENGTH(password) > 6),"
-                            + "fname TEXT NOT NULL CHECK(LENGTH(fname) > 2),"
-                            + "lname TEXT NOT NULL CHECK(LENGTH(lname) > 2)" + ")");
+            stmt.execute("""
+                            CREATE TABLE IF NOT EXISTS user (
+                                username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),
+                                password TEXT NOT NULL CHECK(LENGTH(password) > 6),
+                                fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
+                                lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
+                                isVIP INTEGER NOT NULL DEFAULT 0)
+                            );
+                            """);
         } catch (SQLException e) {
             System.out.println("SQLiteError: " + e.getMessage());
         }
@@ -230,7 +234,7 @@ public class DB {
     public static User loginUser(String username, String password) {
         try {
             PreparedStatement stmt = conn.prepareStatement(
-                            "SELECT username, fname, lname FROM user WHERE username = ? AND password = ?");
+                            "SELECT username, fname, lname, isVIP FROM user WHERE username = ? AND password = ?");
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -238,6 +242,10 @@ public class DB {
                 String user = rs.getString("username");
                 String fname = rs.getString("fname");
                 String lname = rs.getString("lname");
+                Boolean isVIP = rs.getBoolean("isVIP");
+                if (isVIP) {
+                    return new VIPUser(user, fname, lname);
+                }
                 return new User(user, fname, lname);
             }
             return null;
@@ -245,5 +253,15 @@ public class DB {
             System.out.println("SQLiteError: " + e.getMessage());
             return null;
         }
+    }
+
+    public static VIPUser upgradeUser(User user) throws UserNotFoundException, SQLException {
+        PreparedStatement stmt = conn.prepareStatement("UPDATE user SET isVIP=1 WHERE LOWER(username) = LOWER(?)");
+        stmt.setString(1, user.getUsername());
+        int affectedRows = stmt.executeUpdate();
+        if (affectedRows == 0) {
+            throw new UserNotFoundException("[ERROR-DB] User not found!");
+        }
+        return new VIPUser(user.getUsername(), user.getFirstName(), user.getLastName());
     }
 }

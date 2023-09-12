@@ -39,13 +39,18 @@ public class AppState {
     }
 
     public void switchScene(Scene scene, Boolean loginIsRequired) {
+        double minWidth = 680;
+        double minHeight = 480;
         if (loginIsRequired && this.loggedInUser == null) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Login is required");
             alert.setContentText("Something worng happend! Please contact the developer");
             alert.showAndWait();
-            scene = new Scene(new CPortalScene(new LoginFormController()));
+            scene = new Scene(new CPortalScene(new LoginFormController()), minWidth, minHeight);
         }
+
+        this.stage.setWidth(minWidth);
+        this.stage.setHeight(minHeight);
         this.stage.setScene(scene);
     }
 }

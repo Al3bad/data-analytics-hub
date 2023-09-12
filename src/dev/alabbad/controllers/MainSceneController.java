@@ -86,7 +86,7 @@ public class MainSceneController extends AnchorPane {
 
         // the behaviour of tabs was inspired by this post (reference):
         // - https://stackoverflow.com/a/71167686/10823489
-        this.tapMap.put(this.dashboardTab, new VBox(new Text("Dashboard")));
+        this.tapMap.put(this.dashboardTab, new DashboardController());
         this.tapMap.put(this.addPostTab, new NewPostFormController());
         this.tapMap.put(this.deletePostTab, new DeletePostFormController());
         this.tapMap.put(this.getPostTab, new GetPostFormController());
