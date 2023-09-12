@@ -78,12 +78,13 @@ public class Post {
      * Display all details of the posts instance
      */
     public void displayDetails() {
-        System.out.printf("%-7s | %-16s | %-7s | %-7s | %-7s | %-11s\n", "ID", "date/time", "likes", "shares", "author",
-                        "content");
-        System.out.printf("%-7s | %-16s | %-7s | %-7s | %-7s | %-11s\n", "-".repeat(7), "-".repeat(16), "-".repeat(7),
-                        "-".repeat(7), "-".repeat(7), "-".repeat(11));
         System.out.printf("%-7s | %-16s | %-7s | %-7s | %-7s | %-11s\n", this.getID(), this.getDateTime(),
                         this.getLikes(), this.getShares(), this.getAuthor(), this.getContent());
+    }
+
+    public String getCSVFormat() {
+        return String.format("%s,%s,%s,%s,%s,%s", this.getID(), this.getDateTime(), this.getLikes(), this.getShares(),
+                        this.getAuthor(), this.getContent());
     }
 
 }

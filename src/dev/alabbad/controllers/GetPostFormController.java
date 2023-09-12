@@ -1,17 +1,25 @@
 package dev.alabbad.controllers;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.exceptions.PostNotFoundException;
+import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class GetPostFormController extends FormController {
+    private Post retrievedPost;
+
     // TextField IDs & Labels
     private final static String POSTID = "Post ID";
 
@@ -51,12 +59,33 @@ public class GetPostFormController extends FormController {
 
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
-        // TODO: export post
+        try {
+            File fileLocation = chooseFileLocation();
+            if (fileLocation != null) {
+                this.exportPost(this.retrievedPost.getCSVFormat(), fileLocation);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found exception!");
+        }
     }
 
     protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException {
         this.secondaryBtn.setDisable(true);
-        Post post = DB.getPost(postId);
-        this.afterContainer.getChildren().setAll(new PostController(post));
+        this.retrievedPost = DB.getPost(postId);
+        this.afterContainer.getChildren().setAll(new PostController(this.retrievedPost));
+    }
+
+    private File chooseFileLocation() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSV Files ", "*.csv"));
+        File file = fileChooser.showSaveDialog(AppState.getInstance().getStage());
+        return file;
+    }
+
+    private void exportPost(String content, File file) throws FileNotFoundException {
+        PrintWriter writer;
+        writer = new PrintWriter(file);
+        writer.println(content);
+        writer.close();
     }
 }

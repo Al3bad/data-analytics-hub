@@ -26,6 +26,10 @@ public class AppState {
         return this.loggedInUser;
     }
 
+    public Stage getStage() {
+        return this.stage;
+    }
+
     public void setUser(User user) {
         this.loggedInUser = user;
     }
