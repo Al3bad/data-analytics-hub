@@ -4,7 +4,6 @@ import dev.alabbad.models.AppState;
 import dev.alabbad.models.User;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.MouseEvent;
@@ -63,8 +61,6 @@ public class MainSceneController extends AnchorPane {
     @FXML
     private VBox container;
 
-    private HashMap<Toggle, VBox> tapMap = new HashMap<>();
-
     public MainSceneController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/main-scene.fxml"));
         fxmlLoader.setRoot(this);
@@ -84,16 +80,6 @@ public class MainSceneController extends AnchorPane {
             ((RadioButton) textField).getStyleClass().remove("radio-button");
         }
 
-        // the behaviour of tabs was inspired by this post (reference):
-        // - https://stackoverflow.com/a/71167686/10823489
-        this.tapMap.put(this.dashboardTab, new DashboardController());
-        this.tapMap.put(this.addPostTab, new NewPostFormController());
-        this.tapMap.put(this.deletePostTab, new DeletePostFormController());
-        this.tapMap.put(this.getPostTab, new GetPostFormController());
-        this.tapMap.put(this.getMostLikedPostsTab, new GetMostLikedPostsController());
-        this.tapMap.put(this.getMostSharedPostsTab, new GetMostSharedPostsController());
-        this.tapMap.put(this.editProfileTab, new EditProfileFormController());
-
         displaySelectedTab();
         this.actionsGroup.selectedToggleProperty()
                         .addListener((observable, oldValue, newValue) -> displaySelectedTab());
@@ -106,12 +92,21 @@ public class MainSceneController extends AnchorPane {
     }
 
     private void displaySelectedTab() {
-        this.container.getChildren().setAll(this.tapMap.get(this.actionsGroup.getSelectedToggle()));
-    }
-
-    @FXML
-    public void onEditBtnClicked(MouseEvent event) {
-        AppState.getInstance().switchScene(new Scene(new EditProfileFormController()), true);
+        if (this.actionsGroup.getSelectedToggle() == this.dashboardTab) {
+            this.container.getChildren().setAll(new DashboardController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.addPostTab) {
+            this.container.getChildren().setAll(new NewPostFormController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.deletePostTab) {
+            this.container.getChildren().setAll(new DeletePostFormController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.getPostTab) {
+            this.container.getChildren().setAll(new GetPostFormController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.getMostLikedPostsTab) {
+            this.container.getChildren().setAll(new GetMostLikedPostsController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.getMostSharedPostsTab) {
+            this.container.getChildren().setAll(new GetMostSharedPostsController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.editProfileTab) {
+            this.container.getChildren().setAll(new EditProfileFormController());
+        }
     }
 
     @FXML
@@ -131,15 +126,5 @@ public class MainSceneController extends AnchorPane {
             AppState.getInstance().setUser(null);
             AppState.getInstance().switchScene(new Scene(new CPortalScene(new LoginFormController())), false);
         }
-    }
-
-    @FXML
-    public void onDashboardTabClicked(MouseEvent event) {
-        System.out.println("Dashboard tab clicked!");
-    }
-
-    @FXML
-    public void onPostTabClicked(MouseEvent event) {
-        System.out.println("Posts tab clicked!");
     }
 }

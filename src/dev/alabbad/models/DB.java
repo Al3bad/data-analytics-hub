@@ -264,4 +264,25 @@ public class DB {
         }
         return new VIPUser(user.getUsername(), user.getFirstName(), user.getLastName());
     }
+
+    public static ArrayList<Integer> getSharesDistribution() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("""
+                        SELECT * FROM (
+                            SELECT COUNT(*) AS "shares-0-99" FROM post WHERE shares < 100
+                        ) JOIN (
+                            SELECT COUNT(*) AS "shares-100-999" FROM post WHERE shares BETWEEN 100 AND 999
+                        ) JOIN (
+                            SELECT COUNT(*) AS "shares-gt-999" FROM post WHERE shares > 999
+                        )
+                        """);
+        ArrayList<Integer> shareDistribution = new ArrayList<>();
+        while (rs.next()) {
+            shareDistribution.add(rs.getInt("shares-0-99"));
+            shareDistribution.add(rs.getInt("shares-100-999"));
+            shareDistribution.add(rs.getInt("shares-gt-999"));
+            return shareDistribution;
+        }
+        return shareDistribution;
+    }
 }
