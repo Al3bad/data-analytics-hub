@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
@@ -26,7 +27,12 @@ public class NewPostFormController extends FormController {
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
         LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
         textFieldElements.put(ID, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0, true)));
-        textFieldElements.put(AUTHOR, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
+        ExtendedTextField<String> authorField = new ExtendedTextField<String>((val) -> Parser.parseStr(val, false));
+        // Author field -----------------------------
+        authorField.setText(AppState.getInstance().getUser().getUsername());
+        authorField.setDisable(true);
+        textFieldElements.put(AUTHOR, authorField);
+        // -------------------------------------------
         textFieldElements.put(CONTENT, new ExtendedTextField<String>((val) -> Parser.parseStr(val, true)));
         textFieldElements.put(LIKES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
         textFieldElements.put(SHARES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
