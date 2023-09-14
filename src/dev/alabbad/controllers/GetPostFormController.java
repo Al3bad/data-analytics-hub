@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.exceptions.PostNotFoundException;
+import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
@@ -50,6 +51,8 @@ public class GetPostFormController extends FormController {
             this.afterContainer.getChildren().setAll(new CAlert("Post not found!", "info"));
         } catch (SQLException e) {
             this.afterContainer.getChildren().setAll(new CAlert("Something wrong happends! [DB]", "error"));
+        } catch (UnauthorisedAction e) {
+            this.afterContainer.getChildren().setAll(new CAlert(e.getMessage(), "info"));
         } catch (Exception e) {
             this.afterContainer.getChildren()
                             .setAll(new CAlert("Invalid value! ID must be a positive integer!", "error"));
@@ -69,7 +72,7 @@ public class GetPostFormController extends FormController {
         }
     }
 
-    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException {
+    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException, UnauthorisedAction {
         this.secondaryBtn.setDisable(true);
         this.retrievedPost = DB.getPost(postId);
         this.afterContainer.getChildren().setAll(new PostController(this.retrievedPost));

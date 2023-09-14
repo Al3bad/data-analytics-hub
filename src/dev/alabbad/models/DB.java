@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
+import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.UserNotFoundException;
 
 import java.sql.*;
@@ -41,7 +42,7 @@ public class DB {
                                 password TEXT NOT NULL CHECK(LENGTH(password) > 6),
                                 fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
                                 lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
-                                isVIP INTEGER NOT NULL DEFAULT 0)
+                                isVIP INTEGER NOT NULL DEFAULT 0
                             );
                             """);
         } catch (SQLException e) {
@@ -174,13 +175,16 @@ public class DB {
         return posts;
     }
 
-    public static Boolean deletePost(int id) throws PostNotFoundException, SQLException {
-        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ?");
-        stmt.setInt(1, id);
-        int affectedRows = stmt.executeUpdate();
-        if (affectedRows == 0) {
-            throw new PostNotFoundException("[ERROR-DB] Post not found!");
+    public static Boolean deletePost(int id, String postAuthor)
+                    throws PostNotFoundException, SQLException, UnauthorisedAction {
+        Post post = getPost(id);
+        if (post.getAuthor().toLowerCase() != postAuthor.toLowerCase()) {
+            throw new UnauthorisedAction("You're unauthorised to delete a posts of someone else's post!");
         }
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
+        stmt.setInt(1, id);
+        stmt.setString(1, postAuthor);
+        stmt.executeUpdate();
         return true;
     }
 
