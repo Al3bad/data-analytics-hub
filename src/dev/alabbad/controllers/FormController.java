@@ -36,7 +36,7 @@ public abstract class FormController extends VBox {
         this.secondaryBtn = secondaryBtn;
 
         this.setupForm();
-        this.setupButton(this.secondaryBtn, "secondaryBtn", "secondary");
+        this.secondaryBtn.setId("secondaryBtn");
         this.secondaryBtn.onMouseClickedProperty().set(event -> this.onSecondaryBtnClicked(event));
         this.btnGroup.getChildren().add(this.secondaryBtn);
     }
@@ -66,7 +66,7 @@ public abstract class FormController extends VBox {
         this.btnGroup.setId("btnGroup");
         this.btnGroup.setSpacing(8);
 
-        this.setupButton(this.primaryBtn, "primaryBtn", "primary");
+        this.primaryBtn.setId("primaryBtn");
         this.primaryBtn.onMouseClickedProperty().set(event -> this.onPrimaryBtnClicked(event));
         this.btnGroup.getChildren().add(primaryBtn);
 
@@ -74,14 +74,6 @@ public abstract class FormController extends VBox {
         this.setSpacing(8);
         this.setPrefWidth(200);
         this.getChildren().setAll(inputs, this.beforeContainer, this.btnGroup, this.afterContainer);
-    }
-
-    protected void setupButton(Button btn, String id, String type) {
-        btn.setId(id);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.getStylesheets().add("/css/button.css");
-        btn.getStyleClass().add("button");
-        btn.getStyleClass().add(type);
     }
 
     protected void resetTextFieldStyles() {

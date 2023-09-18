@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
+import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
@@ -42,12 +43,7 @@ public class DashboardController extends VBox {
     }
 
     private void setupNormalUserView() {
-        Button vipButton = new Button("Upgrade to VIP");
-        vipButton.setId("vip-button");
-        vipButton.setMaxWidth(Double.MAX_VALUE);
-        vipButton.getStylesheets().add("/css/button.css");
-        vipButton.getStyleClass().add("button");
-        vipButton.getStyleClass().add("primary");
+        Button vipButton = new PrimaryButton("Upgrade to VIP");
         vipButton.onMouseClickedProperty().set(event -> this.onVIPBtnClicked(event));
         this.getChildren().add(vipButton);
     }
@@ -55,12 +51,7 @@ public class DashboardController extends VBox {
     private void setupVIPUserView() throws SQLException {
         // this.getChildren().add(new Label("You're a VIP user"));
         drawPieChart();
-        Button importPostsButton = new Button("Import Posts");
-        importPostsButton.setId("import-posts-button");
-        importPostsButton.setMaxWidth(Double.MAX_VALUE);
-        importPostsButton.getStylesheets().add("/css/button.css");
-        importPostsButton.getStyleClass().add("button");
-        importPostsButton.getStyleClass().add("primary");
+        Button importPostsButton = new PrimaryButton("Import Posts");
         importPostsButton.onMouseClickedProperty().set(event -> this.onImportBtnClicked(event));
         this.getChildren().add(importPostsButton);
     }

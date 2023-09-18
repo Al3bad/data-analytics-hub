@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedPasswordField;
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.elements.PrimaryButton;
+import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
@@ -20,7 +22,7 @@ public class SignupFormController extends FormController {
     protected final static String LNAME = "Last Name";
 
     public SignupFormController() {
-        super(createTextFieldElements(), new Button("Signup"), new Button("Login"));
+        super(createTextFieldElements(), new PrimaryButton("Signup"), new SecondaryButton("Login"));
     }
 
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {

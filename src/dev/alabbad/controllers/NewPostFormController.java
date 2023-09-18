@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
 public class NewPostFormController extends FormController {
@@ -21,7 +21,7 @@ public class NewPostFormController extends FormController {
     private final static String DATETIME = "Date/Time";
 
     public NewPostFormController() {
-        super(createTextFieldElements(), new Button("Post"));
+        super(createTextFieldElements(), new PrimaryButton("Post"));
     }
 
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {

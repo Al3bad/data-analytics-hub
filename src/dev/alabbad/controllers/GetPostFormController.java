@@ -7,13 +7,14 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.elements.PrimaryButton;
+import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -25,7 +26,7 @@ public class GetPostFormController extends FormController {
     private final static String POSTID = "Post ID";
 
     public GetPostFormController() {
-        super(createTextFieldElements(), new Button("Get Post"), new Button("Export Post"));
+        super(createTextFieldElements(), new PrimaryButton("Get Post"), new SecondaryButton("Export Post"));
         this.secondaryBtn.setDisable(true);
     }
 

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -21,7 +21,7 @@ public class GetMostLikedPostsController extends FormController {
     protected final static String NUM_OF_POSTS = "Number of Posts";
 
     public GetMostLikedPostsController() {
-        super(createTextFieldElements(), new Button("Get Most Liked Posts"));
+        super(createTextFieldElements(), new PrimaryButton("Get Most Liked Posts"));
     }
 
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {

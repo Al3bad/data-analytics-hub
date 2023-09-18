@@ -4,12 +4,13 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.elements.ExtendedPasswordField;
 import dev.alabbad.elements.ExtendedTextField;
+import dev.alabbad.elements.PrimaryButton;
+import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
 public class LoginFormController extends FormController {
@@ -18,7 +19,7 @@ public class LoginFormController extends FormController {
     private final static String PASSWORD = "Password";
 
     public LoginFormController() {
-        super(createTextFieldElements(), new Button("Login"), new Button("Signup"));
+        super(createTextFieldElements(), new PrimaryButton("Login"), new SecondaryButton("Signup"));
         // NOTE: remove this later
         this.textFieldElements.get(USERNAME).setText("xv");
         this.textFieldElements.get(PASSWORD).setText("1234567");
