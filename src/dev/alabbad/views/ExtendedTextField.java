@@ -1,5 +1,6 @@
 package dev.alabbad.views;
 
+import dev.alabbad.exceptions.ParseValueException;
 import javafx.scene.control.TextField;
 
 public class ExtendedTextField<T> extends TextField {
@@ -8,7 +9,7 @@ public class ExtendedTextField<T> extends TextField {
     // https://www.w3docs.com/snippets/java/how-to-pass-a-function-as-a-parameter-in-java.html
     @FunctionalInterface
     public interface Function<T> {
-        T run(String val) throws Exception;
+        T run(String val) throws ParseValueException;
     }
 
     private Function<T> parsor;
@@ -22,7 +23,7 @@ public class ExtendedTextField<T> extends TextField {
         return parsedVal;
     }
 
-    public T parse() throws Exception {
+    public T parse() throws ParseValueException {
         this.parsedVal = parsor.run(this.getText());
         return this.parsedVal;
     }

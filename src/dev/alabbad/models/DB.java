@@ -89,13 +89,13 @@ public class DB {
         }
     }
 
-    public static Post insertPost(int id, String content, String author, int likes, int shares, String dateTime)
+    public static Post insertPost(Integer id, String content, String author, int likes, int shares, String dateTime)
                     throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("""
                         INSERT INTO post (id,content, author, likes, shares, dateTime)
                         VALUES (?, ?, ?, ?, ?, ?);
                         """);
-        if (id == -1) {
+        if (id == null) {
             // auto generate id
             stmt.setNull(1, Types.NULL);
         } else {
@@ -107,7 +107,7 @@ public class DB {
         stmt.setInt(4, likes);
         stmt.setInt(5, shares);
         stmt.setString(6, dateTime);
-        stmt.executeUpdate();
+        // stmt.executeUpdate();
         return new Post(getLastInsertedRowID(), content, author, likes, shares, dateTime);
     }
 

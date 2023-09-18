@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.exceptions.ParseValueException;
 import dev.alabbad.views.AlertView;
 import dev.alabbad.views.ExtendedTextField;
 import javafx.scene.control.Button;
@@ -50,7 +51,6 @@ public abstract class FormController extends VBox {
         inputs.setId("inputGroup");
 
         for (String id : this.textFieldElements.keySet()) {
-            System.out.println(id);
             VBox inputContainer = new VBox();
             Label label = new Label(id);
             TextField textField = this.textFieldElements.get(id);
@@ -107,7 +107,12 @@ public abstract class FormController extends VBox {
         } catch (InvalidFormException e) {
             // change border color of the text input to red
             this.setTextFieldErrorStyles(e.getErrors());
-            container.getChildren().setAll(new AlertView("Invalid post!", "error"));
+            String formattedErrors = "Invalid form!\n";
+            for (String fieldId : e.getErrors().keySet()) {
+                String errorMsg = e.getErrors().get(fieldId);
+                formattedErrors += String.format("- %s: %s\n", fieldId, errorMsg);
+            }
+            container.getChildren().setAll(new AlertView(formattedErrors.trim(), "error"));
             return false;
         }
     }
@@ -120,7 +125,7 @@ public abstract class FormController extends VBox {
                     System.out.println("IT's a PasswordField");
                 }
                 this.textFieldElements.get(textFieldId).parse();
-            } catch (Exception e) {
+            } catch (ParseValueException e) {
                 errors.put(textFieldId, e.getMessage());
             }
         }

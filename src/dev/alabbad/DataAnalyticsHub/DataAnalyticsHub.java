@@ -47,11 +47,7 @@ public class DataAnalyticsHub extends Application {
         DB.connect(sqliteFilename);
         // Create user table if it doesn't exist
         DB.createUserTable();
-        // Get all users in table
-        HashMap<String, User> users = DB.getAllUsers();
-        for (User user : users.values()) {
-            user.displayDetails();
-        }
+        DB.createPostTable();
         launch();
         // Close connection
         try {

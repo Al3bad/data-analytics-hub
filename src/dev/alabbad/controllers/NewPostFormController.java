@@ -37,7 +37,7 @@ public class NewPostFormController extends FormController {
         textFieldElements.put(CONTENT, new ExtendedTextField<String>((val) -> Parser.parseStr(val, true)));
         textFieldElements.put(LIKES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
         textFieldElements.put(SHARES, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
-        textFieldElements.put(DATETIME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, true)));
+        textFieldElements.put(DATETIME, new ExtendedTextField<String>((val) -> Parser.parseDateTime(val)));
         return textFieldElements;
     }
 
@@ -47,7 +47,7 @@ public class NewPostFormController extends FormController {
             return false;
         }
 
-        int id = (int) this.textFieldElements.get(ID).getParsedVal();
+        Integer id = (Integer) this.textFieldElements.get(ID).getParsedVal();
         String author = (String) this.textFieldElements.get(AUTHOR).getParsedVal();
         String content = (String) this.textFieldElements.get(CONTENT).getParsedVal();
         int likes = (int) this.textFieldElements.get(LIKES).getParsedVal();
