@@ -1,5 +1,12 @@
 package dev.alabbad.models;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,8 +14,6 @@ import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.UserNotFoundException;
-
-import java.sql.*;
 
 public class DB {
     private static Connection conn = null;

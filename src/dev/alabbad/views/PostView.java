@@ -1,4 +1,4 @@
-package dev.alabbad.controllers;
+package dev.alabbad.views;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class PostController extends VBox {
+public class PostView extends VBox {
     @FXML
     private Text author;
 
@@ -31,7 +31,7 @@ public class PostController extends VBox {
     @FXML
     private VBox container;
 
-    public PostController(Post post) {
+    public PostView(Post post) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/post.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);

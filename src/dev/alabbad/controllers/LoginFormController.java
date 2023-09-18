@@ -2,14 +2,17 @@ package dev.alabbad.controllers;
 
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedPasswordField;
-import dev.alabbad.elements.ExtendedTextField;
-import dev.alabbad.elements.PrimaryButton;
-import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedPasswordField;
+import dev.alabbad.views.ExtendedTextField;
+import dev.alabbad.views.MainScene;
+import dev.alabbad.views.PortalScene;
+import dev.alabbad.views.PrimaryButton;
+import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
@@ -44,12 +47,12 @@ public class LoginFormController extends FormController {
         User user = DB.loginUser(username, password);
 
         if (user == null) {
-            this.beforeContainer.getChildren().setAll(new CAlert("Incorrect username or password!", "error"));
+            this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
             return false;
         } else {
             // navigate to dashboard scene
             AppState.getInstance().setUser(user);
-            Scene dashboardScene = new Scene(new MainSceneController());
+            Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;
@@ -57,7 +60,7 @@ public class LoginFormController extends FormController {
 
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
-        Scene portalScene = new Scene(new CPortalScene(new SignupFormController()));
+        Scene portalScene = new Scene(new PortalScene(new SignupFormController()));
         AppState.getInstance().switchScene(portalScene, false);
     }
 }

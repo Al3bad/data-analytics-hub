@@ -1,27 +1,34 @@
-package dev.alabbad.controllers;
-
-import dev.alabbad.models.AppState;
-import dev.alabbad.models.User;
+package dev.alabbad.views;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
+import dev.alabbad.controllers.DashboardController;
+import dev.alabbad.controllers.DeletePostFormController;
+import dev.alabbad.controllers.EditProfileFormController;
+import dev.alabbad.controllers.GetMostLikedPostsController;
+import dev.alabbad.controllers.GetMostSharedPostsController;
+import dev.alabbad.controllers.GetPostFormController;
+import dev.alabbad.controllers.LoginFormController;
+import dev.alabbad.controllers.NewPostFormController;
+import dev.alabbad.models.AppState;
+import dev.alabbad.models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class MainSceneController extends AnchorPane {
+public class MainScene extends AnchorPane {
     // User details section
     @FXML
     private Text fullName;
@@ -61,7 +68,7 @@ public class MainSceneController extends AnchorPane {
     @FXML
     private VBox container;
 
-    public MainSceneController() {
+    public MainScene() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/main-scene.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -124,7 +131,7 @@ public class MainSceneController extends AnchorPane {
         // take action based on result
         if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
             AppState.getInstance().setUser(null);
-            AppState.getInstance().switchScene(new Scene(new CPortalScene(new LoginFormController())), false);
+            AppState.getInstance().switchScene(new Scene(new PortalScene(new LoginFormController())), false);
         }
     }
 }

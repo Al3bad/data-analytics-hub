@@ -3,12 +3,13 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedTextField;
-import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedTextField;
+import dev.alabbad.views.PrimaryButton;
 import javafx.scene.input.MouseEvent;
 
 public class NewPostFormController extends FormController {
@@ -57,11 +58,11 @@ public class NewPostFormController extends FormController {
         try {
             Post newPost = DB.insertPost(id, content, author, likes, shares, dateTime);
             newPost.displayDetails();
-            this.beforeContainer.getChildren().setAll(new CAlert("Post has been successfully created!", "success"));
+            this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
             return true;
         } catch (SQLException e) {
-            this.beforeContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+            this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             return false;
         }
     }

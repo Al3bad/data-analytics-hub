@@ -4,13 +4,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedTextField;
-import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedTextField;
+import dev.alabbad.views.PostView;
+import dev.alabbad.views.PrimaryButton;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -44,12 +46,12 @@ public class GetMostLikedPostsController extends FormController {
             this.onSubmitHandler(author, limit);
             return true;
         } catch (InvalidArgumentException e) {
-            this.afterContainer.getChildren().setAll(new CAlert(e.getMessage(), "error"));
+            this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "error"));
         } catch (SQLException e) {
-            this.afterContainer.getChildren().setAll(new CAlert("Something wrong happends! [DB]", "error"));
+            this.afterContainer.getChildren().setAll(new AlertView("Something wrong happends! [DB]", "error"));
         } catch (Exception e) {
             this.afterContainer.getChildren()
-                            .setAll(new CAlert("Invalid value! ID must be a positive integer!", "error"));
+                            .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
         }
         return true;
     }
@@ -61,13 +63,13 @@ public class GetMostLikedPostsController extends FormController {
 
     protected void displayResult(String author, ArrayList<Post> posts) {
         if (posts.size() == 0 && author.length() != 0) {
-            this.afterContainer.getChildren().setAll(new CAlert("The specified author was not found!", "info"));
+            this.afterContainer.getChildren().setAll(new AlertView("The specified author was not found!", "info"));
         } else if (posts.size() == 0) {
-            this.afterContainer.getChildren().setAll(new CAlert("There no posts added in the system yet!", "info"));
+            this.afterContainer.getChildren().setAll(new AlertView("There no posts added in the system yet!", "info"));
         } else {
             this.afterContainer.getChildren().setAll();
             for (Post post : posts) {
-                VBox postComponent = new PostController(post);
+                VBox postComponent = new PostView(post);
                 VBox.setMargin(postComponent, new Insets(0, 0, 12, 0));
                 this.afterContainer.getChildren().add(postComponent);
             }

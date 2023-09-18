@@ -2,16 +2,18 @@ package dev.alabbad.controllers;
 
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedPasswordField;
-import dev.alabbad.elements.ExtendedTextField;
-import dev.alabbad.elements.PrimaryButton;
-import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedPasswordField;
+import dev.alabbad.views.ExtendedTextField;
+import dev.alabbad.views.MainScene;
+import dev.alabbad.views.PortalScene;
+import dev.alabbad.views.PrimaryButton;
+import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 
 public class SignupFormController extends FormController {
@@ -48,12 +50,12 @@ public class SignupFormController extends FormController {
         User newUser = DB.insertUser(username, password, fname, lname);
 
         if (newUser == null) {
-            this.beforeContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+            this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             return false;
         } else {
-            this.beforeContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
+            this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
             AppState.getInstance().setUser(newUser);
-            Scene dashboardScene = new Scene(new MainSceneController());
+            Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
         }
         return true;
@@ -61,7 +63,7 @@ public class SignupFormController extends FormController {
 
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
-        Scene portalScene = new Scene(new CPortalScene(new LoginFormController()));
+        Scene portalScene = new Scene(new PortalScene(new LoginFormController()));
         AppState.getInstance().switchScene(portalScene, false);
     }
 }

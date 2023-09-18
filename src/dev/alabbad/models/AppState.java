@@ -1,7 +1,7 @@
 package dev.alabbad.models;
 
-import dev.alabbad.controllers.CPortalScene;
 import dev.alabbad.controllers.LoginFormController;
+import dev.alabbad.views.PortalScene;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -46,7 +46,7 @@ public class AppState {
             alert.setTitle("Login is required");
             alert.setContentText("Something worng happend! Please contact the developer");
             alert.showAndWait();
-            scene = new Scene(new CPortalScene(new LoginFormController()), minWidth, minHeight);
+            scene = new Scene(new PortalScene(new LoginFormController()), minWidth, minHeight);
         }
 
         this.stage.setWidth(minWidth);

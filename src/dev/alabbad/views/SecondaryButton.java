@@ -1,4 +1,4 @@
-package dev.alabbad.elements;
+package dev.alabbad.views;
 
 /**
  * A button element with secondary button styles applied

@@ -7,21 +7,22 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
-import dev.alabbad.elements.PrimaryButton;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.VIPUser;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.MainScene;
+import dev.alabbad.views.PrimaryButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -71,7 +72,7 @@ public class DashboardController extends VBox {
         if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
             try {
                 AppState.getInstance().setUser(DB.upgradeUser(AppState.getInstance().getUser()));
-                AppState.getInstance().switchScene(new Scene(new MainSceneController()), true);
+                AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             } catch (SQLException e) {
                 // TODO: handle exception
                 System.out.println("SQLite exception!");

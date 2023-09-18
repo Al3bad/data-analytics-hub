@@ -1,11 +1,13 @@
 package dev.alabbad.controllers;
 
-import dev.alabbad.elements.ExtendedPasswordField;
 import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedPasswordField;
+import dev.alabbad.views.MainScene;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -51,16 +53,17 @@ public class EditProfileFormController extends SignupFormController {
             String currentUsername = AppState.getInstance().getUser().getUsername();
             User updatedUser = DB.updateUser(currentUsername, username, currentPassword, fname, lname);
             if (updatedUser == null) {
-                this.afterContainer.getChildren().setAll(new CAlert("Something wrong happend!", "error"));
+                this.afterContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
                 return false;
             } else {
-                this.afterContainer.getChildren().setAll(new CAlert("User has been successfully created!", "success"));
+                this.afterContainer.getChildren()
+                                .setAll(new AlertView("User has been successfully created!", "success"));
                 AppState.getInstance().setUser(updatedUser);
-                Scene dashboardScene = new Scene(new MainSceneController());
+                Scene dashboardScene = new Scene(new MainScene());
                 AppState.getInstance().switchScene(dashboardScene, true);
             }
         } catch (UserNotFoundException e) {
-            this.afterContainer.getChildren().setAll(new CAlert("User is not found!", "error"));
+            this.afterContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
             return false;
         }
         return true;

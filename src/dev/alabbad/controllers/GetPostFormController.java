@@ -6,15 +6,17 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedTextField;
-import dev.alabbad.elements.PrimaryButton;
-import dev.alabbad.elements.SecondaryButton;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedTextField;
+import dev.alabbad.views.PostView;
+import dev.alabbad.views.PrimaryButton;
+import dev.alabbad.views.SecondaryButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -49,14 +51,14 @@ public class GetPostFormController extends FormController {
             this.secondaryBtn.setDisable(false);
             return true;
         } catch (PostNotFoundException e) {
-            this.afterContainer.getChildren().setAll(new CAlert("Post not found!", "info"));
+            this.afterContainer.getChildren().setAll(new AlertView("Post not found!", "info"));
         } catch (SQLException e) {
-            this.afterContainer.getChildren().setAll(new CAlert("Something wrong happends! [DB]", "error"));
+            this.afterContainer.getChildren().setAll(new AlertView("Something wrong happends! [DB]", "error"));
         } catch (UnauthorisedAction e) {
-            this.afterContainer.getChildren().setAll(new CAlert(e.getMessage(), "info"));
+            this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "info"));
         } catch (Exception e) {
             this.afterContainer.getChildren()
-                            .setAll(new CAlert("Invalid value! ID must be a positive integer!", "error"));
+                            .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
         }
         return false;
     }
@@ -76,7 +78,7 @@ public class GetPostFormController extends FormController {
     protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException, UnauthorisedAction {
         this.secondaryBtn.setDisable(true);
         this.retrievedPost = DB.getPost(postId);
-        this.afterContainer.getChildren().setAll(new PostController(this.retrievedPost));
+        this.afterContainer.getChildren().setAll(new PostView(this.retrievedPost));
     }
 
     private File chooseFileLocation() {

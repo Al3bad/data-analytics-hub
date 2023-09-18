@@ -3,8 +3,9 @@ package dev.alabbad.controllers;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.elements.ExtendedTextField;
 import dev.alabbad.exceptions.InvalidFormException;
+import dev.alabbad.views.AlertView;
+import dev.alabbad.views.ExtendedTextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -106,7 +107,7 @@ public abstract class FormController extends VBox {
         } catch (InvalidFormException e) {
             // change border color of the text input to red
             this.setTextFieldErrorStyles(e.getErrors());
-            container.getChildren().setAll(new CAlert("Invalid post!", "error"));
+            container.getChildren().setAll(new AlertView("Invalid post!", "error"));
             return false;
         }
     }

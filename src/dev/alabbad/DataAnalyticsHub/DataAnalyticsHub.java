@@ -1,11 +1,8 @@
 package dev.alabbad.DataAnalyticsHub;
 
-import dev.alabbad.controllers.LoginFormController;
-import dev.alabbad.controllers.CPortalScene;
-import dev.alabbad.controllers.FormController;
-import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
-import dev.alabbad.models.User;
+import dev.alabbad.controllers.*;
+import dev.alabbad.views.*;
+import dev.alabbad.models.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -33,7 +30,7 @@ public class DataAnalyticsHub extends Application {
         LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
         textFieldElements.put("username", new TextField());
         textFieldElements.put("password", new PasswordField());
-        AnchorPane portalScene = new CPortalScene(new LoginFormController());
+        AnchorPane portalScene = new PortalScene(new LoginFormController());
         Scene scene = new Scene(portalScene);
         // Setting the title to Stage.
         stage.setTitle("Data Analytics Hub");

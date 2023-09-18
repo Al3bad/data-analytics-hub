@@ -1,4 +1,4 @@
-package dev.alabbad.elements;
+package dev.alabbad.views;
 
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.TextFieldSkin;
