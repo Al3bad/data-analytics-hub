@@ -1,7 +1,9 @@
 package dev.alabbad.controllers;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
@@ -44,18 +46,22 @@ public class LoginFormController extends FormController {
         String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
 
         // Get user from DB
-        User user = DB.loginUser(username, password);
-
-        if (user == null) {
-            this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
-            return false;
-        } else {
+        User user;
+        try {
+            user = DB.loginUser(username, password);
             // navigate to dashboard scene
             AppState.getInstance().setUser(user);
             Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
+            return true;
+        } catch (UserNotFoundException e) {
+            this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
+            return false;
+        } catch (SQLException e) {
+            this.beforeContainer.getChildren()
+                            .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
+            return false;
         }
-        return true;
     }
 
     @Override

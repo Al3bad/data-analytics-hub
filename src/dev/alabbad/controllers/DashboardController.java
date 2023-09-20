@@ -9,6 +9,8 @@ import java.util.Scanner;
 
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.models.User;
+import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.VIPUser;
@@ -31,7 +33,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class DashboardController extends VBox {
     public DashboardController() {
         // construct view based on the logged user
-        if (AppState.getInstance().getUser() instanceof VIPUser) {
+        User loggedinUser = AppState.getInstance().getUser();
+        if (loggedinUser instanceof VIPUser || loggedinUser instanceof AdminUser) {
             try {
                 setupVIPUserView();
             } catch (SQLException e) {

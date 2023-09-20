@@ -44,9 +44,10 @@ public class DB {
             stmt.execute("""
                             CREATE TABLE IF NOT EXISTS user (
                                 username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),
-                                password TEXT NOT NULL CHECK(LENGTH(password) > 6),
+                                password TEXT NOT NULL CHECK(LENGTH(password) > 3),
                                 fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
                                 lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
+                                isAdmin INTEGER NOT NULL DEFAULT 0,
                                 isVIP INTEGER NOT NULL DEFAULT 0
                             );
                             """);
@@ -73,20 +74,17 @@ public class DB {
         }
     }
 
-    public static User insertUser(String username, String password, String fname, String lname) {
-        try {
-            PreparedStatement stmt = conn.prepareStatement(
-                            "INSERT INTO user (username, password, fname, lname) VALUES (?, ?, ?, ?)");
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, fname);
-            stmt.setString(4, lname);
-            stmt.executeUpdate();
-            return new User(username, fname, lname);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public static User insertUser(String username, String password, String fname, String lname, Boolean isAdmin)
+                    throws SQLException, UserNotFoundException {
+        PreparedStatement stmt = conn.prepareStatement(
+                        "INSERT INTO user (username, password, fname, lname, isAdmin) VALUES (?, ?, ?, ?, ?)");
+        stmt.setString(1, username);
+        stmt.setString(2, password);
+        stmt.setString(3, fname);
+        stmt.setString(4, lname);
+        stmt.setBoolean(5, isAdmin);
+        stmt.executeUpdate();
+        return getUser(username);
     }
 
     public static Post insertPost(Integer id, String content, String author, int likes, int shares, String dateTime)
@@ -107,7 +105,7 @@ public class DB {
         stmt.setInt(4, likes);
         stmt.setInt(5, shares);
         stmt.setString(6, dateTime);
-        // stmt.executeUpdate();
+        stmt.executeUpdate();
         return new Post(getLastInsertedRowID(), content, author, likes, shares, dateTime);
     }
 
@@ -180,16 +178,44 @@ public class DB {
         return posts;
     }
 
-    public static Boolean deletePost(int id, String postAuthor)
-                    throws PostNotFoundException, SQLException, UnauthorisedAction {
+    public static Boolean deletePost(int id, String postAuthor, String loggedinUsername)
+                    throws PostNotFoundException, SQLException, UnauthorisedAction, UserNotFoundException {
+        Boolean isAdmin = getUser(loggedinUsername) instanceof AdminUser;
         Post post = getPost(id);
-        if (post.getAuthor().toLowerCase() != postAuthor.toLowerCase()) {
+        if (!isAdmin && !post.getAuthor().toLowerCase().equals(postAuthor.toLowerCase())) {
             throw new UnauthorisedAction("You're unauthorised to delete a posts of someone else's post!");
         }
-        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE id = ? AND author = ?");
+        String stmtStr = "DELETE FROM post WHERE id = ?";
+        if (!(isAdmin)) {
+            stmtStr += "  AND LOWER(author) = LOWER(?)";
+
+        }
+        PreparedStatement stmt = conn.prepareStatement(stmtStr);
         stmt.setInt(1, id);
+        stmt.setString(2, postAuthor);
+        stmt.executeUpdate();
+        return true;
+    }
+
+    public static Boolean deletePosts(String postAuthor, String loggedinUsername) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM post WHERE LOWER(author) = LOWER(?)");
         stmt.setString(1, postAuthor);
         stmt.executeUpdate();
+        return true;
+    }
+
+    public static Boolean deleteUser(String username, String loggedinUsername)
+                    throws SQLException, UserNotFoundException, UnauthorisedAction {
+        if (!(getUser(loggedinUsername) instanceof AdminUser)) {
+            throw new UnauthorisedAction("You're unauthorised to delete a user!");
+        }
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM user WHERE username = ?");
+        stmt.setString(1, username);
+        int affectedRows = stmt.executeUpdate();
+        if (affectedRows == 0) {
+            throw new UserNotFoundException("[ERROR-DB] User not found!");
+        }
+        DB.deletePosts(username, loggedinUsername);
         return true;
     }
 
@@ -215,7 +241,12 @@ public class DB {
             if (affectedRows == 0) {
                 throw new UserNotFoundException("[ERROR-DB] User not found!");
             }
-            return new User(username, fname, lname);
+            // Update author field for the posts
+            PreparedStatement stmt2 = conn.prepareStatement("UPDATE post SET author=? WHERE LOWER(author) = LOWER(?)");
+            stmt2.setString(1, username);
+            stmt2.setString(2, currentUsername);
+            stmt2.executeUpdate();
+            return getUser(username);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -226,7 +257,7 @@ public class DB {
         HashMap<String, User> users = new HashMap<String, User>();
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT username, fname, lname FROM user");
+            ResultSet rs = stmt.executeQuery("SELECT username, fname, lname FROM user WHERE isAdmin = 0");
             while (rs.next()) {
                 String username = rs.getString("username");
                 String fname = rs.getString("fname");
@@ -240,28 +271,38 @@ public class DB {
         }
     }
 
-    public static User loginUser(String username, String password) {
-        try {
-            PreparedStatement stmt = conn.prepareStatement(
-                            "SELECT username, fname, lname, isVIP FROM user WHERE username = ? AND password = ?");
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String user = rs.getString("username");
-                String fname = rs.getString("fname");
-                String lname = rs.getString("lname");
-                Boolean isVIP = rs.getBoolean("isVIP");
-                if (isVIP) {
-                    return new VIPUser(user, fname, lname);
-                }
-                return new User(user, fname, lname);
+    public static User getUser(String username) throws SQLException, UserNotFoundException {
+        PreparedStatement stmt = conn
+                        .prepareStatement("SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ?");
+        stmt.setString(1, username);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            String user = rs.getString("username");
+            String fname = rs.getString("fname");
+            String lname = rs.getString("lname");
+            Boolean isVIP = rs.getBoolean("isVIP");
+            Boolean isAdmin = rs.getBoolean("isAdmin");
+            if (isAdmin) {
+                return new AdminUser(user, fname, lname);
+            } else if (isVIP) {
+                return new VIPUser(user, fname, lname);
             }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
-            return null;
+            return new User(user, fname, lname);
         }
+        throw new UserNotFoundException("User not found!");
+    }
+
+    public static User loginUser(String username, String password) throws UserNotFoundException, SQLException {
+        User user = getUser(username);
+        PreparedStatement stmt = conn.prepareStatement(
+                        "SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ? AND password = ?");
+        stmt.setString(1, user.getUsername());
+        stmt.setString(2, password);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            return user;
+        }
+        return null;
     }
 
     public static VIPUser upgradeUser(User user) throws UserNotFoundException, SQLException {

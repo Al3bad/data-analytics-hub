@@ -1,7 +1,9 @@
 package dev.alabbad.controllers;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
@@ -47,18 +49,20 @@ public class SignupFormController extends FormController {
         String lname = (String) this.textFieldElements.get(LNAME).getParsedVal();
 
         // Insert user to db
-        User newUser = DB.insertUser(username, password, fname, lname);
-
-        if (newUser == null) {
-            this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
-            return false;
-        } else {
+        User newUser;
+        try {
+            newUser = DB.insertUser(username, password, fname, lname, false);
             this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
             AppState.getInstance().setUser(newUser);
             Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
+            return true;
+        } catch (SQLException e) {
+            this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
+        } catch (UserNotFoundException e) {
+            System.out.println("Something wrong happend! Please contact the developer!");
         }
-        return true;
+        return false;
     }
 
     @Override

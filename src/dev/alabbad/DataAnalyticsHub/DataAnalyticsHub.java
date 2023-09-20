@@ -1,6 +1,7 @@
 package dev.alabbad.DataAnalyticsHub;
 
 import dev.alabbad.controllers.*;
+import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.views.*;
 import dev.alabbad.models.*;
 
@@ -48,6 +49,14 @@ public class DataAnalyticsHub extends Application {
         // Create user table if it doesn't exist
         DB.createUserTable();
         DB.createPostTable();
+        // NOTE: this is for demo only - always make sure admin user exist in the system
+        try {
+            DB.insertUser("admin", "admin", "Abdullah", "Alabbad", true);
+        } catch (SQLException e) {
+            System.out.println("Admin user already exists");
+        } catch (UserNotFoundException e) {
+            System.out.println("Something wrong happend! Please contact the developer!");
+        }
         launch();
         // Close connection
         try {

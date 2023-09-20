@@ -12,6 +12,8 @@ import dev.alabbad.controllers.GetMostSharedPostsController;
 import dev.alabbad.controllers.GetPostFormController;
 import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.NewPostFormController;
+import dev.alabbad.controllers.UsersController;
+import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.User;
 import javafx.fxml.FXML;
@@ -25,6 +27,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -62,6 +65,9 @@ public class MainScene extends AnchorPane {
     private RadioButton getMostSharedPostsTab;
 
     @FXML
+    private RadioButton usersTab;
+
+    @FXML
     private RadioButton editProfileTab;
 
     // Main content
@@ -80,6 +86,17 @@ public class MainScene extends AnchorPane {
             throw new RuntimeException(exception);
         }
 
+        // NOTE: List of users for ADMIN USER
+        // TODO: Only add this when the user type is ADMIN
+        if (AppState.getInstance().getUser() instanceof AdminUser) {
+            this.usersTab = new RadioButton();
+            this.usersTab.setText("Users");
+            this.usersTab.getStylesheets().add("/css/tab.css");
+            this.usersTab.getStyleClass().add("tab");
+            this.usersTab.getStyleClass().add("tab-container");
+            this.usersTab.toggleGroupProperty().set(this.actionsGroup);
+            this.tabs.getChildren().add(new HBox(usersTab));
+        }
         // get all TextField in the form
         Set<Node> radioButtons = this.lookupAll(".tab");
         // put TextField element in the HashMap
@@ -113,6 +130,8 @@ public class MainScene extends AnchorPane {
             this.container.getChildren().setAll(new GetMostSharedPostsController());
         } else if (this.actionsGroup.getSelectedToggle() == this.editProfileTab) {
             this.container.getChildren().setAll(new EditProfileFormController());
+        } else if (this.actionsGroup.getSelectedToggle() == this.usersTab) {
+            this.container.getChildren().setAll(new UsersController());
         }
     }
 

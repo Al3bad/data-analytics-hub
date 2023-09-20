@@ -2,13 +2,13 @@ package dev.alabbad.models;
 
 public class User {
     protected String username;
-    protected String fname;
-    protected String lname;
+    protected String firstName;
+    protected String lastName;
 
     public User(String username, String fname, String lname) {
         this.username = username;
-        this.fname = fname;
-        this.lname = lname;
+        this.firstName = fname;
+        this.lastName = lname;
     }
 
     public String getUsername() {
@@ -16,16 +16,16 @@ public class User {
     }
 
     public String getFirstName() {
-        return this.fname;
+        return this.firstName;
     }
 
     public String getLastName() {
-        return this.lname;
+        return this.lastName;
     }
 
     public void displayDetails() {
         System.out.println("Username: " + this.username);
-        System.out.println("First Name: " + this.fname);
-        System.out.println("Last Name: " + this.lname);
+        System.out.println("First Name: " + this.firstName);
+        System.out.println("Last Name: " + this.lastName);
     }
 }

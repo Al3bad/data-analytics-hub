@@ -21,7 +21,7 @@
 
 There are two ways to run the program:
 
-## Method 1: Using Intellij IDEA IDE
+### Method 1: Using Intellij IDEA IDE
 
 1. Open the root folder in Intellij IDEA IDE: `File -> Open`.
 2. Hit the run button in the top right corner of the IDE or use the hotkey `ctrl+R`.
