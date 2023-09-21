@@ -5,11 +5,13 @@ import java.util.HashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
@@ -27,8 +29,23 @@ public class UsersController extends TableView<User> {
         this.getColumns().add(usernameCol);
         this.getColumns().add(fnameCol);
         this.getColumns().add(lnameCol);
-        this.onKeyPressedProperty().set(event -> this.onKeyPressed(event));
+        // High light Admin users
+        this.setRowFactory(row -> new TableRow<User>() {
+            @Override
+            protected void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item instanceof AdminUser) {
+                    this.setStyle("-fx-selection-bar: #F8B7B2;");
+                    if (isSelected()) {
+                        this.setStyle("-fx-selection-bar: #F87E75;");
+                    } else {
+                        this.setStyle("-fx-background-color: #F8B7B2;");
+                    }
+                }
 
+            }
+        });
+        this.onKeyPressedProperty().set(event -> this.onKeyPressed(event));
         this.populateTable();
     }
 
@@ -36,7 +53,12 @@ public class UsersController extends TableView<User> {
         TableViewSelectionModel<User> selectionModel = this.getSelectionModel();
         ObservableList<User> selectedItems = selectionModel.getSelectedItems();
         User selectedUser = (User) selectedItems.get(0);
-        DB.deleteUser(selectedUser.getUsername(), AppState.getInstance().getUser().getUsername());
+        if (selectedUser instanceof AdminUser) {
+            // TODO: show alert windows
+            System.out.println("You're not allowed to delete admin user!");
+        } else {
+            DB.deleteUser(selectedUser.getUsername(), AppState.getInstance().getUser().getUsername());
+        }
     }
 
     private void populateTable() {

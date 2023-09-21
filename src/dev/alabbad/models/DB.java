@@ -257,12 +257,17 @@ public class DB {
         HashMap<String, User> users = new HashMap<String, User>();
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT username, fname, lname FROM user WHERE isAdmin = 0");
+            ResultSet rs = stmt.executeQuery("SELECT username, fname, lname, isAdmin FROM user");
             while (rs.next()) {
                 String username = rs.getString("username");
                 String fname = rs.getString("fname");
                 String lname = rs.getString("lname");
-                users.put(username, new User(username, fname, lname));
+                Boolean isAdmin = rs.getBoolean("isAdmin");
+                if (isAdmin) {
+                    users.put(username, new AdminUser(username, fname, lname));
+                } else {
+                    users.put(username, new User(username, fname, lname));
+                }
             }
             return users;
         } catch (SQLException e) {
