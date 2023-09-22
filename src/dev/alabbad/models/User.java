@@ -1,14 +1,24 @@
 package dev.alabbad.models;
 
+import java.io.InputStream;
+
 public class User {
     protected String username;
     protected String firstName;
     protected String lastName;
+    protected InputStream profileImg;
 
     public User(String username, String fname, String lname) {
         this.username = username;
         this.firstName = fname;
         this.lastName = lname;
+    }
+
+    public User(String username, String fname, String lname, InputStream profileImg) {
+        this.username = username;
+        this.firstName = fname;
+        this.lastName = lname;
+        this.profileImg = profileImg;
     }
 
     public String getUsername() {
@@ -21,6 +31,14 @@ public class User {
 
     public String getLastName() {
         return this.lastName;
+    }
+
+    public InputStream getProfileImg() {
+        return this.profileImg;
+    }
+
+    public void setProfileImg(InputStream value) {
+        this.profileImg = value;
     }
 
     public void displayDetails() {

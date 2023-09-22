@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
+import dev.alabbad.controllers.AvatarController;
 import dev.alabbad.controllers.DashboardController;
 import dev.alabbad.controllers.DeletePostFormController;
 import dev.alabbad.controllers.EditProfileFormController;
@@ -33,6 +34,9 @@ import javafx.scene.text.Text;
 
 public class MainScene extends AnchorPane {
     // User details section
+    @FXML
+    private HBox userDetailsContainer;
+
     @FXML
     private Text fullName;
 
@@ -87,7 +91,6 @@ public class MainScene extends AnchorPane {
         }
 
         // NOTE: List of users for ADMIN USER
-        // TODO: Only add this when the user type is ADMIN
         if (AppState.getInstance().getUser() instanceof AdminUser) {
             this.usersTab = new RadioButton();
             this.usersTab.setText("Users");
@@ -108,6 +111,7 @@ public class MainScene extends AnchorPane {
         this.actionsGroup.selectedToggleProperty()
                         .addListener((observable, oldValue, newValue) -> displaySelectedTab());
 
+        this.userDetailsContainer.getChildren().add(0, new AvatarController());
         User user = AppState.getInstance().getUser();
         if (user != null) {
             this.fullName.setText("Hello " + user.getFirstName() + " " + user.getLastName());

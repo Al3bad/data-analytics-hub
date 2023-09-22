@@ -1,5 +1,9 @@
 package dev.alabbad.models;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -48,7 +52,8 @@ public class DB {
                                 fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
                                 lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
                                 isAdmin INTEGER NOT NULL DEFAULT 0,
-                                isVIP INTEGER NOT NULL DEFAULT 0
+                                isVIP INTEGER NOT NULL DEFAULT 0,
+                                profileImg BLOB DEFAULT NULL
                             );
                             """);
         } catch (SQLException e) {
@@ -253,6 +258,30 @@ public class DB {
         }
     }
 
+    public static User updateUserProfileImg(String currentUsername, InputStream profileImg)
+                    throws SQLException, UserNotFoundException, IOException {
+        PreparedStatement stmt = conn
+                        .prepareStatement("UPDATE user SET profileImg = ? WHERE LOWER(username) = LOWER(?)");
+        stmt.setBytes(1, streamToBytes(profileImg));
+        stmt.setString(2, currentUsername);
+        int affectedRows = stmt.executeUpdate();
+        if (affectedRows == 0) {
+            throw new UserNotFoundException("[ERROR-DB] User not found!");
+        }
+        return getUser(currentUsername);
+    }
+
+    private static byte[] streamToBytes(InputStream file) throws IOException {
+        // reference: https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
+        ByteArrayOutputStream bos = null;
+        byte[] buffer = new byte[1024];
+        bos = new ByteArrayOutputStream();
+        for (int len; (len = file.read(buffer)) != -1;) {
+            bos.write(buffer, 0, len);
+        }
+        return bos != null ? bos.toByteArray() : null;
+    }
+
     public static HashMap<String, User> getAllUsers() {
         HashMap<String, User> users = new HashMap<String, User>();
         try {
@@ -277,8 +306,8 @@ public class DB {
     }
 
     public static User getUser(String username) throws SQLException, UserNotFoundException {
-        PreparedStatement stmt = conn
-                        .prepareStatement("SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ?");
+        PreparedStatement stmt = conn.prepareStatement(
+                        "SELECT username, fname, lname, isVIP, isAdmin, profileImg FROM user WHERE username = ?");
         stmt.setString(1, username);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
@@ -287,12 +316,13 @@ public class DB {
             String lname = rs.getString("lname");
             Boolean isVIP = rs.getBoolean("isVIP");
             Boolean isAdmin = rs.getBoolean("isAdmin");
+            InputStream profileImg = rs.getBinaryStream("profileImg");
             if (isAdmin) {
-                return new AdminUser(user, fname, lname);
+                return new AdminUser(user, fname, lname, profileImg);
             } else if (isVIP) {
-                return new VIPUser(user, fname, lname);
+                return new VIPUser(user, fname, lname, profileImg);
             }
-            return new User(user, fname, lname);
+            return new User(user, fname, lname, profileImg);
         }
         throw new UserNotFoundException("User not found!");
     }

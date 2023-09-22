@@ -27,7 +27,7 @@ public class DataAnalyticsHub extends Application {
     public void start(Stage stage) throws Exception {
         AppState.getInstance().setStage(stage);
         double minWidth = 680;
-        double minHeight = 480;
+        double minHeight = 580;
         LinkedHashMap<String, TextField> textFieldElements = new LinkedHashMap<String, TextField>();
         textFieldElements.put("username", new TextField());
         textFieldElements.put("password", new PasswordField());
