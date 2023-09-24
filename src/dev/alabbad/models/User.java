@@ -1,12 +1,16 @@
 package dev.alabbad.models;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 
 public class User {
     protected String username;
     protected String firstName;
     protected String lastName;
-    protected InputStream profileImg;
+    protected String base64ProfileImg;
 
     public User(String username, String fname, String lname) {
         this.username = username;
@@ -18,7 +22,14 @@ public class User {
         this.username = username;
         this.firstName = fname;
         this.lastName = lname;
-        this.profileImg = profileImg;
+        if (profileImg != null) {
+            try {
+                byte[] imgBytes = inputStreamToBytes(profileImg);
+                this.base64ProfileImg = Base64.getEncoder().encodeToString(imgBytes);
+            } catch (IOException e) {
+                System.out.println("Faild to process profile image stream!");
+            }
+        }
     }
 
     public String getUsername() {
@@ -33,17 +44,23 @@ public class User {
         return this.lastName;
     }
 
-    public InputStream getProfileImg() {
-        return this.profileImg;
-    }
-
-    public void setProfileImg(InputStream value) {
-        this.profileImg = value;
+    public ByteArrayInputStream getProfileImg() {
+        return new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
     }
 
     public void displayDetails() {
         System.out.println("Username: " + this.username);
         System.out.println("First Name: " + this.firstName);
         System.out.println("Last Name: " + this.lastName);
+    }
+
+    private static byte[] inputStreamToBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        return outputStream.toByteArray();
     }
 }
