@@ -326,7 +326,8 @@ public class DB {
         throw new UserNotFoundException("User not found!");
     }
 
-    public static User loginUser(String username, String password) throws UserNotFoundException, SQLException {
+    public static User loginUser(String username, String password)
+                    throws UserNotFoundException, SQLException, UnauthorisedAction {
         User user = getUser(username);
         PreparedStatement stmt = conn.prepareStatement(
                         "SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ? AND password = ?");
@@ -336,17 +337,17 @@ public class DB {
         while (rs.next()) {
             return user;
         }
-        return null;
+        throw new UnauthorisedAction("Incorrect password");
     }
 
-    public static VIPUser upgradeUser(User user) throws UserNotFoundException, SQLException {
+    public static User upgradeUser(User user) throws UserNotFoundException, SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE user SET isVIP=1 WHERE LOWER(username) = LOWER(?)");
         stmt.setString(1, user.getUsername());
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
             throw new UserNotFoundException("[ERROR-DB] User not found!");
         }
-        return new VIPUser(user.getUsername(), user.getFirstName(), user.getLastName());
+        return getUser(user.getUsername());
     }
 
     public static ArrayList<Integer> getSharesDistribution() throws SQLException {

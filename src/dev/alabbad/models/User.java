@@ -45,7 +45,8 @@ public class User {
     }
 
     public ByteArrayInputStream getProfileImg() {
-        return new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
+        return this.base64ProfileImg == null ? null
+                        : new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
     }
 
     public void displayDetails() {

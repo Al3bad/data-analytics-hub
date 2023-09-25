@@ -3,6 +3,7 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
@@ -56,12 +57,13 @@ public class LoginFormController extends FormController {
             return true;
         } catch (UserNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
-            return false;
+        } catch (UnauthorisedAction e) {
+            this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren()
                             .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
-            return false;
         }
+        return false;
     }
 
     @Override
