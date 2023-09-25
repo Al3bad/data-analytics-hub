@@ -9,23 +9,26 @@ import java.util.Scanner;
 
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UserNotFoundException;
-import dev.alabbad.models.User;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
+import dev.alabbad.models.User;
 import dev.alabbad.models.VIPUser;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.MainScene;
 import dev.alabbad.views.PrimaryButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -44,6 +47,8 @@ public class DashboardController extends VBox {
         } else {
             setupNormalUserView();
         }
+        this.setAlignment(Pos.CENTER);
+        this.setSpacing(8);
     }
 
     private void setupNormalUserView() {
@@ -54,10 +59,34 @@ public class DashboardController extends VBox {
 
     private void setupVIPUserView() throws SQLException {
         // this.getChildren().add(new Label("You're a VIP user"));
-        drawPieChart();
+        ArrayList<Integer> data = DB.getSharesDistribution();
+        int sumRecords = data.stream().mapToInt(num -> num.intValue()).sum();
+        if (sumRecords == 0) {
+            this.getChildren().add(new Label("There is not posts in the system!"));
+        } else {
+            drawPieChart(data);
+            displayValues(data);
+        }
         Button importPostsButton = new PrimaryButton("Import Posts");
         importPostsButton.onMouseClickedProperty().set(event -> this.onImportBtnClicked(event));
         this.getChildren().add(importPostsButton);
+    }
+
+    private void displayValues(ArrayList<Integer> data) {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(16);
+
+        // node, col, row, colSpan, rowSpan
+        gridPane.add(new Label("0-99 Shares"), 0, 0, 1, 1);
+        gridPane.add(new Label(":  " + data.get(0).toString() + " posts"), 1, 0, 1, 1);
+
+        gridPane.add(new Label("100-999 Shares"), 0, 1, 1, 1);
+        gridPane.add(new Label(":  " + data.get(1).toString() + " posts"), 1, 1, 1, 1);
+
+        gridPane.add(new Label("> 1000 Shares"), 0, 2, 1, 1);
+        gridPane.add(new Label(":  " + data.get(2).toString() + " posts"), 1, 2, 1, 1);
+        this.getChildren().add(gridPane);
     }
 
     public void onVIPBtnClicked(MouseEvent event) {
@@ -97,21 +126,27 @@ public class DashboardController extends VBox {
         }
     }
 
-    private void drawPieChart() throws SQLException {
+    private void drawPieChart(ArrayList<Integer> data) throws SQLException {
         // Preparing ObservbleList object
-        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-        ArrayList<Integer> shareDisribution = DB.getSharesDistribution();
+        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
 
-        data.add(new PieChart.Data("0 - 99 Shares", shareDisribution.get(0)));
-        data.add(new PieChart.Data("100 - 999 Shares", shareDisribution.get(1)));
-        data.add(new PieChart.Data("> 1000 Shares", shareDisribution.get(2)));
+        if (data.get(0) > 0) {
+            pieData.add(new PieChart.Data("0 - 99 Shares", data.get(0)));
+        }
+        if (data.get(1) > 0) {
+            pieData.add(new PieChart.Data("100 - 999 Shares", data.get(1)));
+        }
+        if (data.get(2) > 0) {
+            pieData.add(new PieChart.Data("> 1000 Shares", data.get(2)));
+        }
 
         // Creating a Pie chart
-        PieChart pieChart = new PieChart(data);
-        pieChart.setData(data);
-        pieChart.setTitle("Share Distribution");
+        PieChart pieChart = new PieChart(pieData);
+        pieChart.setData(pieData);
+        pieChart.setTitle("Shares Distribution");
         pieChart.setLabelLineLength(32);
         pieChart.setStartAngle(90);
+        pieChart.setLegendVisible(false);
         this.getChildren().add(pieChart);
     }
 
