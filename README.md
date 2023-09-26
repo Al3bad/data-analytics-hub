@@ -25,7 +25,17 @@ There are two ways to run the program:
 ### Method 1: Using Intellij IDEA IDE
 
 1. Open the root folder in Intellij IDEA IDE: `File -> Open`.
-2. Hit the run button in the top right corner of the IDE or use the hotkey `ctrl+R`.
+2. In the file explorer, expand `src` then `DataAnalyticsHub` folders.
+3. Right-click on `Main` class then select `More Run/Debug -> Modify Run Configurations...`
+4. In the "Build and run" section, open the "Modify options" menu then select "Add VM options"
+5. Add the following in the "VM options" field:
+
+```
+--module-path $ProjectFileDir$/lib --add-modules javafx.controls,javafx.fxml
+```
+
+6. Hit "Apply" then "Ok" button
+7. Now run the program by hitting the run button in the top right corner of the IDE or use the hotkey `ctrl+R`.
 
 ### Method 2.1: Using a bat script (Windows systems only)
 
