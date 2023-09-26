@@ -4,19 +4,37 @@
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 cd $SCRIPT_DIR
 
-# cleanup bin files
-[ -d "./bin" ] && rm -r bin
-
-# Compile java code
-# javac -d bin -cp lib/sqlite-jdbc-3.42.0.0.jar:bin src/*.java
-SRC_FILES=$(find ./src/dev/alabbad -name "*.java")
-javac -d ./bin -cp ./lib/sqlite-jdbc/*:./lib/javafx/* $SRC_FILES
-
-# Run the program
-java \
-	--module-path ./lib/javafx \
-	--add-modules javafx.controls,javafx.fxml \
-	-cp ./lib/sqlite-jdbc/*:./lib/javafx/*:resources:bin dev.alabbad.DataAnalyticsHub.Main $1
+binFolderPath="./bin"
 
 # cleanup bin files
-[ -d "./bin" ] && rm -r bin
+[ -d $binFolderPath ] && rm -r $binFolderPath
+
+# Find Java source files (*.java) and JAR files (*.jar)
+javaFiles=""
+jarFiles=""
+
+while IFS= read -r file; do
+	javaFiles="$javaFiles $file"
+done < <(find ./src -name "*.java" -type f)
+
+while IFS= read -r file; do
+	jarFiles="$jarFiles:$file"
+done < <(find ./lib -name "*.jar" -type f)
+
+# Build the classpath for any JAR files found in the source directory and its subdirectories
+classpath=${jarFiles#;}
+
+# Compile the Java source files
+javac -d $binFolderPath -cp "$classpath" $javaFiles
+
+javaExecutable="java"
+modulePath="./lib"
+modules="javafx.controls,javafx.fxml"
+fullClasspath="$classpath:./resources:$binFolderPath"
+mainClass="dev.alabbad.DataAnalyticsHub.Main"
+
+# Run the Java program
+"$javaExecutable" --module-path "$modulePath" --add-modules "$modules" -cp "$fullClasspath" "$mainClass"
+
+# cleanup bin files
+[ -d $binFolderPath ] && rm -r $binFolderPath
