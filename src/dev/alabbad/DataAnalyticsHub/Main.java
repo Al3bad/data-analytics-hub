@@ -19,6 +19,6 @@ package dev.alabbad.DataAnalyticsHub;
  */
 public class Main {
     public static void main(String[] args) {
-        new DataAnalyticsHub().run("app.db");
+        new DataAnalyticsHub().run();
     }
 }

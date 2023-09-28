@@ -21,24 +21,20 @@ import dev.alabbad.exceptions.UserNotFoundException;
 public class DB {
     private static Connection conn = null;
 
-    /**
-     * Connect to a sample database
-     *
-     * @throws ClassNotFoundException
-     */
-    public static void connect(String sqliteFilename) {
-        String url = "jdbc:sqlite:" + sqliteFilename;
-        try {
-            // create a connection to the sqlite DB
-            conn = DriverManager.getConnection(url);
-            System.out.println("Connection to SQLite has been established!");
-        } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
-        }
-    }
-
     public static Connection getConnection() {
         return conn;
+    }
+
+    /**
+     * Connect to the database.
+     *
+     * @param sqliteFilename
+     * @throws SQLException
+     */
+    public static void connect(String sqliteFilename) throws SQLException {
+        String url = "jdbc:sqlite:" + sqliteFilename;
+        // create a connection to the sqlite DB
+        conn = DriverManager.getConnection(url);
     }
 
     public static void createUserTable() {
