@@ -1,21 +1,58 @@
 #!/usr/bin/env bash
 
-# Set working directory as the location of the script (root folder of the project)
+# ==================================================
+# --> Set working dirctory as the location of the script
+# ==================================================
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 cd $SCRIPT_DIR
 
-# cleanup bin files
-[ -d "./bin" ] && rm -r bin
-[ -d "./bin_test" ] && rm -r bin_test
+# ==================================================
+# --> Cleanup bin files (if any)
+# ==================================================
+binFolderPath="./bin"
+binTestFolderPath="./bin_test"
 
-# Compile java code
-javac -d bin src/*.java
-# Compile java unit tests
-javac -d bin_test -cp lib/junit-4.13.2.jar:bin test/*.java
+[ -d $binFolderPath ] && rm -r $binFolderPath
+[ -d $binTestFolderPath ] && rm -r $binTestFolderPath
 
-# Run test
-# java -cp lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar:bin_test:bin org.junit.runner.JUnitCore ...
+# ==================================================
+# --> Find Java source files (*.java) and JAR files (*.jar)
+# ==================================================
+javaFiles=""
+javaTestFiles=""
+jarFiles=""
 
-# cleanup bin files
-[ -d "./bin_test" ] && rm -r bin_test
-[ -d "./bin" ] && rm -r bin
+while IFS= read -r file; do
+	javaFiles="$javaFiles $file"
+done < <(find ./src -name "*.java" -type f)
+
+while IFS= read -r file; do
+	javaTestFiles="$javaTestFiles $file"
+done < <(find ./test -name "*.java" -type f)
+
+while IFS= read -r file; do
+	jarFiles="$jarFiles:$file"
+done < <(find ./lib -name "*.jar" -type f)
+
+# Build the classpath for any JAR files found in the source directory and its subdirectories
+classpath=${jarFiles#;}
+
+# ==================================================
+# --> Compiles java files
+# ==================================================
+# Compile the Java source files
+javac -d $binFolderPath -cp "$classpath" $javaFiles
+
+# Compile the Java source files
+javac -d $binTestFolderPath -cp "$classpath:$binFolderPath" $javaTestFiles
+
+# ==================================================
+# --> Run tests
+# ==================================================
+java -cp "$classpath:$binTestFolderPath:$binFolderPath" org.junit.runner.JUnitCore test.TestDB
+
+# ==================================================
+# --> Cleanup bin files
+# ==================================================
+[ -d $binFolderPath ] && rm -r $binFolderPath
+[ -d $binTestFolderPath ] && rm -r $binTestFolderPath
