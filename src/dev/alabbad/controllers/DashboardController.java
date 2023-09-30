@@ -103,7 +103,7 @@ public class DashboardController extends VBox {
         // take action based on result
         if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
             try {
-                AppState.getInstance().setUser(DB.upgradeUser(AppState.getInstance().getUser()));
+                AppState.getInstance().setUser(DB.upgradeUser(AppState.getInstance().getUser().getUsername()));
                 AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             } catch (SQLException e) {
                 // TODO: handle exception

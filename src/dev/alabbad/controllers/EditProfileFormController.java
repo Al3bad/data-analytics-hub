@@ -1,5 +1,8 @@
 package dev.alabbad.controllers;
 
+import java.sql.SQLException;
+
+import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
@@ -10,9 +13,7 @@ import dev.alabbad.views.ExtendedPasswordField;
 import dev.alabbad.views.MainScene;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 
 public class EditProfileFormController extends SignupFormController {
     // TextField IDs & Labels
@@ -21,24 +22,21 @@ public class EditProfileFormController extends SignupFormController {
 
     public EditProfileFormController() {
         super();
+        this.setAlignment(Pos.CENTER);
+        this.textFieldElements.remove(PASSWORD);
+        this.textFieldElements.put(CURRENT_PASSWORD,
+                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
         this.textFieldElements.put(NEW_PASSWORD,
                         new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
-        setupForm();
-        // setupAvatar();
-        this.setAlignment(Pos.CENTER);
+        this.setupForm();
+        this.fillinForm();
+    }
 
-        // TODO: make sure that user creds are valid before updating
-        // TODO: handle some errors properly
-
+    private void fillinForm() {
         User loggedinUser = AppState.getInstance().getUser();
         this.textFieldElements.get(USERNAME).setText(loggedinUser.getUsername());
         this.textFieldElements.get(FNAME).setText(loggedinUser.getFirstName());
         this.textFieldElements.get(LNAME).setText(loggedinUser.getLastName());
-        this.textFieldElements.get(PASSWORD).setText("");
-        // Replace the label from "Password" to "Current Password"
-        VBox inputContainer = (VBox) this.textFieldElements.get(PASSWORD).getParent();
-        Label label = (Label) inputContainer.getChildren().get(0);
-        label.setText(CURRENT_PASSWORD);
         this.primaryBtn.setText("Edit");
     }
 
@@ -47,28 +45,31 @@ public class EditProfileFormController extends SignupFormController {
         if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
-        String username = (String) this.textFieldElements.get(USERNAME).getParsedVal();
-        String currentPassword = (String) this.textFieldElements.get(CURRENT_PASSWORD).getParsedVal();
+        String newUsername = (String) this.textFieldElements.get(USERNAME).getParsedVal();
+        String password = (String) this.textFieldElements.get(CURRENT_PASSWORD).getParsedVal();
         String newPassword = (String) this.textFieldElements.get(NEW_PASSWORD).getParsedVal();
         String fname = (String) this.textFieldElements.get(FNAME).getParsedVal();
         String lname = (String) this.textFieldElements.get(LNAME).getParsedVal();
 
         try {
-            String currentUsername = AppState.getInstance().getUser().getUsername();
-            User updatedUser = DB.updateUser(currentUsername, username, currentPassword, fname, lname);
-            if (updatedUser == null) {
-                this.afterContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
-                return false;
-            } else {
-                this.afterContainer.getChildren()
-                                .setAll(new AlertView("User has been successfully created!", "success"));
-                AppState.getInstance().setUser(updatedUser);
-                Scene dashboardScene = new Scene(new MainScene());
-                AppState.getInstance().switchScene(dashboardScene, true);
-            }
+            String username = AppState.getInstance().getUser().getUsername();
+            User updatedUser = DB.updateUser(username, newUsername, password, newPassword, fname, lname);
+            this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
+            AppState.getInstance().setUser(updatedUser);
+            Scene dashboardScene = new Scene(new MainScene());
+            AppState.getInstance().switchScene(dashboardScene, true);
         } catch (UserNotFoundException e) {
-            this.afterContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
+            this.beforeContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
             return false;
+        } catch (UnauthorisedAction e) {
+            this.beforeContainer.getChildren().setAll(new AlertView("Invalid credentials!", "error"));
+        } catch (SQLException e) {
+            if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
+                this.beforeContainer.getChildren()
+                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+            } else {
+                this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!!!", "error"));
+            }
         }
         return true;
     }

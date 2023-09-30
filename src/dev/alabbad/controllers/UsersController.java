@@ -162,10 +162,14 @@ public class UsersController extends TableView<User> {
     private void populateTable() {
         // get all users from db
         this.getItems().setAll();
-        HashMap<String, User> users = DB.getAllUsers();
-        for (String username : users.keySet()) {
-            User user = users.get(username);
-            this.getItems().add(user);
+        HashMap<String, User> users;
+        try {
+            users = DB.getAllUsers();
+            for (String username : users.keySet()) {
+                User user = users.get(username);
+                this.getItems().add(user);
+            }
+        } catch (SQLException e) {
         }
     }
 }
