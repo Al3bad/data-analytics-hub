@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
+/**
+ * Definition of user object
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class User {
     protected String username;
     protected String firstName;
@@ -23,6 +29,7 @@ public class User {
         this.firstName = fname;
         this.lastName = lname;
         if (profileImg != null) {
+            // convert th input stream image to base64
             try {
                 byte[] imgBytes = inputStreamToBytes(profileImg);
                 this.base64ProfileImg = Base64.getEncoder().encodeToString(imgBytes);
@@ -44,22 +51,37 @@ public class User {
         return this.lastName;
     }
 
+    /**
+     * Convert the base64 image to byte array input stream
+     *
+     * @return
+     */
     public ByteArrayInputStream getProfileImg() {
         return this.base64ProfileImg == null ? null
                         : new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
     }
 
+    /**
+     * Disaply user's basic information
+     */
     public void displayDetails() {
         System.out.println("Username: " + this.username);
         System.out.println("First Name: " + this.firstName);
         System.out.println("Last Name: " + this.lastName);
     }
 
-    private static byte[] inputStreamToBytes(InputStream inputStream) throws IOException {
+    /**
+     * Convert input stream image to bytes
+     *
+     * @param image
+     * @return image bytes
+     * @throws IOException
+     */
+    private static byte[] inputStreamToBytes(InputStream image) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
+        while ((bytesRead = image.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
         }
         return outputStream.toByteArray();

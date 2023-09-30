@@ -7,14 +7,23 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
+/**
+ * AppState singletone. It holds the logged in user object, the stage of the
+ * app, and a method to switch scenes.
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class AppState {
     private static AppState instance;
     User loggedInUser;
     Stage stage;
 
+    // prevent object instantiation from outside
     private AppState() {
     }
 
+    // lazy instantiation
     public static AppState getInstance() {
         if (instance == null) {
             instance = new AppState();
@@ -22,6 +31,7 @@ public class AppState {
         return instance;
     }
 
+    // getters
     public User getUser() {
         return this.loggedInUser;
     }
@@ -30,6 +40,7 @@ public class AppState {
         return this.stage;
     }
 
+    // setters
     public void setUser(User user) {
         this.loggedInUser = user;
     }
@@ -38,9 +49,17 @@ public class AppState {
         this.stage = stage;
     }
 
+    /**
+     * Switch scenes in the global stage
+     *
+     * @param scene new scene to be switched to
+     * @param loginIsRequired flag
+     */
     public void switchScene(Scene scene, Boolean loginIsRequired) {
         double minWidth = 680;
         double minHeight = 480;
+        // switch to login scene when the used is not logged in and tries to navigate
+        // to a restricted view
         if (loginIsRequired && this.loggedInUser == null) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Login is required");
@@ -48,7 +67,7 @@ public class AppState {
             alert.showAndWait();
             scene = new Scene(new PortalScene(new LoginFormController()), minWidth, minHeight);
         }
-
+        // set scene
         this.stage.setWidth(minWidth);
         this.stage.setHeight(minHeight);
         this.stage.setScene(scene);
