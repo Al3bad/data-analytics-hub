@@ -102,7 +102,6 @@ public class DB {
                             """);
             return true;
         } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
             return false;
         }
     }
@@ -128,7 +127,6 @@ public class DB {
                             """);
             return true;
         } catch (SQLException e) {
-            System.out.println("SQLiteError: " + e.getMessage());
             return false;
         }
     }
