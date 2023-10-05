@@ -56,8 +56,6 @@ public class AppState {
      * @param loginIsRequired flag
      */
     public void switchScene(Scene scene, Boolean loginIsRequired) {
-        double minWidth = 680;
-        double minHeight = 480;
         // switch to login scene when the used is not logged in and tries to navigate
         // to a restricted view
         if (loginIsRequired && this.loggedInUser == null) {
@@ -65,11 +63,11 @@ public class AppState {
             alert.setTitle("Login is required");
             alert.setContentText("Something worng happend! Please contact the developer");
             alert.showAndWait();
-            scene = new Scene(new PortalScene(new LoginFormController()), minWidth, minHeight);
+            scene = new Scene(new PortalScene(new LoginFormController()));
         }
         // set scene
-        this.stage.setWidth(minWidth);
-        this.stage.setHeight(minHeight);
+        this.stage.setWidth(this.stage.getWidth());
+        this.stage.setHeight(this.stage.getHeight());
         this.stage.setScene(scene);
     }
 }
