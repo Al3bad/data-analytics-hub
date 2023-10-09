@@ -90,16 +90,16 @@ public class DB {
             // construct & execute query
             Statement stmt = conn.createStatement();
             stmt.execute("""
-                            CREATE TABLE IF NOT EXISTS user (
-                                username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),
-                                password TEXT NOT NULL CHECK(LENGTH(password) > 3),
-                                fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
-                                lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
-                                isAdmin INTEGER NOT NULL DEFAULT 0,
-                                isVIP INTEGER NOT NULL DEFAULT 0,
-                                profileImg BLOB DEFAULT NULL
-                            );
-                            """);
+                    CREATE TABLE IF NOT EXISTS user (
+                        username TEXT UNIQUE NOT NULL PRIMARY KEY CHECK(TRIM(username) != ''),
+                        password TEXT NOT NULL CHECK(LENGTH(password) > 3),
+                        fname TEXT NOT NULL CHECK(TRIM(fname) != ''),
+                        lname TEXT NOT NULL CHECK(TRIM(lname) != ''),
+                        isAdmin INTEGER NOT NULL DEFAULT 0,
+                        isVIP INTEGER NOT NULL DEFAULT 0,
+                        profileImg BLOB DEFAULT NULL
+                    );
+                    """);
             return true;
         } catch (SQLException e) {
             return false;
@@ -116,15 +116,15 @@ public class DB {
             // construct & execute query
             Statement stmt = conn.createStatement();
             stmt.execute("""
-                            CREATE TABLE IF NOT EXISTS post (
-                                id INTEGER NOT NULL UNIQUE PRIMARY KEY,
-                                content TEXT NOT NULL,
-                                author TEXT NOT NULL,
-                                likes INTEGER NOT NULL,
-                                shares INTEGER NOT NULL,
-                                dateTime STRING NOT NULL
-                            );
-                            """);
+                    CREATE TABLE IF NOT EXISTS post (
+                        id INTEGER NOT NULL UNIQUE PRIMARY KEY,
+                        content TEXT NOT NULL,
+                        author TEXT NOT NULL,
+                        likes INTEGER NOT NULL,
+                        shares INTEGER NOT NULL,
+                        dateTime STRING NOT NULL
+                    );
+                    """);
             return true;
         } catch (SQLException e) {
             return false;
@@ -145,14 +145,14 @@ public class DB {
      * @param isAdmin
      * @return new User object
      * @throws UserNotFoundException when the user is not found after the insert
-     * operation
+     *                               operation
      * @throws SQLException
      */
     public static User insertUser(String username, String password, String fname, String lname, Boolean isAdmin)
-                    throws SQLException, UserNotFoundException {
+            throws SQLException, UserNotFoundException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
-                        "INSERT INTO user (username, password, fname, lname, isAdmin) VALUES (?, ?, ?, ?, ?)");
+                "INSERT INTO user (username, password, fname, lname, isAdmin) VALUES (?, ?, ?, ?, ?)");
         stmt.setString(1, username);
         stmt.setString(2, password);
         stmt.setString(3, fname);
@@ -173,7 +173,7 @@ public class DB {
     public static User getUser(String username) throws SQLException, UserNotFoundException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
-                        "SELECT username, fname, lname, isVIP, isAdmin, profileImg FROM user WHERE username = ?");
+                "SELECT username, fname, lname, isVIP, isAdmin, profileImg FROM user WHERE username = ?");
         stmt.setString(1, username);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
@@ -223,24 +223,24 @@ public class DB {
     }
 
     /**
-     * @param username current username
+     * @param username    current username
      * @param newUsername new username
-     * @param password current password
+     * @param password    current password
      * @param newPassword new password
-     * @param fname new first name
-     * @param lname new last name
+     * @param fname       new first name
+     * @param lname       new last name
      * @return
      * @throws UserNotFoundException when user is not found
-     * @throws UnauthorisedAction when credentials are incorrect
+     * @throws UnauthorisedAction    when credentials are incorrect
      * @throws SQLException
      */
     public static User updateUser(String username, String newUsername, String password, String newPassword,
-                    String fname, String lname) throws UserNotFoundException, SQLException, UnauthorisedAction {
+            String fname, String lname) throws UserNotFoundException, SQLException, UnauthorisedAction {
         // check authorisation
         loginUser(username, password);
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
-                        "UPDATE user SET username=?,password=?,fname=?,lname=? WHERE LOWER(username) = LOWER(?)");
+                "UPDATE user SET username=?,password=?,fname=?,lname=? WHERE LOWER(username) = LOWER(?)");
         stmt.setString(1, newUsername);
         stmt.setString(2, newPassword);
         stmt.setString(3, fname);
@@ -263,12 +263,12 @@ public class DB {
      * @param loggedinUsername logged in user
      * @return true
      * @throws UserNotFoundException when logged in user is not found in database
-     * @throws UnauthorisedAction when a normal/VIP user attempt to delete a post
-     * belongs to another user
+     * @throws UnauthorisedAction    when a normal/VIP user attempt to delete a post
+     *                               belongs to another user
      * @throws SQLException
      */
     public static Boolean deleteUser(String username, String loggedinUsername)
-                    throws SQLException, UserNotFoundException, UnauthorisedAction {
+            throws SQLException, UserNotFoundException, UnauthorisedAction {
         // construct & execute query
         if (!(getUser(loggedinUsername) instanceof AdminUser)) {
             throw new UnauthorisedAction("You're unauthorised to delete a user!");
@@ -290,16 +290,16 @@ public class DB {
      * @param username
      * @param password
      * @throws UserNotFoundException when user is not found in the database
-     * @throws UnauthorisedAction when credentials are incorrect
+     * @throws UnauthorisedAction    when credentials are incorrect
      * @throws SQLException
      */
     public static User loginUser(String username, String password)
-                    throws UserNotFoundException, SQLException, UnauthorisedAction {
+            throws UserNotFoundException, SQLException, UnauthorisedAction {
         // check if the user exists in the database first
         User user = getUser(username);
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
-                        "SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ? AND password = ?");
+                "SELECT username, fname, lname, isVIP, isAdmin FROM user WHERE username = ? AND password = ?");
         stmt.setString(1, user.getUsername());
         stmt.setString(2, password);
         ResultSet rs = stmt.executeQuery();
@@ -335,14 +335,15 @@ public class DB {
      * @param profileImg image to be updated
      * @return updated user
      * @throws UserNotFoundException when user is not found
-     * @throws IOException when an error occurs during converting stream to bytes
+     * @throws IOException           when an error occurs during converting stream
+     *                               to bytes
      * @throws SQLException
      */
     public static User updateUserProfileImg(String username, InputStream profileImg)
-                    throws SQLException, UserNotFoundException, IOException {
+            throws SQLException, UserNotFoundException, IOException {
         // construct & execute query
         PreparedStatement stmt = conn
-                        .prepareStatement("UPDATE user SET profileImg = ? WHERE LOWER(username) = LOWER(?)");
+                .prepareStatement("UPDATE user SET profileImg = ? WHERE LOWER(username) = LOWER(?)");
         stmt.setBytes(1, streamToBytes(profileImg));
         stmt.setString(2, username);
         int affectedRows = stmt.executeUpdate();
@@ -369,12 +370,12 @@ public class DB {
      * @throws SQLException
      */
     public static Post insertPost(Integer id, String content, String author, int likes, int shares, String dateTime)
-                    throws SQLException {
+            throws SQLException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement("""
-                        INSERT INTO post (id,content, author, likes, shares, dateTime)
-                        VALUES (?, ?, ?, ?, ?, ?);
-                        """);
+                INSERT INTO post (id,content, author, likes, shares, dateTime)
+                VALUES (?, ?, ?, ?, ?, ?);
+                """);
         if (id == null) {
             // auto generate id
             stmt.setNull(1, Types.NULL);
@@ -419,15 +420,15 @@ public class DB {
      * Get top N shared or liked posts
      *
      * @param sortBy the column that the posts should be sorted by. Accepts either
-     * `likes` or `shares`
-     * @param limit limit the number of post to return
+     *               `likes` or `shares`
+     * @param limit  limit the number of post to return
      * @return collection of posts
      * @throws InvalidArgumentException when the argument of `sortBy` is neither
-     * `likes` nor `shares`
+     *                                  `likes` nor `shares`
      * @throws SQLException
      */
     public static ArrayList<Post> getPosts(String sortBy, String author, int limit)
-                    throws InvalidArgumentException, SQLException {
+            throws InvalidArgumentException, SQLException {
         // all posts for all users or posts for a specific user?
         String stmtStr = "SELECT * FROM post";
         if (author.length() > 0) {
@@ -471,18 +472,18 @@ public class DB {
     /**
      * Delete a post by its ID
      *
-     * @param id post ID
-     * @param postAuthor post author
+     * @param id               post ID
+     * @param postAuthor       post author
      * @param loggedinUsername logged in user
      * @return true
      * @throws PostNotFoundException when post is not found in database
-     * @throws UnauthorisedAction when a normal/VIP user attempt to delete a post
-     * belongs to another user
+     * @throws UnauthorisedAction    when a normal/VIP user attempt to delete a post
+     *                               belongs to another user
      * @throws UserNotFoundException when logged in user is not found in database
      * @throws SQLException
      */
     public static Boolean deletePost(int id, String postAuthor, String loggedinUsername)
-                    throws PostNotFoundException, SQLException, UnauthorisedAction, UserNotFoundException {
+            throws PostNotFoundException, SQLException, UnauthorisedAction, UserNotFoundException {
         // check for authorisation for this operation
         Boolean isAdmin = getUser(loggedinUsername) instanceof AdminUser;
         Post post = getPost(id);
@@ -527,14 +528,14 @@ public class DB {
         // construct & execute query
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("""
-                        SELECT * FROM (
-                            SELECT COUNT(*) AS "shares-0-99" FROM post WHERE shares < 100
-                        ) JOIN (
-                            SELECT COUNT(*) AS "shares-100-999" FROM post WHERE shares BETWEEN 100 AND 999
-                        ) JOIN (
-                            SELECT COUNT(*) AS "shares-gt-999" FROM post WHERE shares > 999
-                        )
-                        """);
+                SELECT * FROM (
+                    SELECT COUNT(*) AS "shares-0-99" FROM post WHERE shares < 100
+                ) JOIN (
+                    SELECT COUNT(*) AS "shares-100-999" FROM post WHERE shares BETWEEN 100 AND 999
+                ) JOIN (
+                    SELECT COUNT(*) AS "shares-gt-999" FROM post WHERE shares > 999
+                )
+                """);
         ArrayList<Integer> shareDistribution = new ArrayList<>();
         while (rs.next()) {
             // extract data from result

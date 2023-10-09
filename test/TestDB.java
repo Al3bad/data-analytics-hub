@@ -116,7 +116,92 @@ public class TestDB {
     // ==================================================
     @Test
     public void updateUserTest() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
         User updatedUser = DB.updateUser("username", "newusername", "123456789", "123456789", "First", "Last");
         assertEquals("newusername", updatedUser.getUsername());
     }
+
+    // ==================================================
+    // --> Users: Delete user
+    // ==================================================
+    @Test
+    public void deleteUserTest_AdminUser() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+        // check that the user exist before deletion
+        assertEquals("username1", DB.getUser("username1").getUsername());
+        // delete user by admin
+        assertTrue(DB.deleteUser("username1", "admin"));
+    }
+
+    @Test(expected = UnauthorisedAction.class)
+    public void deleteUserTest_UnauthorisedUser() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+        // check that the user exist before deletion
+        assertEquals("username1", DB.getUser("username1").getUsername());
+        // delete user
+        assertTrue(DB.deleteUser("username1", "username1"));
+    }
+
+    // ==================================================
+    // --> Users: Login user
+    // ==================================================
+    @Test
+    public void loginUserTest() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+
+        // loggin nomral and admin users
+        User loggedinUser = DB.loginUser("username1", "123456789");
+        User loggedinAdmin = DB.loginUser("admin", "123456789");
+
+        // check type of user
+        assertTrue(loggedinUser instanceof User);
+        assertTrue(loggedinAdmin instanceof AdminUser);
+
+        // check the username
+        assertEquals("username1", loggedinUser.getUsername());
+        assertEquals("admin", loggedinAdmin.getUsername());
+    }
+
+    @Test(expected = UnauthorisedAction.class)
+    public void loginUserTest_UnauthorisedAction() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+
+        // trying logging in with incorrect password
+        DB.loginUser("username1", "invalidpassword");
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void loginUserTest_UserNotFoundException() throws SQLException, UserNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username1", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+
+        // trying logging in with incorrect password
+        DB.loginUser("usernotfound", "invalidpassword");
+    }
+
+    // ==================================================
+    // --> Users: Upgrade user
+    // ==================================================
+    // TODO:
 }
