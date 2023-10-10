@@ -3,6 +3,11 @@ package test;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -12,6 +17,7 @@ import dev.alabbad.exceptions.UserNotFoundException;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.User;
+import dev.alabbad.models.VIPUser;
 
 public class TestDB {
     static int testCount;
@@ -203,5 +209,48 @@ public class TestDB {
     // ==================================================
     // --> Users: Upgrade user
     // ==================================================
-    // TODO:
+    @Test
+    public void upgradeUserTest() throws SQLException, UserNotFoundException {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+
+        // check type of user before upgrade
+        assertTrue(DB.getUser("username") instanceof User);
+
+        // upgrade user
+        assertTrue(DB.upgradeUser("username") instanceof VIPUser);
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void upgradeUserTest_UserNotFoundException() throws SQLException, UserNotFoundException {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+        // try to upgrade user that doesn't exist
+        DB.upgradeUser("missinguser");
+    }
+
+    // ==================================================
+    // --> Users: Update user profile image
+    // ==================================================
+    @Test
+    public void updateUserProfileImgTest() throws SQLException, UserNotFoundException, IOException {
+        // add a users to DB
+        DB.insertUser("admin", "123456789", "First", "Last", true);
+        DB.insertUser("username", "123456789", "First", "Last", false);
+        DB.insertUser("username2", "123456789", "First", "Last", false);
+
+        // check that the profile img is null at the start
+        assertNull(DB.getUser("username").getProfileImg());
+
+        // get the image
+        File profileImg = new File("./resources/images/discord-avatar.jpeg");
+        InputStream img = new FileInputStream(profileImg);
+
+        // check that the image is not null
+        assertNotNull(DB.updateUserProfileImg("username", img).getProfileImg());
+    }
 }

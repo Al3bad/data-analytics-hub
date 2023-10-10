@@ -88,7 +88,7 @@ public class AvatarController extends StackPane {
     private File chooseFileLocation() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters()
-                        .addAll(new ExtensionFilter("Image Files ", Arrays.asList("*.jpeg", "*.jpg", "*.png")));
+                .addAll(new ExtensionFilter("Image Files ", Arrays.asList("*.jpeg", "*.jpg", "*.png")));
         File file = fileChooser.showOpenDialog(AppState.getInstance().getStage());
         return file;
     }

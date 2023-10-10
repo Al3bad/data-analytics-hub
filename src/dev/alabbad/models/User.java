@@ -58,7 +58,7 @@ public class User {
      */
     public ByteArrayInputStream getProfileImg() {
         return this.base64ProfileImg == null ? null
-                        : new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
+                : new ByteArrayInputStream(Base64.getDecoder().decode(this.base64ProfileImg));
     }
 
     /**
