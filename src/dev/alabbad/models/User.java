@@ -14,12 +14,20 @@ import java.util.Base64;
  */
 public class User {
     protected String username;
+    protected String password;
     protected String firstName;
     protected String lastName;
     protected String base64ProfileImg;
 
     public User(String username, String fname, String lname) {
         this.username = username;
+        this.firstName = fname;
+        this.lastName = lname;
+    }
+
+    public User(String username, String password, String fname, String lname) {
+        this.username = username;
+        this.username = password;
         this.firstName = fname;
         this.lastName = lname;
     }
@@ -49,6 +57,10 @@ public class User {
 
     public String getLastName() {
         return this.lastName;
+    }
+
+    public void setPassword(String value) {
+        this.password = value;
     }
 
     /**

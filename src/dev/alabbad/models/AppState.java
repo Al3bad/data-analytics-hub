@@ -52,7 +52,7 @@ public class AppState {
     /**
      * Switch scenes in the global stage
      *
-     * @param scene new scene to be switched to
+     * @param scene           new scene to be switched to
      * @param loginIsRequired flag
      */
     public void switchScene(Scene scene, Boolean loginIsRequired) {

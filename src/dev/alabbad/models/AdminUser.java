@@ -13,6 +13,10 @@ public class AdminUser extends User {
         super(username, fname, lname);
     }
 
+    public AdminUser(String username, String password, String fname, String lname) {
+        super(username, password, fname, lname);
+    }
+
     public AdminUser(String username, String fname, String lname, InputStream profileImg) {
         super(username, fname, lname, profileImg);
     }

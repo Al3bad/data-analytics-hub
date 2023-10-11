@@ -3,8 +3,9 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
@@ -54,16 +55,19 @@ public class NewPostFormController extends FormController {
         int shares = (int) this.textFieldElements.get(SHARES).getParsedVal();
         String dateTime = (String) this.textFieldElements.get(DATETIME).getParsedVal();
 
-        // Insert user to db
+        // Insert poast to db
         try {
-            Post newPost = DB.insertPost(id, content, author, likes, shares, dateTime);
+            Post newPost = Model.getPostDao().insert(new Post(id, content, author, likes, shares, dateTime));
             newPost.displayDetails();
             this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
             return true;
+        } catch (EntityNotFoundException e) {
+            this.beforeContainer.getChildren()
+                    .setAll(new AlertView("Post is not found! Something wrong happend!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
-            return false;
         }
+        return false;
     }
 }

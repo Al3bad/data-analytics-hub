@@ -5,7 +5,7 @@ import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 
 public interface Dao<A, T> {
-    public boolean createTabel();
+    public boolean createTable();
 
     public T get(A id) throws SQLException, EntityNotFoundException;
 

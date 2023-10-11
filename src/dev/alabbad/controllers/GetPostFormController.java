@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
-import dev.alabbad.exceptions.PostNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
@@ -50,7 +50,7 @@ public class GetPostFormController extends FormController {
             this.onSubmitHandler(postId);
             this.secondaryBtn.setDisable(false);
             return true;
-        } catch (PostNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             this.afterContainer.getChildren().setAll(new AlertView("Post not found!", "info"));
         } catch (SQLException e) {
             this.afterContainer.getChildren().setAll(new AlertView("Something wrong happends! [DB]", "error"));
@@ -58,7 +58,7 @@ public class GetPostFormController extends FormController {
             this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "info"));
         } catch (Exception e) {
             this.afterContainer.getChildren()
-                            .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
+                    .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
         }
         return false;
     }
@@ -75,9 +75,9 @@ public class GetPostFormController extends FormController {
         }
     }
 
-    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException, UnauthorisedAction {
+    protected void onSubmitHandler(int postId) throws SQLException, UnauthorisedAction, EntityNotFoundException {
         this.secondaryBtn.setDisable(true);
-        this.retrievedPost = DB.getPost(postId);
+        this.retrievedPost = Model.getPostDao().get(postId);
         this.afterContainer.getChildren().setAll(new PostView(this.retrievedPost));
     }
 

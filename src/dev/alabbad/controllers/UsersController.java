@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -98,7 +98,7 @@ public class UsersController extends TableView<User> {
                     // repopulate table with users after confirmating the deletion
                     this.populateTable();
                 }
-            } catch (UserNotFoundException e) {
+            } catch (EntityNotFoundException e) {
                 System.out.println("User not found!");
                 this.populateTable();
             } catch (SQLException e) {
@@ -114,18 +114,19 @@ public class UsersController extends TableView<User> {
      *
      * @param selectedUser
      * @return `true` when user confirms, `false` otherwise.
-     * @throws SQLException When faild to perform sql operation.
-     * @throws UserNotFoundException When the current logged in user is not found in
-     * the database
-     * @throws UnauthorisedAction When the current logged in user is admin
+     * @throws SQLException            When faild to perform sql operation.
+     * @throws EntityNotFoundException When the current logged in user is not found
+     *                                 in
+     *                                 the database
+     * @throws UnauthorisedAction      When the current logged in user is admin
      */
     public Boolean confirmDeletionDialog(User selectedUser)
-                    throws SQLException, UserNotFoundException, UnauthorisedAction {
+            throws SQLException, EntityNotFoundException, UnauthorisedAction {
         // create and show conformation dialog
         Dialog<ButtonType> dialog = new Dialog<ButtonType>();
         dialog.setTitle("Delete User Conformation");
         dialog.setContentText(
-                        "All posts associated to this user will be deleted as well? Are you sure you want to proceed?");
+                "All posts associated to this user will be deleted as well? Are you sure you want to proceed?");
         ButtonType deleteBtn = new ButtonType("Delete", ButtonData.OK_DONE);
         ButtonType cancelBtn = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(deleteBtn);
@@ -134,7 +135,7 @@ public class UsersController extends TableView<User> {
 
         if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
             // delete user
-            DB.deleteUser(selectedUser.getUsername(), AppState.getInstance().getUser().getUsername());
+            Model.getUserDao().delete(selectedUser, AppState.getInstance().getUser());
             return true;
         }
         return false;
@@ -164,7 +165,7 @@ public class UsersController extends TableView<User> {
         this.getItems().setAll();
         HashMap<String, User> users;
         try {
-            users = DB.getAllUsers();
+            users = Model.getUserDao().getAll();
             for (String username : users.keySet()) {
                 User user = users.get(username);
                 this.getItems().add(user);

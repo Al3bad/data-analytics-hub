@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
-import dev.alabbad.exceptions.PostNotFoundException;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
@@ -51,14 +51,14 @@ public class GetMostLikedPostsController extends FormController {
             this.afterContainer.getChildren().setAll(new AlertView("Something wrong happends! [DB]", "error"));
         } catch (Exception e) {
             this.afterContainer.getChildren()
-                            .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
+                    .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
         }
         return true;
     }
 
     protected void onSubmitHandler(String author, int limit)
-                    throws PostNotFoundException, SQLException, InvalidArgumentException {
-        this.displayResult(author, DB.getPosts("likes", author, limit));
+            throws EntityNotFoundException, SQLException, InvalidArgumentException {
+        this.displayResult(author, Model.getPostDao().getSome("likes", author, limit));
     }
 
     protected void displayResult(String author, ArrayList<Post> posts) {

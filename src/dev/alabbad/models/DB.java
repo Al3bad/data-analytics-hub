@@ -26,7 +26,7 @@ import dev.alabbad.exceptions.EntityNotFoundException;
  */
 public class DB {
     public static final int SQLITE_CONSTRAINT = 19;
-    private static Connection conn = null;
+    private static Connection conn;
 
     public static Connection getConnection() {
         return conn;
@@ -38,10 +38,11 @@ public class DB {
      * @param sqliteFilename
      * @throws SQLException
      */
-    public static void connect(String sqliteFilename) throws SQLException {
+    public static Connection connect(String sqliteFilename) throws SQLException {
         String url = "jdbc:sqlite:" + sqliteFilename;
         // create a connection to the sqlite DB
         conn = DriverManager.getConnection(url);
+        return conn;
     }
 
     /**

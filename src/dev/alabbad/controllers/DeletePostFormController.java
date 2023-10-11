@@ -2,11 +2,11 @@ package dev.alabbad.controllers;
 
 import java.sql.SQLException;
 
-import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
+import dev.alabbad.models.Post;
 import dev.alabbad.views.AlertView;
 
 public class DeletePostFormController extends GetPostFormController {
@@ -17,12 +17,12 @@ public class DeletePostFormController extends GetPostFormController {
     }
 
     @Override
-    protected void onSubmitHandler(int postId) throws PostNotFoundException, SQLException, UnauthorisedAction {
+    protected void onSubmitHandler(int postId) throws EntityNotFoundException, SQLException, UnauthorisedAction {
         try {
-            DB.deletePost(postId, AppState.getInstance().getUser().getUsername(),
-                            AppState.getInstance().getUser().getUsername());
+            Post post = Model.getPostDao().get(postId);
+            Model.getPostDao().delete(post, AppState.getInstance().getUser());
 
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             System.out.println("User not found!");
         }
         this.afterContainer.getChildren().setAll(new AlertView("The post has been successfully deleted!", "success"));

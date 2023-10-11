@@ -2,9 +2,9 @@ package dev.alabbad.controllers;
 
 import java.sql.SQLException;
 
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
-import dev.alabbad.exceptions.PostNotFoundException;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 
 public class GetMostSharedPostsController extends GetMostLikedPostsController {
     public GetMostSharedPostsController() {
@@ -13,7 +13,7 @@ public class GetMostSharedPostsController extends GetMostLikedPostsController {
     }
 
     protected void onSubmitHandler(String author, int limit)
-                    throws PostNotFoundException, SQLException, InvalidArgumentException {
-        this.displayResult(author, DB.getPosts("shares", author, limit));
+            throws EntityNotFoundException, SQLException, InvalidArgumentException {
+        this.displayResult(author, Model.getPostDao().getSome("shares", author, limit));
     }
 }

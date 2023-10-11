@@ -3,9 +3,11 @@ package dev.alabbad.DataAnalyticsHub;
 import java.sql.SQLException;
 
 import dev.alabbad.controllers.LoginFormController;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
+import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.views.PortalScene;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -38,7 +40,7 @@ public class DataAnalyticsHub extends Application {
         // Show stage
         AppState.getInstance().getStage().show();
         // Problem with database;
-        if (initDB("app.db") == false) {
+        if (initModel("app.db") == false) {
             Dialog<ButtonType> dialog = new Dialog<ButtonType>();
             ButtonType okBtn = new ButtonType("OK", ButtonData.OK_DONE);
             dialog.setTitle("Error");
@@ -63,22 +65,21 @@ public class DataAnalyticsHub extends Application {
      * @param sqliteFilename the filename for sqlite database
      * @return status
      */
-    public Boolean initDB(String sqliteFilename) {
+    public Boolean initModel(String sqliteFilename) {
         // Connect to DB
         try {
-            DB.connect(sqliteFilename);
-            DB.createUserTable();
-            DB.createPostTable();
+            Model.init(DB.connect(sqliteFilename));
         } catch (SQLException e) {
             return false;
         }
         // Create user table if it doesn't exist
         try {
             // NOTE: always make sure admin user exist in the system (this is for demo only)
-            DB.insertUser("admin", "admin", "Abdullah", "Alabbad", true);
+            Model.getUserDao().insert(new AdminUser("admin", "admin", "Abdullah", "Alabbad"));
+            // DB.insertUser("admin", "admin", "Abdullah", "Alabbad", true);
         } catch (SQLException e) {
             System.out.println("Admin user already exists");
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             System.out.println("Something wrong happend! Please contact the developer!");
         }
         return true;

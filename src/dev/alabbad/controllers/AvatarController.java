@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
 import dev.alabbad.views.MainScene;
 import javafx.animation.FadeTransition;
@@ -72,14 +72,15 @@ public class AvatarController extends StackPane {
         if (fileLocation != null) {
             try {
                 InputStream img = new FileInputStream(fileLocation);
-                User updatedUser = DB.updateUserProfileImg(AppState.getInstance().getUser().getUsername(), img);
+                User updatedUser = Model.getUserDao().updateProfileImg(AppState.getInstance().getUser().getUsername(),
+                        img);
                 AppState.getInstance().setUser(updatedUser);
                 AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             } catch (IOException e) {
                 System.out.println("File not read!");
             } catch (SQLException e) {
                 System.out.println("SQLException");
-            } catch (UserNotFoundException e) {
+            } catch (EntityNotFoundException e) {
                 System.out.println("UserNotFoundException");
             }
         }

@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
@@ -47,21 +47,20 @@ public class LoginFormController extends FormController {
         String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
 
         // Get user from DB
-        User user;
         try {
-            user = DB.loginUser(username, password);
+            User user = Model.getUserDao().login(username, password);
             // navigate to dashboard scene
             AppState.getInstance().setUser(user);
             Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
             return true;
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (UnauthorisedAction e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren()
-                            .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
+                    .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
         }
         return false;
     }

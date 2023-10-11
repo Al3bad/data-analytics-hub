@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
-import dev.alabbad.exceptions.PostNotFoundException;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
-import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
+import dev.alabbad.models.Post;
 import dev.alabbad.models.User;
 import dev.alabbad.models.VIPUser;
 import dev.alabbad.utils.Parser;
@@ -59,7 +59,7 @@ public class DashboardController extends VBox {
 
     private void setupVIPUserView() throws SQLException {
         // this.getChildren().add(new Label("You're a VIP user"));
-        ArrayList<Integer> data = DB.getSharesDistribution();
+        ArrayList<Integer> data = Model.getPostDao().getSharesDistribution();
         int sumRecords = data.stream().mapToInt(num -> num.intValue()).sum();
         if (sumRecords == 0) {
             this.getChildren().add(new Label("There is not posts in the system!"));
@@ -103,12 +103,12 @@ public class DashboardController extends VBox {
         // take action based on result
         if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
             try {
-                AppState.getInstance().setUser(DB.upgradeUser(AppState.getInstance().getUser().getUsername()));
+                AppState.getInstance().setUser(Model.getUserDao().upgrade(AppState.getInstance().getUser()));
                 AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             } catch (SQLException e) {
                 // TODO: handle exception
                 System.out.println("SQLite exception!");
-            } catch (UserNotFoundException e) {
+            } catch (EntityNotFoundException e) {
                 // TODO: handle exception
                 System.out.println("User not found exception");
             }
@@ -175,9 +175,9 @@ public class DashboardController extends VBox {
                 int ID = Parser.parseInt(fields[0], 0);
                 try {
                     // Skip if the there is an already existing post
-                    DB.getPost(ID);
+                    Model.getPostDao().get(ID);
                     System.out.printf("Post with ID = %d already exist!\n", ID);
-                } catch (PostNotFoundException e) {
+                } catch (EntityNotFoundException e) {
                     // parse fields
                     String content = fields[1];
                     String author = Parser.parseStr(fields[2]);
@@ -185,7 +185,7 @@ public class DashboardController extends VBox {
                     int shares = Parser.parseInt(fields[4], 0);
                     String dateTime = Parser.parseDateTime(fields[5]);
                     // create post obj
-                    DB.insertPost(ID, content, author, likes, shares, dateTime);
+                    Model.getPostDao().insert(new Post(ID, content, author, likes, shares, dateTime));
                     validRowsCount++;
                 }
             } catch (Exception e) {
@@ -199,7 +199,7 @@ public class DashboardController extends VBox {
     /**
      * Parse CSV string
      *
-     * @param str the CSV string to be parsed
+     * @param str               the CSV string to be parsed
      * @param expectedFieldsNum the number of expected fields
      * @return array of strings
      * @throws Exception

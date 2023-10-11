@@ -3,9 +3,10 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
+import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
@@ -25,9 +26,9 @@ public class EditProfileFormController extends SignupFormController {
         this.setAlignment(Pos.CENTER);
         this.textFieldElements.remove(PASSWORD);
         this.textFieldElements.put(CURRENT_PASSWORD,
-                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
+                new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
         this.textFieldElements.put(NEW_PASSWORD,
-                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
+                new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
         this.setupForm();
         this.fillinForm();
     }
@@ -53,12 +54,12 @@ public class EditProfileFormController extends SignupFormController {
 
         try {
             String username = AppState.getInstance().getUser().getUsername();
-            User updatedUser = DB.updateUser(username, newUsername, password, newPassword, fname, lname);
+            User updatedUser = Model.getUserDao().update(username, newUsername, password, newPassword, fname, lname);
             this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
             AppState.getInstance().setUser(updatedUser);
             Scene dashboardScene = new Scene(new MainScene());
             AppState.getInstance().switchScene(dashboardScene, true);
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
             return false;
         } catch (UnauthorisedAction e) {
@@ -66,7 +67,7 @@ public class EditProfileFormController extends SignupFormController {
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
-                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+                        .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
             } else {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!!!", "error"));
             }
