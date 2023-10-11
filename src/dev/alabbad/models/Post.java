@@ -7,7 +7,7 @@ package dev.alabbad.models;
  * @version 1.0.0
  */
 public class Post {
-    private int ID;
+    private Integer ID;
     private String content;
     private String author;
     private int likes;
@@ -26,7 +26,7 @@ public class Post {
         this.dateTime = dateTime;
     }
 
-    public int getID() {
+    public Integer getID() {
         return this.ID;
     }
 
@@ -79,12 +79,12 @@ public class Post {
      */
     public void displayDetails() {
         System.out.printf("%-7s | %-16s | %-7s | %-7s | %-7s | %-11s\n", this.getID(), this.getDateTime(),
-                        this.getLikes(), this.getShares(), this.getAuthor(), this.getContent());
+                this.getLikes(), this.getShares(), this.getAuthor(), this.getContent());
     }
 
     public String getCSVFormat() {
         return String.format("%s,%s,%s,%s,%s,%s", this.getID(), this.getDateTime(), this.getLikes(), this.getShares(),
-                        this.getAuthor(), this.getContent());
+                this.getAuthor(), this.getContent());
     }
 
 }

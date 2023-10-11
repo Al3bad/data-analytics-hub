@@ -16,7 +16,7 @@ import java.util.HashMap;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.PostNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.exceptions.UserNotFoundException;
+import dev.alabbad.exceptions.EntityNotFoundException;
 
 /**
  * This class holds a set of static methods to interact with the database
@@ -144,12 +144,12 @@ public class DB {
      * @param lname
      * @param isAdmin
      * @return new User object
-     * @throws UserNotFoundException when the user is not found after the insert
-     *                               operation
+     * @throws EntityNotFoundException when the user is not found after the insert
+     *                                 operation
      * @throws SQLException
      */
     public static User insertUser(String username, String password, String fname, String lname, Boolean isAdmin)
-            throws SQLException, UserNotFoundException {
+            throws SQLException, EntityNotFoundException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO user (username, password, fname, lname, isAdmin) VALUES (?, ?, ?, ?, ?)");
@@ -167,10 +167,10 @@ public class DB {
      * Get user by username
      *
      * @param username
-     * @throws UserNotFoundException when the user is not found
+     * @throws EntityNotFoundException when the user is not found
      * @throws SQLException
      */
-    public static User getUser(String username) throws SQLException, UserNotFoundException {
+    public static User getUser(String username) throws SQLException, EntityNotFoundException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT username, fname, lname, isVIP, isAdmin, profileImg FROM user WHERE username = ?");
@@ -192,7 +192,7 @@ public class DB {
             }
             return new User(user, fname, lname, profileImg);
         }
-        throw new UserNotFoundException("User not found!");
+        throw new EntityNotFoundException("User not found!");
     }
 
     /**
@@ -230,12 +230,12 @@ public class DB {
      * @param fname       new first name
      * @param lname       new last name
      * @return
-     * @throws UserNotFoundException when user is not found
-     * @throws UnauthorisedAction    when credentials are incorrect
+     * @throws EntityNotFoundException when user is not found
+     * @throws UnauthorisedAction      when credentials are incorrect
      * @throws SQLException
      */
     public static User updateUser(String username, String newUsername, String password, String newPassword,
-            String fname, String lname) throws UserNotFoundException, SQLException, UnauthorisedAction {
+            String fname, String lname) throws EntityNotFoundException, SQLException, UnauthorisedAction {
         // check authorisation
         loginUser(username, password);
         // construct & execute query
@@ -262,13 +262,14 @@ public class DB {
      * @param username
      * @param loggedinUsername logged in user
      * @return true
-     * @throws UserNotFoundException when logged in user is not found in database
-     * @throws UnauthorisedAction    when a normal/VIP user attempt to delete a post
-     *                               belongs to another user
+     * @throws EntityNotFoundException when logged in user is not found in database
+     * @throws UnauthorisedAction      when a normal/VIP user attempt to delete a
+     *                                 post
+     *                                 belongs to another user
      * @throws SQLException
      */
     public static Boolean deleteUser(String username, String loggedinUsername)
-            throws SQLException, UserNotFoundException, UnauthorisedAction {
+            throws SQLException, EntityNotFoundException, UnauthorisedAction {
         // construct & execute query
         if (!(getUser(loggedinUsername) instanceof AdminUser)) {
             throw new UnauthorisedAction("You're unauthorised to delete a user!");
@@ -277,7 +278,7 @@ public class DB {
         stmt.setString(1, username);
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
-            throw new UserNotFoundException("[ERROR-DB] User not found!");
+            throw new EntityNotFoundException("[ERROR-DB] User not found!");
         }
         // delete all posts associated to the deleted user
         DB.deletePosts(username);
@@ -289,12 +290,12 @@ public class DB {
      *
      * @param username
      * @param password
-     * @throws UserNotFoundException when user is not found in the database
-     * @throws UnauthorisedAction    when credentials are incorrect
+     * @throws EntityNotFoundException when user is not found in the database
+     * @throws UnauthorisedAction      when credentials are incorrect
      * @throws SQLException
      */
     public static User loginUser(String username, String password)
-            throws UserNotFoundException, SQLException, UnauthorisedAction {
+            throws EntityNotFoundException, SQLException, UnauthorisedAction {
         // check if the user exists in the database first
         User user = getUser(username);
         // construct & execute query
@@ -314,16 +315,16 @@ public class DB {
      *
      * @param username
      * @return updated user
-     * @throws UserNotFoundException when user is not found in the database
+     * @throws EntityNotFoundException when user is not found in the database
      * @throws SQLException
      */
-    public static User upgradeUser(String username) throws UserNotFoundException, SQLException {
+    public static User upgradeUser(String username) throws EntityNotFoundException, SQLException {
         // construct & execute query
         PreparedStatement stmt = conn.prepareStatement("UPDATE user SET isVIP=1 WHERE LOWER(username) = LOWER(?)");
         stmt.setString(1, username);
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
-            throw new UserNotFoundException("[ERROR-DB] User not found!");
+            throw new EntityNotFoundException("[ERROR-DB] User not found!");
         }
         return getUser(username);
     }
@@ -334,13 +335,13 @@ public class DB {
      * @param username
      * @param profileImg image to be updated
      * @return updated user
-     * @throws UserNotFoundException when user is not found
-     * @throws IOException           when an error occurs during converting stream
-     *                               to bytes
+     * @throws EntityNotFoundException when user is not found
+     * @throws IOException             when an error occurs during converting stream
+     *                                 to bytes
      * @throws SQLException
      */
     public static User updateUserProfileImg(String username, InputStream profileImg)
-            throws SQLException, UserNotFoundException, IOException {
+            throws SQLException, EntityNotFoundException, IOException {
         // construct & execute query
         PreparedStatement stmt = conn
                 .prepareStatement("UPDATE user SET profileImg = ? WHERE LOWER(username) = LOWER(?)");
@@ -348,7 +349,7 @@ public class DB {
         stmt.setString(2, username);
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
-            throw new UserNotFoundException("[ERROR-DB] User not found!");
+            throw new EntityNotFoundException("[ERROR-DB] User not found!");
         }
         return getUser(username);
     }
@@ -476,14 +477,15 @@ public class DB {
      * @param postAuthor       post author
      * @param loggedinUsername logged in user
      * @return true
-     * @throws PostNotFoundException when post is not found in database
-     * @throws UnauthorisedAction    when a normal/VIP user attempt to delete a post
-     *                               belongs to another user
-     * @throws UserNotFoundException when logged in user is not found in database
+     * @throws PostNotFoundException   when post is not found in database
+     * @throws UnauthorisedAction      when a normal/VIP user attempt to delete a
+     *                                 post
+     *                                 belongs to another user
+     * @throws EntityNotFoundException when logged in user is not found in database
      * @throws SQLException
      */
     public static Boolean deletePost(int id, String postAuthor, String loggedinUsername)
-            throws PostNotFoundException, SQLException, UnauthorisedAction, UserNotFoundException {
+            throws PostNotFoundException, SQLException, UnauthorisedAction, EntityNotFoundException {
         // check for authorisation for this operation
         Boolean isAdmin = getUser(loggedinUsername) instanceof AdminUser;
         Post post = getPost(id);
