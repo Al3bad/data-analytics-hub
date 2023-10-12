@@ -27,7 +27,7 @@ public class User {
 
     public User(String username, String password, String fname, String lname) {
         this.username = username;
-        this.username = password;
+        this.password = password;
         this.firstName = fname;
         this.lastName = lname;
     }
@@ -49,6 +49,10 @@ public class User {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getPassword() {
+        return this.password;
     }
 
     public String getFirstName() {

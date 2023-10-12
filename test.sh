@@ -49,7 +49,8 @@ javac -d $binTestFolderPath -cp "$classpath:$binFolderPath" $javaTestFiles
 # ==================================================
 # --> Run tests
 # ==================================================
-java -cp "$classpath:$binTestFolderPath:$binFolderPath" org.junit.runner.JUnitCore test.TestDB
+java -cp "$classpath:$binTestFolderPath:$binFolderPath" org.junit.runner.JUnitCore test.TestUserDao
+# java -cp "$classpath:$binTestFolderPath:$binFolderPath" org.junit.runner.JUnitCore test.TestDB
 
 # ==================================================
 # --> Cleanup bin files

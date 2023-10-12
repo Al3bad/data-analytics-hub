@@ -101,7 +101,7 @@ public class UserDao implements Dao<String, User> {
         PreparedStatement stmt = connection.prepareStatement(
                 "INSERT INTO user (username, password, fname, lname, isAdmin) VALUES (?, ?, ?, ?, ?)");
         stmt.setString(1, user.getUsername());
-        stmt.setString(2, user.getUsername());
+        stmt.setString(2, user.getPassword());
         stmt.setString(3, user.getFirstName());
         stmt.setString(4, user.getLastName());
         stmt.setBoolean(5, user instanceof AdminUser);
@@ -114,7 +114,7 @@ public class UserDao implements Dao<String, User> {
     public boolean delete(User user, User loggedInUser)
             throws SQLException, UnauthorisedAction, EntityNotFoundException {
         // construct & execute query
-        if (!(loggedInUser instanceof AdminUser)) {
+        if (!(loggedInUser instanceof AdminUser) || user instanceof AdminUser) {
             throw new UnauthorisedAction("You're unauthorised to delete a user!");
         }
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM user WHERE username = ?");
