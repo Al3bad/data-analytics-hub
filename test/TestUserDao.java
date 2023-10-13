@@ -45,7 +45,7 @@ public class TestUserDao {
     }
 
     @Test
-    public void createPostTableTest_Faild() throws SQLException {
+    public void createUserTableTest_Faild() throws SQLException {
         DB.getConnection().close();
         assertFalse(Model.getUserDao().createTable());
     }
@@ -73,8 +73,7 @@ public class TestUserDao {
     }
 
     @Test(expected = SQLException.class)
-    public void getUserTest_Excpetion() throws SQLException,
-            EntityNotFoundException {
+    public void getUserTest_Excpetion() throws SQLException, EntityNotFoundException {
         Model.getUserDao().insert(new User("username", "123456789", "First", "Last"));
         Model.getUserDao().insert(new User("username", "123456789", "First", "Last"));
     }
@@ -91,8 +90,7 @@ public class TestUserDao {
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void getUserTest_UserNotFoundException() throws SQLException,
-            EntityNotFoundException {
+    public void getUserTest_UserNotFoundException() throws SQLException, EntityNotFoundException {
         Model.getUserDao().get("username");
     }
 
@@ -122,7 +120,7 @@ public class TestUserDao {
         Model.getUserDao().insert(new User("username", "123456789", "First", "Last"));
         Model.getUserDao().insert(new User("username1", "123456789", "First", "Last"));
         User updatedUser = Model.getUserDao().update("username", "newusername", "123456789", "123456789", "First",
-                "Last");
+                        "Last");
         assertEquals("newusername", updatedUser.getUsername());
     }
 
@@ -130,8 +128,7 @@ public class TestUserDao {
     // --> Users: Delete user
     // ==================================================
     @Test
-    public void deleteUserTest_AdminUser() throws SQLException,
-            EntityNotFoundException, UnauthorisedAction {
+    public void deleteUserTest_AdminUser() throws SQLException, EntityNotFoundException, UnauthorisedAction {
         // add a users to DB
         AdminUser adminUser = new AdminUser("admin", "123456789", "First", "Last");
         User user1 = new User("username1", "123456789", "First", "Last");
@@ -200,7 +197,7 @@ public class TestUserDao {
 
     @Test(expected = EntityNotFoundException.class)
     public void loginUserTest_EntityNotFoundException()
-            throws SQLException, EntityNotFoundException, UnauthorisedAction {
+                    throws SQLException, EntityNotFoundException, UnauthorisedAction {
         // add a users to DB
         Model.getUserDao().insert(new User("username1", "123456789", "First", "Last"));
         // trying logging in with incorrect password
@@ -217,10 +214,8 @@ public class TestUserDao {
         User user1 = new User("username1", "123456789", "First", "Last");
         Model.getUserDao().insert(adminUser);
         Model.getUserDao().insert(user1);
-        Model.getUserDao().insert(new User("username2", "123456789", "First",
-                "Last"));
-        Model.getUserDao().insert(new User("username3", "123456789", "First",
-                "Last"));
+        Model.getUserDao().insert(new User("username2", "123456789", "First", "Last"));
+        Model.getUserDao().insert(new User("username3", "123456789", "First", "Last"));
         // check type of user before upgrade
         assertTrue(Model.getUserDao().get("username1") instanceof User);
         // upgrade user
@@ -228,8 +223,7 @@ public class TestUserDao {
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void upgradeUserTest_EntityNotFoundException() throws SQLException,
-            EntityNotFoundException {
+    public void upgradeUserTest_EntityNotFoundException() throws SQLException, EntityNotFoundException {
         // add a users to DB
         AdminUser adminUser = new AdminUser("admin", "123456789", "First", "Last");
         User user1 = new User("username1", "123456789", "First", "Last");
@@ -246,8 +240,7 @@ public class TestUserDao {
     // --> Users: Update user profile image
     // ==================================================
     @Test
-    public void updateUserProfileImgTest() throws SQLException,
-            EntityNotFoundException, IOException {
+    public void updateUserProfileImgTest() throws SQLException, EntityNotFoundException, IOException {
         // add a users to DB
         AdminUser adminUser = new AdminUser("admin", "123456789", "First", "Last");
         User user1 = new User("username1", "123456789", "First", "Last");
@@ -263,7 +256,6 @@ public class TestUserDao {
         InputStream img = new FileInputStream(profileImg);
 
         // check that the image is not null
-        assertNotNull(Model.getUserDao().updateProfileImg("username1",
-                img).getProfileImg());
+        assertNotNull(Model.getUserDao().updateProfileImg("username1", img).getProfileImg());
     }
 }
