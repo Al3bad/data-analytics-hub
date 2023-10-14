@@ -51,4 +51,20 @@ public class TestPostDao {
         Post post = Model.getPostDao().insert(new Post(123, "Hello World!", "xv", 22, 100, "10/10/2022 12:12"));
         assertEquals((Integer) 123, post.getID());
     }
+
+    // ==================================================
+    // --> Posts: Get
+    // ==================================================
+    @Test
+    public void getPostTest() throws SQLException, EntityNotFoundException {
+        Model.getPostDao().insert(new Post(123, "Hello World!", "xv", 22, 100, "10/10/2022 12:12"));
+        Post post = Model.getPostDao().get(123);
+        assertTrue(post instanceof Post);
+        assertEquals((Integer) 123, post.getID());
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void getUserTest_UserNotFoundException() throws SQLException, EntityNotFoundException {
+        Model.getPostDao().get(222);
+    }
 }
