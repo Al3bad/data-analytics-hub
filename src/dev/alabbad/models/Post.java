@@ -10,14 +10,14 @@ public class Post {
     private Integer ID;
     private String content;
     private String author;
-    private int likes;
-    private int shares;
+    private Integer likes;
+    private Integer shares;
     private String dateTime;
 
     public Post() {
     }
 
-    public Post(int ID, String content, String author, int likes, int shares, String dateTime) {
+    public Post(Integer ID, String content, String author, Integer likes, Integer shares, String dateTime) {
         this.ID = ID;
         this.content = content;
         this.author = author;
@@ -38,11 +38,11 @@ public class Post {
         return this.author;
     }
 
-    public int getLikes() {
+    public Integer getLikes() {
         return this.likes;
     }
 
-    public int getShares() {
+    public Integer getShares() {
         return this.shares;
     }
 
@@ -79,12 +79,12 @@ public class Post {
      */
     public void displayDetails() {
         System.out.printf("%-7s | %-16s | %-7s | %-7s | %-7s | %-11s\n", this.getID(), this.getDateTime(),
-                this.getLikes(), this.getShares(), this.getAuthor(), this.getContent());
+                        this.getLikes(), this.getShares(), this.getAuthor(), this.getContent());
     }
 
     public String getCSVFormat() {
         return String.format("%s,%s,%s,%s,%s,%s", this.getID(), this.getDateTime(), this.getLikes(), this.getShares(),
-                this.getAuthor(), this.getContent());
+                        this.getAuthor(), this.getContent());
     }
 
 }

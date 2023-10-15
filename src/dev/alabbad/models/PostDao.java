@@ -12,6 +12,12 @@ import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 
+/**
+ * The data access object for the posts
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class PostDao implements Dao<Integer, Post> {
     private Connection connection;
 
@@ -19,27 +25,39 @@ public class PostDao implements Dao<Integer, Post> {
         this.connection = connection;
     }
 
+    /**
+     * Create post table if not exist in the database
+     *
+     * @return `true` if no errors, `false` otherwise
+     */
     @Override
     public boolean createTable() {
         try {
             // construct & execute query
             Statement stmt = connection.createStatement();
             stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS post (
-                        id INTEGER NOT NULL UNIQUE PRIMARY KEY,
-                        content TEXT NOT NULL,
-                        author TEXT NOT NULL,
-                        likes INTEGER NOT NULL,
-                        shares INTEGER NOT NULL,
-                        dateTime STRING NOT NULL
-                    );
-                    """);
+                            CREATE TABLE IF NOT EXISTS post (
+                                id INTEGER NOT NULL UNIQUE PRIMARY KEY,
+                                content TEXT NOT NULL,
+                                author TEXT NOT NULL,
+                                likes INTEGER NOT NULL,
+                                shares INTEGER NOT NULL,
+                                dateTime STRING NOT NULL
+                            );
+                            """);
             return true;
         } catch (SQLException e) {
             return false;
         }
     }
 
+    /**
+     * Get post by its ID
+     *
+     * @param id post ID
+     * @throws EntityNotFoundException when post is not found
+     * @throws SQLException
+     */
     @Override
     public Post get(Integer id) throws SQLException, EntityNotFoundException {
         // construct & execute query
@@ -62,18 +80,18 @@ public class PostDao implements Dao<Integer, Post> {
      * Get top N shared or liked posts
      *
      * @param sortBy the column that the posts should be sorted by. Accepts either
-     *               `likes` or `shares`
-     * @param limit  limit the number of post to return
+     * `likes` or `shares`
+     * @param limit limit the number of post to return
      * @return collection of posts
      * @throws InvalidArgumentException when the argument of `sortBy` is neither
-     *                                  `likes` nor `shares`
+     * `likes` nor `shares`
      * @throws SQLException
      */
     public ArrayList<Post> getSome(String sortBy, String author, int limit)
-            throws InvalidArgumentException, SQLException {
+                    throws InvalidArgumentException, SQLException {
         // all posts for all users or posts for a specific user?
         String stmtStr = "SELECT * FROM post";
-        if (author.length() > 0) {
+        if (author != null && author.length() > 0) {
             stmtStr += " WHERE LOWER(author) = LOWER(?)";
         }
         // sort posts by likes or shares
@@ -90,7 +108,7 @@ public class PostDao implements Dao<Integer, Post> {
 
         // construct & execute query
         PreparedStatement stmt = connection.prepareStatement(stmtStr);
-        if (author.length() > 0) {
+        if (author != null && author.length() > 0) {
             stmt.setString(1, author);
             stmt.setInt(2, limit);
         } else {
@@ -111,13 +129,20 @@ public class PostDao implements Dao<Integer, Post> {
         return posts;
     }
 
+    /**
+     * Insert new post
+     *
+     * @param post
+     * @return new post object
+     * @throws SQLException
+     */
     @Override
-    public Post insert(Post post) throws SQLException, EntityNotFoundException {
+    public Post insert(Post post) throws SQLException {
         // construct & execute query
         PreparedStatement stmt = connection.prepareStatement("""
-                INSERT INTO post (id,content, author, likes, shares, dateTime)
-                VALUES (?, ?, ?, ?, ?, ?);
-                """);
+                        INSERT INTO post (id,content, author, likes, shares, dateTime)
+                        VALUES (?, ?, ?, ?, ?, ?);
+                        """);
         if (post.getID() == null) {
             // auto generate id
             stmt.setNull(1, Types.NULL);
@@ -132,12 +157,20 @@ public class PostDao implements Dao<Integer, Post> {
         stmt.setString(6, post.getDateTime());
         stmt.executeUpdate();
         return new Post(getLastInsertedRowID(), post.getContent(), post.getAuthor(), post.getLikes(), post.getShares(),
-                post.getDateTime());
+                        post.getDateTime());
     }
 
+    /**
+     * Delete a post
+     *
+     * @param post
+     * @param loggedInUser
+     * @return true
+     * @throws UnauthorisedAction when the post is not found in the database
+     * @throws SQLException
+     */
     @Override
-    public boolean delete(Post post, User loggedInUser)
-            throws SQLException, UnauthorisedAction, EntityNotFoundException {
+    public boolean delete(Post post, User loggedInUser) throws SQLException, UnauthorisedAction {
         // check for authorisation for this operation
         Boolean isAdmin = loggedInUser instanceof AdminUser;
         if (!isAdmin && !post.getAuthor().toLowerCase().equals(loggedInUser.getUsername().toLowerCase())) {
@@ -156,12 +189,48 @@ public class PostDao implements Dao<Integer, Post> {
         return true;
     }
 
+    /**
+     * Delete all posts associated with a username/author
+     *
+     * @param postAuthor author of the posts
+     * @return true
+     * @throws SQLException
+     */
     public Boolean deleteAll(String postAuthor) throws SQLException {
         // construct & execute query
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM post WHERE LOWER(author) = LOWER(?)");
         stmt.setString(1, postAuthor);
         stmt.executeUpdate();
         return true;
+    }
+
+    /**
+     * Get the number of shares for each share category
+     *
+     * @return array list of number of shares for each category
+     * @throws SQLException
+     */
+    public ArrayList<Integer> getSharesDistribution() throws SQLException {
+        // construct & execute query
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("""
+                        SELECT * FROM (
+                            SELECT COUNT(*) AS "shares-0-99" FROM post WHERE shares < 100
+                        ) JOIN (
+                            SELECT COUNT(*) AS "shares-100-999" FROM post WHERE shares BETWEEN 100 AND 999
+                        ) JOIN (
+                            SELECT COUNT(*) AS "shares-gt-999" FROM post WHERE shares > 999
+                        )
+                        """);
+        ArrayList<Integer> shareDistribution = new ArrayList<>();
+        while (rs.next()) {
+            // extract data from result
+            shareDistribution.add(rs.getInt("shares-0-99"));
+            shareDistribution.add(rs.getInt("shares-100-999"));
+            shareDistribution.add(rs.getInt("shares-gt-999"));
+            return shareDistribution;
+        }
+        return shareDistribution;
     }
 
     /**
@@ -176,34 +245,5 @@ public class PostDao implements Dao<Integer, Post> {
             throw new SQLException("Last inserted ID is not found!");
         }
         return rs.getInt("id");
-    }
-
-    /**
-     * Get the number of shares for each share category
-     *
-     * @return array list of number of shares for each category
-     * @throws SQLException
-     */
-    public ArrayList<Integer> getSharesDistribution() throws SQLException {
-        // construct & execute query
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("""
-                SELECT * FROM (
-                    SELECT COUNT(*) AS "shares-0-99" FROM post WHERE shares < 100
-                ) JOIN (
-                    SELECT COUNT(*) AS "shares-100-999" FROM post WHERE shares BETWEEN 100 AND 999
-                ) JOIN (
-                    SELECT COUNT(*) AS "shares-gt-999" FROM post WHERE shares > 999
-                )
-                """);
-        ArrayList<Integer> shareDistribution = new ArrayList<>();
-        while (rs.next()) {
-            // extract data from result
-            shareDistribution.add(rs.getInt("shares-0-99"));
-            shareDistribution.add(rs.getInt("shares-100-999"));
-            shareDistribution.add(rs.getInt("shares-gt-999"));
-            return shareDistribution;
-        }
-        return shareDistribution;
     }
 }

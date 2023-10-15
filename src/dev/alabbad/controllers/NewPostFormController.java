@@ -62,9 +62,6 @@ public class NewPostFormController extends FormController {
             this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
             return true;
-        } catch (EntityNotFoundException e) {
-            this.beforeContainer.getChildren()
-                    .setAll(new AlertView("Post is not found! Something wrong happend!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
         }
