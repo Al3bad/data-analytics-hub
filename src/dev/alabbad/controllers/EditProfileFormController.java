@@ -26,9 +26,9 @@ public class EditProfileFormController extends SignupFormController {
         this.setAlignment(Pos.CENTER);
         this.textFieldElements.remove(PASSWORD);
         this.textFieldElements.put(CURRENT_PASSWORD,
-                new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
+                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true)));
         this.textFieldElements.put(NEW_PASSWORD,
-                new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
+                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true, true)));
         this.setupForm();
         this.fillinForm();
     }
@@ -46,6 +46,8 @@ public class EditProfileFormController extends SignupFormController {
         if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
+
+        String username = AppState.getInstance().getUser().getUsername();
         String newUsername = (String) this.textFieldElements.get(USERNAME).getParsedVal();
         String password = (String) this.textFieldElements.get(CURRENT_PASSWORD).getParsedVal();
         String newPassword = (String) this.textFieldElements.get(NEW_PASSWORD).getParsedVal();
@@ -53,8 +55,8 @@ public class EditProfileFormController extends SignupFormController {
         String lname = (String) this.textFieldElements.get(LNAME).getParsedVal();
 
         try {
-            String username = AppState.getInstance().getUser().getUsername();
-            User updatedUser = Model.getUserDao().update(username, newUsername, password, newPassword, fname, lname);
+            User updatedUser = Model.getUserDao().update(new User(newUsername, newPassword, fname, lname), username,
+                            password);
             this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
             AppState.getInstance().setUser(updatedUser);
             Scene dashboardScene = new Scene(new MainScene());
@@ -67,7 +69,7 @@ public class EditProfileFormController extends SignupFormController {
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
-                        .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
             } else {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!!!", "error"));
             }

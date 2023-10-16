@@ -119,9 +119,21 @@ public class TestUserDao {
         // add a users to DB
         Model.getUserDao().insert(new User("username", "123456789", "First", "Last"));
         Model.getUserDao().insert(new User("username1", "123456789", "First", "Last"));
-        User updatedUser = Model.getUserDao().update("username", "newusername", "123456789", "123456789", "First",
-                        "Last");
+        User updatedUser = Model.getUserDao().update(new User("newusername", "newpassword", "First", "Last"),
+                        "username", "123456789");
         assertEquals("newusername", updatedUser.getUsername());
+        assertTrue(Model.getUserDao().login("newusername", "newpassword") instanceof User);;
+    }
+
+    @Test
+    public void updateUserTest_withoutPassword() throws SQLException, EntityNotFoundException, UnauthorisedAction {
+        // add a users to DB
+        Model.getUserDao().insert(new User("username", "123456789", "First", "Last"));
+        Model.getUserDao().insert(new User("username1", "123456789", "First", "Last"));
+        User updatedUser = Model.getUserDao().update(new User("newusername", null, "First", "Last"), "username",
+                        "123456789");
+        assertEquals("newusername", updatedUser.getUsername());
+        assertTrue(Model.getUserDao().login("newusername", "123456789") instanceof User);;
     }
 
     // ==================================================

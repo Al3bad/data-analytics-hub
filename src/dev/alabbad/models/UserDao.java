@@ -165,39 +165,47 @@ public class UserDao implements Dao<String, User> {
     /**
      * Update user
      *
+     * @param updatedUser User object that contains the updated details
      * @param username current username
-     * @param newUsername new username
      * @param password current password
-     * @param newPassword new password
-     * @param fname new first name
-     * @param lname new last name
-     * @return
+     * @return updated User object
      * @throws EntityNotFoundException when user is not found
      * @throws UnauthorisedAction when credentials are incorrect
      * @throws SQLException
      */
-    public User update(String username, String newUsername, String password, String newPassword, String fname,
-                    String lname) throws EntityNotFoundException, SQLException, UnauthorisedAction {
-        // TODO: improve this
+    public User update(User updatedUser, String username, String password)
+                    throws EntityNotFoundException, SQLException, UnauthorisedAction {
         // check authorisation
         login(username, password);
         // construct & execute query
-        PreparedStatement stmt = connection.prepareStatement(
-                        "UPDATE user SET username=?,password=?,fname=?,lname=? WHERE LOWER(username) = LOWER(?)");
-        stmt.setString(1, newUsername);
-        stmt.setString(2, newPassword);
-        stmt.setString(3, fname);
-        stmt.setString(4, lname);
-        stmt.setString(5, username);
+        int paramOffset = 0;
+        String stmtStr = "UPDATE user SET ";
+
+        if (updatedUser.getPassword() != null) {
+            stmtStr += "password=?,";
+            paramOffset = 1;
+        }
+
+        stmtStr += "username=?,fname=?,lname=? WHERE LOWER(username) = LOWER(?)";
+
+        PreparedStatement stmt = connection.prepareStatement(stmtStr);
+
+        if (updatedUser.getPassword() != null) {
+            stmt.setString(1, updatedUser.getPassword());
+        }
+        stmt.setString(1 + paramOffset, updatedUser.getUsername());
+        stmt.setString(2 + paramOffset, updatedUser.getFirstName());
+        stmt.setString(3 + paramOffset, updatedUser.getLastName());
+        stmt.setString(4 + paramOffset, username);
         stmt.executeUpdate();
         // Update author field for the posts
         PreparedStatement stmt2 = connection
                         .prepareStatement("UPDATE post SET author=? WHERE LOWER(author) = LOWER(?)");
-        stmt2.setString(1, newUsername);
+        stmt2.setString(1, updatedUser.getUsername());
         stmt2.setString(2, username);
         stmt2.executeUpdate();
         // return updated user information
-        return get(newUsername);
+        return get(updatedUser.getUsername());
     }
 
     /**
