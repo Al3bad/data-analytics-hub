@@ -2,6 +2,12 @@ package dev.alabbad.models;
 
 import java.sql.Connection;
 
+/**
+ * Model class to access data access objects
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class Model {
     private static UserDao userDao;
     private static PostDao postDao;

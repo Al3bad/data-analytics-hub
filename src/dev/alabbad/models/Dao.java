@@ -4,6 +4,12 @@ import java.sql.SQLException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 
+/**
+ * The interface for data access objects
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public interface Dao<A, T> {
     public boolean createTable();
 
