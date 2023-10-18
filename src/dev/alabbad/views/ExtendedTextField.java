@@ -3,6 +3,12 @@ package dev.alabbad.views;
 import dev.alabbad.exceptions.ParseValueException;
 import javafx.scene.control.TextField;
 
+/**
+ * TextFiled with parser handler
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class ExtendedTextField<T> extends TextField {
     // reference:
     // -
@@ -23,6 +29,12 @@ public class ExtendedTextField<T> extends TextField {
         return parsedVal;
     }
 
+    /**
+     * Parse the value from the text field using the specified parser
+     *
+     * @return parsed value
+     * @throws ParseValueException when failed to parse
+     */
     public T parse() throws ParseValueException {
         this.parsedVal = parsor.run(this.getText());
         return this.parsedVal;

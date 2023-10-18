@@ -3,6 +3,12 @@ package dev.alabbad.views;
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.TextFieldSkin;
 
+/**
+ * PasswordField with parser handler
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class ExtendedPasswordField<T> extends ExtendedTextField<T> {
     public ExtendedPasswordField(Function<T> parsor) {
         super(parsor);
@@ -11,7 +17,7 @@ public class ExtendedPasswordField<T> extends ExtendedTextField<T> {
 
     // reference:
     // - https://www.youtube.com/watch?v=YAei6rpMzkc
-    // - Chanching the skin of the text field
+    // - Changing the skin of the text field
     private class PasswordFieldSkin extends TextFieldSkin {
         static final char BULLET = '\u25cf';
 
