@@ -7,6 +7,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Portal scene for login/signup form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class PortalScene extends AnchorPane {
     @FXML
     private VBox container;
