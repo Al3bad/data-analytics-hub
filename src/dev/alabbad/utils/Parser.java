@@ -141,4 +141,27 @@ public class Parser {
         }
         return parseInt(integerStr, min);
     }
+
+    /**
+     * Parse CSV string
+     *
+     * @param str the CSV string to be parsed
+     * @param expectedFieldsNum the number of expected fields
+     * @return array of strings
+     * @throws ParseValueException when the number of fields doesn't match the
+     * expected number
+     */
+    public static String[] parseCSV(String str, int expectedFieldsNum) throws ParseValueException {
+        String[] fields = str.split(",");
+
+        if (fields.length != expectedFieldsNum) {
+            throw new ParseValueException("Invalid number of fields");
+        }
+
+        for (int i = 0; i < fields.length; i++) {
+            fields[i] = fields[i].strip();
+        }
+        return fields;
+    }
+
 }
