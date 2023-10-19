@@ -107,4 +107,24 @@ public class TestParser {
     public void parseDateTest_ParseValueException_OutOfRange() throws ParseValueException {
         Parser.parseDateTime("40/05/2023 10:10");
     }
+
+    // ===============================================
+    // --> parseCSV()
+    // ===============================================
+    @Test
+    public void parseCSVTest_Valid() throws ParseValueException {
+        String[] fields = Parser.parseCSV("10,Check out this epic film.,A567VF,1000,1587,1/06/2023 14:25", 6);
+        assertEquals(6, fields.length);
+    }
+
+    @Test(expected = ParseValueException.class)
+    public void parseCSVTest_InvalidFieldsNumException_less() throws ParseValueException {
+        Parser.parseCSV("10,Check out this epic film.,A567VF,1000,1587", 6);
+    }
+
+    @Test(expected = ParseValueException.class)
+    public void parseCSVTest_InvalidFieldsNumException_more() throws ParseValueException {
+        Parser.parseCSV("10,Check out this epic film.,A567VF,1000,1587,1/06/2023 14:25,extra", 6);
+    }
+
 }
