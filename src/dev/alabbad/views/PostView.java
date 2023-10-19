@@ -9,6 +9,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * Post view to display post information
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class PostView extends VBox {
     @FXML
     private Text author;
