@@ -5,12 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
+import dev.alabbad.utils.FileHandler;
 import dev.alabbad.views.MainScene;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -23,8 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Duration;
 
 public class AvatarController extends StackPane {
@@ -68,30 +66,22 @@ public class AvatarController extends StackPane {
     }
 
     private void onProfileImageClicked(MouseEvent event) {
-        File fileLocation = chooseFileLocation();
+        File fileLocation = FileHandler.chooseFileForOpen("Image Files ", FileHandler.TYPE_IMG);
         if (fileLocation != null) {
             try {
                 InputStream img = new FileInputStream(fileLocation);
-                User updatedUser = Model.getUserDao().updateProfileImg(AppState.getInstance().getUser().getUsername(),
-                        img);
+                String username = AppState.getInstance().getUser().getUsername();
+                User updatedUser = Model.getUserDao().updateProfileImg(username, img);
                 AppState.getInstance().setUser(updatedUser);
                 AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             } catch (IOException e) {
                 System.out.println("File not read!");
-            } catch (SQLException e) {
-                System.out.println("SQLException");
             } catch (EntityNotFoundException e) {
                 System.out.println("UserNotFoundException");
+            } catch (SQLException e) {
+                System.out.println("SQLException");
             }
         }
-    }
-
-    private File chooseFileLocation() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters()
-                .addAll(new ExtensionFilter("Image Files ", Arrays.asList("*.jpeg", "*.jpg", "*.png")));
-        File file = fileChooser.showOpenDialog(AppState.getInstance().getStage());
-        return file;
     }
 
     ImagePattern pattern(Image img, double radius) {

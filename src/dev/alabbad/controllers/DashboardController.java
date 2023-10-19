@@ -13,6 +13,7 @@ import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.models.User;
 import dev.alabbad.models.VIPUser;
+import dev.alabbad.utils.FileHandler;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.DialogView;
 import dev.alabbad.views.MainScene;
@@ -27,8 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 public class DashboardController extends VBox {
     public DashboardController() {
@@ -106,7 +105,7 @@ public class DashboardController extends VBox {
 
     public void onImportBtnClicked(MouseEvent event) {
         try {
-            File fileLocation = chooseFileLocation();
+            File fileLocation = FileHandler.chooseFileForOpen("CSV files ", FileHandler.TYPE_CSV);
             if (fileLocation != null) {
                 this.importPost(fileLocation);
             }
@@ -137,13 +136,6 @@ public class DashboardController extends VBox {
         pieChart.setStartAngle(90);
         pieChart.setLegendVisible(false);
         this.getChildren().add(pieChart);
-    }
-
-    private File chooseFileLocation() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSV Files ", "*.csv"));
-        File file = fileChooser.showOpenDialog(AppState.getInstance().getStage());
-        return file;
     }
 
     private void importPost(File file) throws FileNotFoundException {

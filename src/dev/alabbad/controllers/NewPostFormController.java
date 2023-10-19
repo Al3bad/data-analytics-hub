@@ -74,8 +74,7 @@ public class NewPostFormController extends FormController {
 
         // Insert post to db
         try {
-            Post newPost = Model.getPostDao().insert(new Post(id, content, author, likes, shares, dateTime));
-            newPost.displayDetails();
+            Model.getPostDao().insert(new Post(id, content, author, likes, shares, dateTime));
             this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
             return true;

@@ -2,15 +2,14 @@ package dev.alabbad.controllers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
-import dev.alabbad.models.AppState;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
+import dev.alabbad.utils.FileHandler;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
 import dev.alabbad.views.ExtendedTextField;
@@ -18,8 +17,6 @@ import dev.alabbad.views.PostView;
 import dev.alabbad.views.PrimaryButton;
 import dev.alabbad.views.SecondaryButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * Implementation of get post form
@@ -85,9 +82,9 @@ public class GetPostFormController extends FormController {
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
         try {
-            File fileLocation = chooseFileLocation();
+            File fileLocation = FileHandler.chooseFileForSave("CSV Files ", FileHandler.TYPE_CSV);
             if (fileLocation != null) {
-                this.exportPost(this.retrievedPost.getCSVFormat(), fileLocation);
+                FileHandler.writeToFile(this.retrievedPost.toString(), fileLocation);
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found exception!");
@@ -105,19 +102,5 @@ public class GetPostFormController extends FormController {
         this.secondaryBtn.setDisable(true);
         this.retrievedPost = Model.getPostDao().get(postId);
         this.afterContainer.getChildren().setAll(new PostView(this.retrievedPost));
-    }
-
-    private File chooseFileLocation() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSV Files ", "*.csv"));
-        File file = fileChooser.showSaveDialog(AppState.getInstance().getStage());
-        return file;
-    }
-
-    private void exportPost(String content, File file) throws FileNotFoundException {
-        PrintWriter writer;
-        writer = new PrintWriter(file);
-        writer.println(content);
-        writer.close();
     }
 }
