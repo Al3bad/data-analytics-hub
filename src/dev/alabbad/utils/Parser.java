@@ -76,10 +76,10 @@ public class Parser {
      * @throws ParseValueException when `str` length is less than 6 characters
      */
     public static String parsePassword(String str) throws ParseValueException {
-        if (str.trim().length() < 6) {
+        if (str.length() < 6) {
             throw new ParseValueException("Value must have a least 6 charachters!");
         }
-        return str.trim();
+        return str;
     }
 
     /**
