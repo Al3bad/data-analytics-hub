@@ -18,6 +18,12 @@ import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Implementation of the signup form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class SignupFormController extends FormController {
     // TextField IDs & Labels
     protected final static String USERNAME = "Username";
@@ -38,11 +44,18 @@ public class SignupFormController extends FormController {
         return textFieldElements;
     }
 
+    /**
+     * Primary button handler - signup user
+     *
+     * @param event mouse event
+     */
     @Override
     protected Boolean onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
+
+        // get values from input fields
         String username = (String) this.textFieldElements.get(USERNAME).getParsedVal();
         String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
         String fname = (String) this.textFieldElements.get(FNAME).getParsedVal();
@@ -51,18 +64,25 @@ public class SignupFormController extends FormController {
         // Insert user to db
         try {
             User newUser = Model.getUserDao().insert(new User(username, password, fname, lname));
-            this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
+            // set logged in user
             AppState.getInstance().setUser(newUser);
+            // navigate to dashboard scene
             AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             return true;
+        } catch (EntityNotFoundException e) {
+            this.beforeContainer.getChildren().setAll(
+                            new AlertView("Couldn't get user after signup! Please contact the developer!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
-        } catch (EntityNotFoundException e) {
-            System.out.println("Something wrong happend! Please contact the developer!");
         }
         return false;
     }
 
+    /**
+     * Secondary button handler - switch to login form
+     *
+     * @param event mouse event
+     */
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
         Scene portalScene = new Scene(new PortalScene(new LoginFormController()));

@@ -16,6 +16,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Implementation of edit profile form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class EditProfileFormController extends SignupFormController {
     // TextField IDs & Labels
     protected final static String CURRENT_PASSWORD = "Current Password";
@@ -33,6 +39,9 @@ public class EditProfileFormController extends SignupFormController {
         this.fillinForm();
     }
 
+    /**
+     * Fill in the form with the details of the loagged in user
+     */
     private void fillinForm() {
         User loggedinUser = AppState.getInstance().getUser();
         this.textFieldElements.get(USERNAME).setText(loggedinUser.getUsername());
@@ -41,12 +50,18 @@ public class EditProfileFormController extends SignupFormController {
         this.primaryBtn.setText("Edit");
     }
 
+    /**
+     * Primary button handler - edit user's profile
+     *
+     * @param event mouse evnet
+     */
     @Override
     protected Boolean onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
 
+        // get values from text fields
         String username = AppState.getInstance().getUser().getUsername();
         String newUsername = (String) this.textFieldElements.get(USERNAME).getParsedVal();
         String password = (String) this.textFieldElements.get(CURRENT_PASSWORD).getParsedVal();
@@ -58,9 +73,10 @@ public class EditProfileFormController extends SignupFormController {
             User updatedUser = Model.getUserDao().update(new User(newUsername, newPassword, fname, lname), username,
                             password);
             this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
+            // set the updated user
             AppState.getInstance().setUser(updatedUser);
-            Scene dashboardScene = new Scene(new MainScene());
-            AppState.getInstance().switchScene(dashboardScene, true);
+            // rerender main scene to display changes
+            AppState.getInstance().switchScene(new Scene(new MainScene()), true);
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
             return false;

@@ -19,6 +19,12 @@ import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Implementation of the login form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class LoginFormController extends FormController {
     // TextField IDs & Labels
     private final static String USERNAME = "Username";
@@ -26,11 +32,13 @@ public class LoginFormController extends FormController {
 
     public LoginFormController() {
         super(createTextFieldElements(), new PrimaryButton("Login"), new SecondaryButton("Signup"));
-        // NOTE: remove this later
-        this.textFieldElements.get(USERNAME).setText("xv");
-        this.textFieldElements.get(PASSWORD).setText("1234567");
     }
 
+    /**
+     * Add the text fields for this form
+     *
+     * @return linked hash map containing the text field elements
+     */
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
         LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
         textFieldElements.put(USERNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
@@ -38,21 +46,28 @@ public class LoginFormController extends FormController {
         return textFieldElements;
     }
 
+    /**
+     * Primary button handler - login user
+     *
+     * @param event mouse event
+     */
     @Override
     protected Boolean onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
             return false;
         }
+
+        // get values from input fields
         String username = (String) this.textFieldElements.get(USERNAME).getParsedVal();
         String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
 
         // Get user from DB
         try {
             User user = Model.getUserDao().login(username, password);
-            // navigate to dashboard scene
+            // set logged in user
             AppState.getInstance().setUser(user);
-            Scene dashboardScene = new Scene(new MainScene());
-            AppState.getInstance().switchScene(dashboardScene, true);
+            // navigate to dashboard scene
+            AppState.getInstance().switchScene(new Scene(new MainScene()), true);
             return true;
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
@@ -60,14 +75,18 @@ public class LoginFormController extends FormController {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren()
-                    .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
+                            .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
         }
         return false;
     }
 
+    /**
+     * Secondary button handler - switch to signup form
+     *
+     * @param event mouse event
+     */
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
-        Scene portalScene = new Scene(new PortalScene(new SignupFormController()));
-        AppState.getInstance().switchScene(portalScene, false);
+        AppState.getInstance().switchScene(new Scene(new PortalScene(new SignupFormController())), false);
     }
 }

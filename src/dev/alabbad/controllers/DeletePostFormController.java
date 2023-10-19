@@ -9,6 +9,12 @@ import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.views.AlertView;
 
+/**
+ * Implementation of delete post form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class DeletePostFormController extends GetPostFormController {
     public DeletePostFormController() {
         super();
