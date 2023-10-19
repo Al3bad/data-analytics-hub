@@ -16,15 +16,19 @@ public class DeletePostFormController extends GetPostFormController {
         this.btnGroup.getChildren().remove(1);
     }
 
+    /**
+     * Delete post by it's id from the model
+     *
+     * @param postId post id
+     * @throws EntityNotFoundException when the post is not found
+     * @throws UnauthorisedAction when the user attempt to delete someone else's
+     * post
+     * @throws SQLException
+     */
     @Override
     protected void onSubmitHandler(int postId) throws EntityNotFoundException, SQLException, UnauthorisedAction {
-        try {
-            Post post = Model.getPostDao().get(postId);
-            Model.getPostDao().delete(post, AppState.getInstance().getUser());
-
-        } catch (EntityNotFoundException e) {
-            System.out.println("User not found!");
-        }
+        Post post = Model.getPostDao().get(postId);
+        Model.getPostDao().delete(post, AppState.getInstance().getUser());
         this.afterContainer.getChildren().setAll(new AlertView("The post has been successfully deleted!", "success"));
     }
 }

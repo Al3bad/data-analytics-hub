@@ -21,6 +21,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+/**
+ * Implementation of get post form
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class GetPostFormController extends FormController {
     private Post retrievedPost;
 
@@ -32,12 +38,23 @@ public class GetPostFormController extends FormController {
         this.secondaryBtn.setDisable(true);
     }
 
+    /**
+     * Add the text fields for this form
+     *
+     * @return linked hash map containing the text field elements
+     */
     public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
         LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
         textFieldElements.put(POSTID, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
         return textFieldElements;
     }
 
+    /**
+     * Call the form submission handler
+     *
+     * @param event moust event
+     * @return true if the form is valid, false, otherwise
+     */
     @Override
     protected Boolean onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.afterContainer) == false) {
@@ -56,13 +73,15 @@ public class GetPostFormController extends FormController {
             this.afterContainer.getChildren().setAll(new AlertView("Something wrong happends! [DB]", "error"));
         } catch (UnauthorisedAction e) {
             this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "info"));
-        } catch (Exception e) {
-            this.afterContainer.getChildren()
-                    .setAll(new AlertView("Invalid value! ID must be a positive integer!", "error"));
         }
         return false;
     }
 
+    /**
+     * Secondary button handler - Export post
+     *
+     * @param event moust event
+     */
     @Override
     protected void onSecondaryBtnClicked(MouseEvent event) {
         try {
@@ -75,6 +94,13 @@ public class GetPostFormController extends FormController {
         }
     }
 
+    /**
+     * Get post by it's id from the model
+     *
+     * @param postId post id
+     * @throws EntityNotFoundException when the post is not found
+     * @throws SQLException
+     */
     protected void onSubmitHandler(int postId) throws SQLException, UnauthorisedAction, EntityNotFoundException {
         this.secondaryBtn.setDisable(true);
         this.retrievedPost = Model.getPostDao().get(postId);

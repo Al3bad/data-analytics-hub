@@ -44,7 +44,7 @@ public class GetMostLikedPostsFormController extends FormController {
     }
 
     /**
-     * Call the form submit handler
+     * Call the form submission handler
      *
      * @param event moust event
      * @return true if the form is valid, false, otherwise
