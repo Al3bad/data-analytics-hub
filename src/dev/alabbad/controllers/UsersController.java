@@ -2,7 +2,6 @@ package dev.alabbad.controllers;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Optional;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.exceptions.EntityNotFoundException;
@@ -10,10 +9,7 @@ import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import dev.alabbad.views.DialogView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -79,86 +75,42 @@ public class UsersController extends TableView<User> {
     }
 
     /**
-     * [INTERACTS WITH VIEW] Key press handler on the table view. Delete the
-     * selected user when the delete/backspace button is pressed.
+     * Key press handler on the table view. Delete the selected user when the
+     * delete/backspace button is pressed.
      *
      * @param event key event
      */
     private void onKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.DELETE) || event.getCode().equals(KeyCode.BACK_SPACE)) {
-            try {
-                // get the user object from the selected row
-                TableViewSelectionModel<User> selectionModel = this.getSelectionModel();
-                ObservableList<User> selectedItems = selectionModel.getSelectedItems();
-                User selectedUser = (User) selectedItems.get(0);
-                if (selectedUser instanceof AdminUser) {
-                    // prevent deleting admin users
-                    this.showDeletionNotAllowedDialog();
-                } else if (selectedUser instanceof User && this.confirmDeletionDialog(selectedUser) == true) {
-                    // repopulate table with users after confirmating the deletion
-                    this.populateTable();
-                }
-            } catch (EntityNotFoundException e) {
-                System.out.println("User not found!");
+            // get the user object from the selected row
+            User selectedUser = (User) this.getSelectionModel().getSelectedItems().get(0);
+            // Conformation dialog
+            if (selectedUser instanceof AdminUser) {
+                new DialogView("Not Allowed Operation", "Admin user cannot be deleted!", "OK");
+            } else {
+                new DialogView("Delete User Conformation",
+                                "All posts associated to this user will be deleted as well? Are you sure you want to proceed?",
+                                "Delete", "Cancel", () -> {
+                                    try {
+                                        // delete user
+                                        Model.getUserDao().delete(selectedUser, AppState.getInstance().getUser());
+                                    } catch (EntityNotFoundException e) {
+                                        new DialogView("User Not Found", "User is not found in the database!", "OK");
+                                        this.populateTable();
+                                    } catch (UnauthorisedAction e) {
+                                        new DialogView("Not Allowed Operation", "Admin user cannot be deleted!", "OK");
+                                    } catch (SQLException e) {
+                                        new DialogView("DB Error",
+                                                        "Something wrong happend! Please contact the developer", "OK");
+                                    }
+                                });
                 this.populateTable();
-            } catch (SQLException e) {
-                System.out.println("Something wrong happends!");
-            } catch (UnauthorisedAction e) {
-                System.out.println("Unauth action!");
             }
         }
     }
 
     /**
-     * [INTERACTS WITH VIEW] Confirmation for user deletion
-     *
-     * @param selectedUser
-     * @return `true` when user confirms, `false` otherwise.
-     * @throws SQLException            When faild to perform sql operation.
-     * @throws EntityNotFoundException When the current logged in user is not found
-     *                                 in
-     *                                 the database
-     * @throws UnauthorisedAction      When the current logged in user is admin
-     */
-    public Boolean confirmDeletionDialog(User selectedUser)
-            throws SQLException, EntityNotFoundException, UnauthorisedAction {
-        // create and show conformation dialog
-        Dialog<ButtonType> dialog = new Dialog<ButtonType>();
-        dialog.setTitle("Delete User Conformation");
-        dialog.setContentText(
-                "All posts associated to this user will be deleted as well? Are you sure you want to proceed?");
-        ButtonType deleteBtn = new ButtonType("Delete", ButtonData.OK_DONE);
-        ButtonType cancelBtn = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(deleteBtn);
-        dialog.getDialogPane().getButtonTypes().add(cancelBtn);
-        Optional<ButtonType> result = dialog.showAndWait();
-
-        if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
-            // delete user
-            Model.getUserDao().delete(selectedUser, AppState.getInstance().getUser());
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * [INTERACTS WITH VIEW] Show a dialog when attempting to delete an admin user.
-     * This dialog just shows a user friendly message that the operatino is not
-     * allowed
-     */
-    public void showDeletionNotAllowedDialog() {
-        // create and show logout conformation dialog
-        Dialog<ButtonType> dialog = new Dialog<ButtonType>();
-        dialog.setTitle("Not Allowed Operation");
-        dialog.setContentText("Admin user cannot be deleted!");
-        ButtonType deleteBtn = new ButtonType("Ok", ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(deleteBtn);
-        dialog.showAndWait();
-    }
-
-    /**
-     * [INTERACTS WITH VIEW] Get all users from the database then populate the
-     * tables.
+     * Get all users from the database then populate the tables.
      */
     private void populateTable() {
         // get all users from db

@@ -1,7 +1,6 @@
 package dev.alabbad.views;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.Set;
 
 import dev.alabbad.controllers.AvatarController;
@@ -21,9 +20,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
@@ -32,6 +28,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * Main scene
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class MainScene extends AnchorPane {
     // User details section
     @FXML
@@ -45,7 +47,7 @@ public class MainScene extends AnchorPane {
 
     // Actions items
     @FXML
-    private VBox tabs; // NOTE: we might need this when implementing stage 2
+    private VBox tabs;
 
     @FXML
     private ToggleGroup actionsGroup;
@@ -79,46 +81,73 @@ public class MainScene extends AnchorPane {
     private VBox container;
 
     public MainScene() {
+        // load fxml file
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/main-scene.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
-
         try {
             fxmlLoader.load();
         } catch (IOException exception) {
-            System.out.println("Something wrong happends while load dashboard scene!!!");
             throw new RuntimeException(exception);
         }
 
-        // NOTE: List of users for ADMIN USER
-        if (AppState.getInstance().getUser() instanceof AdminUser) {
-            this.usersTab = new RadioButton();
-            this.usersTab.setText("Users");
-            this.usersTab.getStylesheets().add("/css/tab.css");
-            this.usersTab.getStyleClass().add("tab");
-            this.usersTab.getStyleClass().add("tab-container");
-            this.usersTab.toggleGroupProperty().set(this.actionsGroup);
-            this.tabs.getChildren().add(new HBox(usersTab));
+        User user = AppState.getInstance().getUser();
+
+        // add Users tab when the the logged in user is admin
+        if (user instanceof AdminUser) {
+            this.addUsersTab();
         }
-        // get all TextField in the form
+
+        this.initTabs();
+        this.initUserDetails(user);
+        this.displaySelectedTab();
+    }
+
+    /**
+     * Add users tab with the necessary styles
+     */
+    private void addUsersTab() {
+        this.usersTab = new RadioButton();
+        this.usersTab.setText("Users");
+        this.usersTab.getStylesheets().add("/css/tab.css");
+        this.usersTab.getStyleClass().add("tab");
+        this.usersTab.getStyleClass().add("tab-container");
+        this.usersTab.toggleGroupProperty().set(this.actionsGroup);
+        this.tabs.getChildren().add(new HBox(usersTab));
+    }
+
+    /**
+     * Initialise tabs
+     */
+    private void initTabs() {
+        // get all radio buttons (act as tabs)
         Set<Node> radioButtons = this.lookupAll(".tab");
-        // put TextField element in the HashMap
+
+        // remove the default styles of the radio buttons (act as tabs)
         for (Node textField : radioButtons) {
             ((RadioButton) textField).getStyleClass().remove("radio-button");
         }
 
-        displaySelectedTab();
+        // add event add event listener to the radio buttons (act as tabs)
         this.actionsGroup.selectedToggleProperty()
                         .addListener((observable, oldValue, newValue) -> displaySelectedTab());
-
-        this.userDetailsContainer.getChildren().add(0, new AvatarController());
-        User user = AppState.getInstance().getUser();
-        if (user != null) {
-            this.fullName.setText("Hello " + user.getFirstName() + " " + user.getLastName());
-            this.username.setText("@" + user.getUsername());
-        }
     }
 
+    /**
+     * Add the avatar and fill in details of the logged in user
+     *
+     * @param user logged in user
+     */
+    private void initUserDetails(User user) {
+        this.userDetailsContainer.getChildren().add(0, new AvatarController());
+        this.fullName.setText("Hello " + user.getFirstName() + " " + user.getLastName());
+        this.username.setText("@" + user.getUsername());
+    }
+
+    /**
+     * Disaplay the element of the the selcted tab (radio button) in the main
+     * container
+     */
     private void displaySelectedTab() {
         if (this.actionsGroup.getSelectedToggle() == this.dashboardTab) {
             this.container.getChildren().setAll(new DashboardController());
@@ -139,22 +168,17 @@ public class MainScene extends AnchorPane {
         }
     }
 
+    /**
+     * Handler of the logout button
+     *
+     * @param event moust event
+     */
     @FXML
     public void onLogoutBtnClicked(MouseEvent event) {
         // create and show logout conformation dialog
-        Dialog<ButtonType> dialog = new Dialog<ButtonType>();
-        dialog.setTitle("Logout Conformation");
-        dialog.setContentText("Are you sure you want to logout?");
-        ButtonType logoutBtn = new ButtonType("Logout", ButtonData.OK_DONE);
-        ButtonType cancelBtn = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(logoutBtn);
-        dialog.getDialogPane().getButtonTypes().add(cancelBtn);
-        Optional<ButtonType> result = dialog.showAndWait();
-
-        // take action based on result
-        if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
+        new DialogView("Logout Conformation", "Are you sure you want to logout?", "Logout", "Cancel", () -> {
             AppState.getInstance().setUser(null);
             AppState.getInstance().switchScene(new Scene(new PortalScene(new LoginFormController())), false);
-        }
+        });
     }
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Scanner;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
@@ -15,6 +14,7 @@ import dev.alabbad.models.Post;
 import dev.alabbad.models.User;
 import dev.alabbad.models.VIPUser;
 import dev.alabbad.utils.Parser;
+import dev.alabbad.views.DialogView;
 import dev.alabbad.views.MainScene;
 import dev.alabbad.views.PrimaryButton;
 import javafx.collections.FXCollections;
@@ -23,9 +23,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -91,28 +88,20 @@ public class DashboardController extends VBox {
 
     public void onVIPBtnClicked(MouseEvent event) {
         // display the dialgo for vip upgrade
-        Dialog<ButtonType> dialog = new Dialog<ButtonType>();
-        dialog.setTitle("VIP Upgrade");
-        dialog.setContentText("Would you like to subscribe to the application for a monthly fee of $0?");
-        ButtonType upgradeBtn = new ButtonType("Yes", ButtonData.OK_DONE);
-        ButtonType cancelBtn = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(upgradeBtn);
-        dialog.getDialogPane().getButtonTypes().add(cancelBtn);
-        Optional<ButtonType> result = dialog.showAndWait();
-
-        // take action based on result
-        if (result.isPresent() && result.get().getButtonData() == ButtonData.OK_DONE) {
-            try {
-                AppState.getInstance().setUser(Model.getUserDao().upgrade(AppState.getInstance().getUser()));
-                AppState.getInstance().switchScene(new Scene(new MainScene()), true);
-            } catch (SQLException e) {
-                // TODO: handle exception
-                System.out.println("SQLite exception!");
-            } catch (EntityNotFoundException e) {
-                // TODO: handle exception
-                System.out.println("User not found exception");
-            }
-        }
+        new DialogView("VIP Upgrade", "Would you like to subscribe to the application for a monthly fee of $0?", "Yes",
+                        "Cancel", () -> {
+                            try {
+                                AppState.getInstance()
+                                                .setUser(Model.getUserDao().upgrade(AppState.getInstance().getUser()));
+                                AppState.getInstance().switchScene(new Scene(new MainScene()), true);
+                            } catch (EntityNotFoundException e) {
+                                new DialogView("User Not Found", "Couldn't upgrade user! Please contact the developer!",
+                                                "OK");
+                            } catch (SQLException e) {
+                                new DialogView("DB Error", "Something wrong happend! Please contact the developer",
+                                                "OK");
+                            }
+                        });
     }
 
     public void onImportBtnClicked(MouseEvent event) {
@@ -171,7 +160,7 @@ public class DashboardController extends VBox {
         while (scan.hasNextLine()) {
             try {
                 readRowsCount++;
-                String[] fields = parseCSV(scan.nextLine(), expectedFieldsNum);
+                String[] fields = Parser.parseCSV(scan.nextLine(), expectedFieldsNum);
                 int ID = Parser.parseInt(fields[0], 0);
                 try {
                     // Skip if the there is an already existing post
@@ -194,27 +183,6 @@ public class DashboardController extends VBox {
         }
         System.out.printf("%d valid posts has been loaded\n", validRowsCount);
         System.out.printf("%d invalid posts has been ignored\n", readRowsCount - validRowsCount);
-    }
-
-    /**
-     * Parse CSV string
-     *
-     * @param str               the CSV string to be parsed
-     * @param expectedFieldsNum the number of expected fields
-     * @return array of strings
-     * @throws Exception
-     */
-    public static String[] parseCSV(String str, int expectedFieldsNum) throws Exception {
-        String[] fields = str.split(",");
-
-        if (fields.length != expectedFieldsNum) {
-            throw new Exception("Invalid number of fields");
-        }
-
-        for (int i = 0; i < fields.length; i++) {
-            fields[i] = fields[i].strip();
-        }
-        return fields;
     }
 
 }

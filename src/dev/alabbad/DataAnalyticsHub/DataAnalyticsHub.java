@@ -8,12 +8,10 @@ import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Model;
+import dev.alabbad.views.DialogView;
 import dev.alabbad.views.PortalScene;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 
 /**
@@ -41,12 +39,7 @@ public class DataAnalyticsHub extends Application {
         AppState.getInstance().getStage().show();
         // Problem with database;
         if (initModel("app.db") == false) {
-            Dialog<ButtonType> dialog = new Dialog<ButtonType>();
-            ButtonType okBtn = new ButtonType("OK", ButtonData.OK_DONE);
-            dialog.setTitle("Error");
-            dialog.setContentText("Program is not properly setup! Please contact the developer. [DB]");
-            dialog.getDialogPane().getButtonTypes().add(okBtn);
-            dialog.showAndWait();
+            new DialogView("Error", "Program is not properly setup! Please contact the developer. [DB]", "OK");
             AppState.getInstance().getStage().close();
         }
     }

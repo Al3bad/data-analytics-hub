@@ -23,8 +23,4 @@ public class PortalScene extends AnchorPane {
         }
         container.getChildren().add(form);
     }
-
-    public VBox getContainer() {
-        return this.container;
-    }
 }
