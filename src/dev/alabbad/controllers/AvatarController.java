@@ -25,6 +25,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 
+/**
+ * This is the element that displayes user's avatar (if exist) and handle
+ * updating the image
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class AvatarController extends StackPane {
     public AvatarController() {
         final double radius = 28;
@@ -49,6 +56,12 @@ public class AvatarController extends StackPane {
         this.getChildren().addAll(img, overlay);
     }
 
+    /**
+     * Dim the profile image when the mouse enter the element
+     *
+     * @param event mouse event
+     * @param overlay circle
+     */
     private void onProfileImageMouseEnter(MouseEvent event, Circle overlay) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(200), overlay);
         fadeTransition.setFromValue(0);
@@ -57,6 +70,12 @@ public class AvatarController extends StackPane {
         fadeTransition.play();
     }
 
+    /**
+     * Remove the overlay from the profile image when the mouse exit the element
+     *
+     * @param event mouse event
+     * @param overlay circle
+     */
     private void onProfileImageMouseExit(MouseEvent event, Circle overlay) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(200), overlay);
         fadeTransition.setToValue(0.25);
@@ -65,6 +84,11 @@ public class AvatarController extends StackPane {
         fadeTransition.play();
     }
 
+    /**
+     * Update profile image handler
+     *
+     * @param event
+     */
     private void onProfileImageClicked(MouseEvent event) {
         File fileLocation = FileHandler.chooseFileForOpen("Image Files ", FileHandler.TYPE_IMG);
         if (fileLocation != null) {
@@ -84,6 +108,13 @@ public class AvatarController extends StackPane {
         }
     }
 
+    /**
+     * Preserve aspect ration of an image
+     *
+     * @param img
+     * @param radius
+     * @return
+     */
     ImagePattern pattern(Image img, double radius) {
         // Preserving aspect ratio of an image
         // reference: https://stackoverflow.com/a/67612795/10823489

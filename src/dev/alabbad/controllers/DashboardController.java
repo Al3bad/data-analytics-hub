@@ -29,6 +29,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Dashboard view controller that normal users can upgrade their account and
+ * non-normal users see the piechart and build import posts
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public class DashboardController extends VBox {
     public DashboardController() {
         // construct view based on the logged user
@@ -37,8 +44,8 @@ public class DashboardController extends VBox {
             try {
                 setupVIPUserView();
             } catch (SQLException e) {
-                // TODO: handle error when
-                System.out.println("Couldn't get data of share distribution!");
+                new DialogView("Error", "Couldn't get share distribution from model! Please contact the developer!",
+                                "Ok");
             }
         } else {
             setupNormalUserView();
@@ -47,12 +54,18 @@ public class DashboardController extends VBox {
         this.setSpacing(8);
     }
 
+    /**
+     * Normal user view
+     */
     private void setupNormalUserView() {
         Button vipButton = new PrimaryButton("Upgrade to VIP");
         vipButton.onMouseClickedProperty().set(event -> this.onVIPBtnClicked(event));
         this.getChildren().add(vipButton);
     }
 
+    /**
+     * VIP/Admin user view
+     */
     private void setupVIPUserView() throws SQLException {
         // this.getChildren().add(new Label("You're a VIP user"));
         ArrayList<Integer> data = Model.getPostDao().getSharesDistribution();
@@ -60,61 +73,21 @@ public class DashboardController extends VBox {
         if (sumRecords == 0) {
             this.getChildren().add(new Label("There is not posts in the system!"));
         } else {
-            drawPieChart(data);
-            displayValues(data);
+            displayPieChart(data);
+            displayNumOfSharePerCategory(data);
         }
         Button importPostsButton = new PrimaryButton("Import Posts");
         importPostsButton.onMouseClickedProperty().set(event -> this.onImportBtnClicked(event));
         this.getChildren().add(importPostsButton);
     }
 
-    private void displayValues(ArrayList<Integer> data) {
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(16);
-
-        // node, col, row, colSpan, rowSpan
-        gridPane.add(new Label("0-99 Shares"), 0, 0, 1, 1);
-        gridPane.add(new Label(":  " + data.get(0).toString() + " posts"), 1, 0, 1, 1);
-
-        gridPane.add(new Label("100-999 Shares"), 0, 1, 1, 1);
-        gridPane.add(new Label(":  " + data.get(1).toString() + " posts"), 1, 1, 1, 1);
-
-        gridPane.add(new Label("> 1000 Shares"), 0, 2, 1, 1);
-        gridPane.add(new Label(":  " + data.get(2).toString() + " posts"), 1, 2, 1, 1);
-        this.getChildren().add(gridPane);
-    }
-
-    public void onVIPBtnClicked(MouseEvent event) {
-        // display the dialgo for vip upgrade
-        new DialogView("VIP Upgrade", "Would you like to subscribe to the application for a monthly fee of $0?", "Yes",
-                        "Cancel", () -> {
-                            try {
-                                AppState.getInstance()
-                                                .setUser(Model.getUserDao().upgrade(AppState.getInstance().getUser()));
-                                AppState.getInstance().switchScene(new Scene(new MainScene()), true);
-                            } catch (EntityNotFoundException e) {
-                                new DialogView("User Not Found", "Couldn't upgrade user! Please contact the developer!",
-                                                "OK");
-                            } catch (SQLException e) {
-                                new DialogView("DB Error", "Something wrong happend! Please contact the developer",
-                                                "OK");
-                            }
-                        });
-    }
-
-    public void onImportBtnClicked(MouseEvent event) {
-        try {
-            File fileLocation = FileHandler.chooseFileForOpen("CSV files ", FileHandler.TYPE_CSV);
-            if (fileLocation != null) {
-                this.importPost(fileLocation);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found exception!");
-        }
-    }
-
-    private void drawPieChart(ArrayList<Integer> data) throws SQLException {
+    /**
+     * Display pie chart of shares propotion
+     *
+     * @param data
+     * @throws SQLException
+     */
+    private void displayPieChart(ArrayList<Integer> data) throws SQLException {
         // Preparing ObservbleList object
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
 
@@ -138,6 +111,73 @@ public class DashboardController extends VBox {
         this.getChildren().add(pieChart);
     }
 
+    /**
+     * Dispaly number of post for each share category
+     *
+     * @param data
+     */
+    private void displayNumOfSharePerCategory(ArrayList<Integer> data) {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(16);
+
+        // node, col, row, colSpan, rowSpan
+        gridPane.add(new Label("0-99 Shares"), 0, 0, 1, 1);
+        gridPane.add(new Label(":  " + data.get(0).toString() + " posts"), 1, 0, 1, 1);
+
+        gridPane.add(new Label("100-999 Shares"), 0, 1, 1, 1);
+        gridPane.add(new Label(":  " + data.get(1).toString() + " posts"), 1, 1, 1, 1);
+
+        gridPane.add(new Label("> 1000 Shares"), 0, 2, 1, 1);
+        gridPane.add(new Label(":  " + data.get(2).toString() + " posts"), 1, 2, 1, 1);
+        this.getChildren().add(gridPane);
+    }
+
+    /**
+     * Upgrade normal user handler
+     *
+     * @param event mouse event
+     */
+    public void onVIPBtnClicked(MouseEvent event) {
+        // display the dialgo for vip upgrade
+        new DialogView("VIP Upgrade", "Would you like to subscribe to the application for a monthly fee of $0?", "Yes",
+                        "Cancel", () -> {
+                            try {
+                                AppState.getInstance()
+                                                .setUser(Model.getUserDao().upgrade(AppState.getInstance().getUser()));
+                                AppState.getInstance().switchScene(new Scene(new MainScene()), true);
+                            } catch (EntityNotFoundException e) {
+                                new DialogView("User Not Found", "Couldn't upgrade user! Please contact the developer!",
+                                                "OK");
+                            } catch (SQLException e) {
+                                new DialogView("DB Error", "Something wrong happend! Please contact the developer",
+                                                "OK");
+                            }
+                        });
+    }
+
+    /**
+     * Bulk import handler
+     *
+     * @param event mouse event
+     */
+    public void onImportBtnClicked(MouseEvent event) {
+        try {
+            File fileLocation = FileHandler.chooseFileForOpen("CSV files ", FileHandler.TYPE_CSV);
+            if (fileLocation != null) {
+                this.importPost(fileLocation);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found exception!");
+        }
+    }
+
+    /**
+     * Import only valid post from a CSV file
+     *
+     * @param file csf file that contains the post data
+     * @throws FileNotFoundException
+     */
     private void importPost(File file) throws FileNotFoundException {
         // create scanner for the file
         int expectedFieldsNum = 6;
