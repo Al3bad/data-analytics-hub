@@ -16,6 +16,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
+/**
+ * The abstract base class for form controller. It construct the the form
+ * dynamically. And it has methods to validate input fields and display error
+ * messages if any input is not valid
+ *
+ * @author Abdullah Alabbad
+ * @version 1.0.0
+ */
 public abstract class FormController extends VBox {
     protected VBox beforeContainer = new VBox();
     protected VBox btnGroup;
@@ -23,6 +31,7 @@ public abstract class FormController extends VBox {
     protected Button secondaryBtn;
     protected VBox afterContainer = new VBox();
 
+    // This hash map holds all text field for the contructed form
     protected LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<>();
 
     public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn) {
@@ -43,6 +52,9 @@ public abstract class FormController extends VBox {
         this.btnGroup.getChildren().add(this.secondaryBtn);
     }
 
+    /**
+     * Dynamically construct the form
+     */
     protected void setupForm() {
         this.getChildren().removeAll();
         // construct input fields
@@ -77,12 +89,20 @@ public abstract class FormController extends VBox {
         this.getChildren().setAll(inputs, this.beforeContainer, this.btnGroup, this.afterContainer);
     }
 
+    /**
+     * Reset styles for all text fields in the form
+     */
     protected void resetTextFieldStyles() {
         for (TextField textField : this.textFieldElements.values()) {
             textField.getStyleClass().remove("error");
         }
     }
 
+    /**
+     * Add error styles for the text fields with invalid values
+     *
+     * @param errors
+     */
     protected void setTextFieldErrorStyles(HashMap<String, String> errors) {
         for (String textFieldId : errors.keySet()) {
             if (this.textFieldElements.get(textFieldId) != null) {
@@ -91,6 +111,9 @@ public abstract class FormController extends VBox {
         }
     }
 
+    /**
+     * Reset styles content of text fields in the form
+     */
     protected void resetTextFields() {
         this.resetTextFieldStyles();
         for (TextField textField : this.textFieldElements.values()) {
@@ -98,6 +121,12 @@ public abstract class FormController extends VBox {
         }
     }
 
+    /**
+     * Validate the values typed in each text field in the form
+     *
+     * @param container for the alert element to display the error messages if any
+     * @return true if the form is valid, false, otherwise
+     */
     protected Boolean validateForm(VBox container) {
         // Validate & parse form
         this.resetTextFieldStyles();
@@ -117,12 +146,18 @@ public abstract class FormController extends VBox {
         }
     }
 
+    /**
+     * Parse the value in each text field in the form by called in the parser
+     *
+     * @return true if no errors in the text fields, false, otherwise
+     * @throws InvalidFormException when the form is invalid
+     */
     private Boolean parseForm() throws InvalidFormException {
         HashMap<String, String> errors = new HashMap<String, String>();
         for (String textFieldId : this.textFieldElements.keySet()) {
             try {
                 if ((TextField) this.textFieldElements.get(textFieldId) instanceof PasswordField) {
-                    System.out.println("IT's a PasswordField");
+                    System.out.println("It's a PasswordField");
                 }
                 this.textFieldElements.get(textFieldId).parse();
             } catch (ParseValueException e) {
@@ -136,14 +171,29 @@ public abstract class FormController extends VBox {
         return true;
     }
 
+    /**
+     * Call the primary button handler when the enter key is pressed
+     *
+     * @param event key event
+     */
     protected void onKeyPressed(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
             this.onPrimaryBtnClicked(null);
         }
     }
 
+    /**
+     * The primary button handler that needs to be implemented by the sub-classes
+     *
+     * @param event mouse event
+     */
     protected abstract Boolean onPrimaryBtnClicked(MouseEvent event);
 
+    /**
+     * The optional secondary button handler
+     *
+     * @param event mouse event
+     */
     protected void onSecondaryBtnClicked(MouseEvent event) {
         System.out.println("Secondary btn is clicked!");
     }
