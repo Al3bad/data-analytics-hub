@@ -31,7 +31,9 @@ public abstract class FormController extends VBox {
     protected Button secondaryBtn;
     protected VBox afterContainer = new VBox();
 
-    // This hash map holds all text field for the contructed form
+    // This linked hash map holds all text field for the contructed form. The reason
+    // why linked hash map is used to to respect the order element when they're
+    // added
     protected LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<>();
 
     public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn) {

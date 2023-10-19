@@ -7,8 +7,8 @@ import dev.alabbad.controllers.AvatarController;
 import dev.alabbad.controllers.DashboardController;
 import dev.alabbad.controllers.DeletePostFormController;
 import dev.alabbad.controllers.EditProfileFormController;
-import dev.alabbad.controllers.GetMostLikedPostsController;
-import dev.alabbad.controllers.GetMostSharedPostsController;
+import dev.alabbad.controllers.GetMostLikedPostsFormController;
+import dev.alabbad.controllers.GetMostSharedPostsFormController;
 import dev.alabbad.controllers.GetPostFormController;
 import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.controllers.NewPostFormController;
@@ -158,9 +158,9 @@ public class MainScene extends AnchorPane {
         } else if (this.actionsGroup.getSelectedToggle() == this.getPostTab) {
             this.container.getChildren().setAll(new GetPostFormController());
         } else if (this.actionsGroup.getSelectedToggle() == this.getMostLikedPostsTab) {
-            this.container.getChildren().setAll(new GetMostLikedPostsController());
+            this.container.getChildren().setAll(new GetMostLikedPostsFormController());
         } else if (this.actionsGroup.getSelectedToggle() == this.getMostSharedPostsTab) {
-            this.container.getChildren().setAll(new GetMostSharedPostsController());
+            this.container.getChildren().setAll(new GetMostSharedPostsFormController());
         } else if (this.actionsGroup.getSelectedToggle() == this.editProfileTab) {
             this.container.getChildren().setAll(new EditProfileFormController());
         } else if (this.actionsGroup.getSelectedToggle() == this.usersTab) {
