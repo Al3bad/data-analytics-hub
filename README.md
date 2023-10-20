@@ -73,8 +73,10 @@ The login information for the default admin user is:
 - Username: `admin`
 - Password: `admin`
 
-# Appendix B - Class Diagram
+# Appendix B - Class Diagram & App Design
 
 > NOTE: Not all classes are included in the class diagram. This is just an abstract digram.
 
 ![Abstract Class Diagram](./images/class-diagram.png)
+
+This app was build using MVC architecture. The model has all the main object definitions as well as the business logic. Two data access layers were implemented: `UserDao` and `PostDao`. These two objects exeucte the SQL queries to the SQLite database and return any results to the controllers.The views were built in both java and FXML. The controllers basically bridge the view and the model. So, all form submissions, event handling and validations happen in the controllers. `AppState` class is a singleton which is used as a global state for the application. It stores the logged in user, the stage object, and a method to switch scenes. The project was developed to adhere to SOLID priniciples of object-oriented programming.
