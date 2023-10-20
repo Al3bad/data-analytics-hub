@@ -50,9 +50,9 @@ public class GetMostLikedPostsFormController extends FormController {
      * @return true if the form is valid, false, otherwise
      */
     @Override
-    protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+    protected void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.afterContainer) == false) {
-            return false;
+            return;
         }
 
         try {
@@ -65,7 +65,6 @@ public class GetMostLikedPostsFormController extends FormController {
             this.afterContainer.getChildren()
                             .setAll(new AlertView("Something wrong happend! Please contact the developer", "error"));
         }
-        return true;
     }
 
     /**

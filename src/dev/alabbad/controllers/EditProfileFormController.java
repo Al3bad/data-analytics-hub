@@ -56,9 +56,9 @@ public class EditProfileFormController extends SignupFormController {
      * @param event mouse evnet
      */
     @Override
-    protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+    protected void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
-            return false;
+            return;
         }
 
         // get values from text fields
@@ -79,7 +79,6 @@ public class EditProfileFormController extends SignupFormController {
             AppState.getInstance().switchScene(new Scene(new MainScene()), true);
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("User is not found!", "error"));
-            return false;
         } catch (UnauthorisedAction e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Invalid credentials!", "error"));
         } catch (SQLException e) {
@@ -90,6 +89,5 @@ public class EditProfileFormController extends SignupFormController {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!!!", "error"));
             }
         }
-        return true;
     }
 }

@@ -189,7 +189,7 @@ public abstract class FormController extends VBox {
      *
      * @param event mouse event
      */
-    protected abstract Boolean onPrimaryBtnClicked(MouseEvent event);
+    protected abstract void onPrimaryBtnClicked(MouseEvent event);
 
     /**
      * The optional secondary button handler

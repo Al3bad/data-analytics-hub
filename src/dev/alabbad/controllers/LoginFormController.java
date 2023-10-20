@@ -52,9 +52,9 @@ public class LoginFormController extends FormController {
      * @param event mouse event
      */
     @Override
-    protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+    protected void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
-            return false;
+            return;
         }
 
         // get values from input fields
@@ -68,7 +68,6 @@ public class LoginFormController extends FormController {
             AppState.getInstance().setUser(user);
             // navigate to dashboard scene
             AppState.getInstance().switchScene(new Scene(new MainScene()), true);
-            return true;
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (UnauthorisedAction e) {
@@ -77,7 +76,6 @@ public class LoginFormController extends FormController {
             this.beforeContainer.getChildren()
                             .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
         }
-        return false;
     }
 
     /**

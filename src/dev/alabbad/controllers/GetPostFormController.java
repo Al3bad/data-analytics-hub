@@ -53,9 +53,9 @@ public class GetPostFormController extends FormController {
      * @return true if the form is valid, false, otherwise
      */
     @Override
-    protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+    protected void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.afterContainer) == false) {
-            return false;
+            return;
         }
 
         try {
@@ -63,7 +63,6 @@ public class GetPostFormController extends FormController {
             // Get post from DB
             this.onSubmitHandler(postId);
             this.secondaryBtn.setDisable(false);
-            return true;
         } catch (EntityNotFoundException e) {
             this.afterContainer.getChildren().setAll(new AlertView("Post not found!", "info"));
         } catch (SQLException e) {
@@ -71,7 +70,6 @@ public class GetPostFormController extends FormController {
         } catch (UnauthorisedAction e) {
             this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "info"));
         }
-        return false;
     }
 
     /**

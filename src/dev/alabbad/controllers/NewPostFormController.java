@@ -59,9 +59,9 @@ public class NewPostFormController extends FormController {
      * @param event mouse event
      */
     @Override
-    public Boolean onPrimaryBtnClicked(MouseEvent event) {
+    public void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
-            return false;
+            return;
         }
 
         // get values from input fields
@@ -77,7 +77,6 @@ public class NewPostFormController extends FormController {
             Model.getPostDao().insert(new Post(id, content, author, likes, shares, dateTime));
             this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
-            return true;
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
@@ -86,6 +85,5 @@ public class NewPostFormController extends FormController {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             }
         }
-        return false;
     }
 }

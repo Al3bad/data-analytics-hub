@@ -50,9 +50,9 @@ public class SignupFormController extends FormController {
      * @param event mouse event
      */
     @Override
-    protected Boolean onPrimaryBtnClicked(MouseEvent event) {
+    protected void onPrimaryBtnClicked(MouseEvent event) {
         if (this.validateForm(this.beforeContainer) == false) {
-            return false;
+            return;
         }
 
         // get values from input fields
@@ -68,14 +68,12 @@ public class SignupFormController extends FormController {
             AppState.getInstance().setUser(newUser);
             // navigate to dashboard scene
             AppState.getInstance().switchScene(new Scene(new MainScene()), true);
-            return true;
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(
                             new AlertView("Couldn't get user after signup! Please contact the developer!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
         }
-        return false;
     }
 
     /**
