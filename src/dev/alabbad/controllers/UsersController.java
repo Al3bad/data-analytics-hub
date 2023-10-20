@@ -94,6 +94,7 @@ public class UsersController extends TableView<User> {
                                     try {
                                         // delete user
                                         Model.getUserDao().delete(selectedUser, AppState.getInstance().getUser());
+                                        Model.getPostDao().deleteAll(selectedUser, AppState.getInstance().getUser());
                                     } catch (EntityNotFoundException e) {
                                         new DialogView("User Not Found", "User is not found in the database!", "OK");
                                         this.populateTable();

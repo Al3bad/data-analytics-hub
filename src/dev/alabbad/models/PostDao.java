@@ -201,10 +201,14 @@ public class PostDao implements IDao<Integer, Post>, IDaoHelpers, IPostDao {
      * @throws SQLException
      */
     @Override
-    public Boolean deleteAll(String postAuthor) throws SQLException {
+    public Boolean deleteAll(User author, User loggedInUser) throws UnauthorisedAction, SQLException {
+        // construct & execute query
+        if (!(loggedInUser instanceof AdminUser)) {
+            throw new UnauthorisedAction("You're unauthorised to delete all posts!");
+        }
         // construct & execute query
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM post WHERE LOWER(author) = LOWER(?)");
-        stmt.setString(1, postAuthor);
+        stmt.setString(1, author.getUsername());
         stmt.executeUpdate();
         return true;
     }

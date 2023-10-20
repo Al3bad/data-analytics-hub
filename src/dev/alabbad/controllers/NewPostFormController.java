@@ -77,6 +77,7 @@ public class NewPostFormController extends FormController {
             Model.getPostDao().insert(new Post(id, content, author, likes, shares, dateTime));
             this.beforeContainer.getChildren().setAll(new AlertView("Post has been successfully created!", "success"));
             resetTextFields();
+            this.textFieldElements.get(AUTHOR).setText(AppState.getInstance().getUser().getUsername());
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
