@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
@@ -81,23 +82,47 @@ public class GetMostLikedPostsFormController extends FormController {
     }
 
     /**
-     * Display the posts in the view
+     * Display the result based on the returned information
      *
      * @param author
      * @param posts
      */
-    protected void displayResult(String author, ArrayList<Post> posts) {
-        if (posts.size() == 0 && author.length() != 0) {
-            this.afterContainer.getChildren().setAll(new AlertView("The specified author was not found!", "info"));
-        } else if (posts.size() == 0) {
-            this.afterContainer.getChildren().setAll(new AlertView("There no posts added in the system yet!", "info"));
-        } else {
-            this.afterContainer.getChildren().setAll();
-            for (Post post : posts) {
-                VBox postComponent = new PostView(post);
-                VBox.setMargin(postComponent, new Insets(0, 0, 12, 0));
-                this.afterContainer.getChildren().add(postComponent);
+    protected void displayResult(String author, ArrayList<Post> posts) throws SQLException {
+        if (author != null) {
+            // check if the specified author exist
+            try {
+                Model.getUserDao().get(author);
+                if (posts.size() == 0) {
+                    // check if there are any posts posted by the specified author
+                    this.afterContainer.getChildren()
+                                    .setAll(new AlertView("There no posts added by the specified author!", "info"));
+                } else {
+                    this.displayPosts(posts);
+                }
+            } catch (EntityNotFoundException e) {
+                this.afterContainer.getChildren().setAll(new AlertView("The specified author was not found!", "info"));
             }
+            return;
+        } else if (author == null && posts.size() == 0) {
+            // check if there are any posts in the system
+            this.afterContainer.getChildren().setAll(new AlertView("There no posts in the system!", "info"));
+            return;
         }
+        displayPosts(posts);
+    }
+
+    /**
+     * Display the posts in the view
+     *
+     * @param posts
+     */
+    private void displayPosts(ArrayList<Post> posts) {
+        this.afterContainer.getChildren().setAll();
+        for (Post post : posts) {
+            VBox postComponent = new PostView(post);
+            VBox.setMargin(postComponent, new Insets(0, 0, 12, 0));
+            this.afterContainer.getChildren().add(postComponent);
+        }
+
     }
 }

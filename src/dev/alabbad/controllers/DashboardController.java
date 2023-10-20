@@ -77,7 +77,14 @@ public class DashboardController extends VBox {
             displayNumOfSharePerCategory(data);
         }
         Button importPostsButton = new PrimaryButton("Import Posts");
-        importPostsButton.onMouseClickedProperty().set(event -> this.onImportBtnClicked(event));
+        importPostsButton.onMouseClickedProperty().set(event -> {
+            this.onImportBtnClicked(event);
+            try {
+                this.getChildren().setAll();
+                this.setupVIPUserView();
+            } catch (SQLException e) {
+            }
+        });
         this.getChildren().add(importPostsButton);
     }
 

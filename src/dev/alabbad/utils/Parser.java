@@ -77,9 +77,23 @@ public class Parser {
      */
     public static String parsePassword(String str) throws ParseValueException {
         if (str.length() < 6) {
-            throw new ParseValueException("Value must have a least 6 charachters!");
+            throw new ParseValueException("Value must have at least 6 charachters!");
         }
         return str;
+    }
+
+    /**
+     * Parse password string.
+     *
+     * @param str password value to be parsed
+     * @param allowEmpty
+     * @return parsed password string
+     */
+    public static String parsePassword(String str, Boolean allowEmpty) throws ParseValueException {
+        if (allowEmpty == true && str.length() == 0) {
+            return null;
+        }
+        return parsePassword(str);
     }
 
     /**

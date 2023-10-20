@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
+import dev.alabbad.models.DB;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
@@ -40,7 +41,7 @@ public class SignupFormController extends FormController {
         textFieldElements.put(USERNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
         textFieldElements.put(FNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
         textFieldElements.put(LNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
-        textFieldElements.put(PASSWORD, new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, false)));
+        textFieldElements.put(PASSWORD, new ExtendedPasswordField<String>((val) -> Parser.parsePassword(val)));
         return textFieldElements;
     }
 
@@ -72,7 +73,12 @@ public class SignupFormController extends FormController {
             this.beforeContainer.getChildren().setAll(
                             new AlertView("Couldn't get user after signup! Please contact the developer!", "error"));
         } catch (SQLException e) {
-            this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
+            if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
+                this.beforeContainer.getChildren()
+                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+            } else {
+                this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
+            }
         }
     }
 

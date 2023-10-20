@@ -34,7 +34,7 @@ public class EditProfileFormController extends SignupFormController {
         this.textFieldElements.put(CURRENT_PASSWORD,
                         new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true)));
         this.textFieldElements.put(NEW_PASSWORD,
-                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true, true)));
+                        new ExtendedPasswordField<String>((val) -> Parser.parsePassword(val, true)));
         this.setupForm();
         this.fillinForm();
     }
@@ -86,7 +86,7 @@ public class EditProfileFormController extends SignupFormController {
                 this.beforeContainer.getChildren()
                                 .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
             } else {
-                this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!!!", "error"));
+                this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             }
         }
     }
