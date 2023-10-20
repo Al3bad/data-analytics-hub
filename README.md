@@ -1,3 +1,9 @@
+# Info
+
+- Student name: Abdullah Alabbad
+- Student ID: s3635950
+- [Github repository link](https://github.com/Al3bad/data-analytics-hub)
+
 # Notes
 
 [Neovim](https://neovim.io) editor was mainly used to develop this program. During the development, the program was compiled and tested through the command line with java SDK. But this project was also adapted to be compiled and run using [Intellij IDEA IDE](https://www.jetbrains.com/idea/).
