@@ -1,6 +1,5 @@
 package dev.alabbad.models;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -11,6 +10,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.utils.Transformer;
 import dev.alabbad.exceptions.EntityNotFoundException;
 
 /**
@@ -268,30 +268,12 @@ public class UserDao implements Dao<String, User> {
         // construct & execute query
         PreparedStatement stmt = connection
                         .prepareStatement("UPDATE user SET profileImg = ? WHERE LOWER(username) = LOWER(?)");
-        stmt.setBytes(1, streamToBytes(profileImg));
+        stmt.setBytes(1, Transformer.streamToBytes(profileImg));
         stmt.setString(2, username);
         int affectedRows = stmt.executeUpdate();
         if (affectedRows == 0) {
             throw new EntityNotFoundException("[ERROR-DB] User not found!");
         }
         return get(username);
-    }
-
-    /**
-     * Convert stream to bytes (to store blob in database)
-     *
-     * @param file file stream to be converted
-     * @return bytes array or null
-     * @throws IOException
-     */
-    private static byte[] streamToBytes(InputStream file) throws IOException {
-        // reference: https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
-        ByteArrayOutputStream bos = null;
-        byte[] buffer = new byte[1024];
-        bos = new ByteArrayOutputStream();
-        for (int len; (len = file.read(buffer)) != -1;) {
-            bos.write(buffer, 0, len);
-        }
-        return bos != null ? bos.toByteArray() : null;
     }
 }
