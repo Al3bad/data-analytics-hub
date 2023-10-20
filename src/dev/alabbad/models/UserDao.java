@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IDao;
+import dev.alabbad.interfaces.IUserDao;
 import dev.alabbad.utils.Transformer;
 import dev.alabbad.exceptions.EntityNotFoundException;
 
@@ -19,7 +21,7 @@ import dev.alabbad.exceptions.EntityNotFoundException;
  * @author Abdullah Alabbad
  * @version 1.0.0
  */
-public class UserDao implements Dao<String, User> {
+public class UserDao implements IDao<String, User>, IUserDao {
     private Connection connection;
 
     public UserDao(Connection connection) {
@@ -92,6 +94,7 @@ public class UserDao implements Dao<String, User> {
      * @return users
      * @throws SQLException
      */
+    @Override
     public HashMap<String, User> getAll() throws SQLException {
         // construct & execute query
         Statement stmt = connection.createStatement();
@@ -173,6 +176,7 @@ public class UserDao implements Dao<String, User> {
      * @throws UnauthorisedAction when credentials are incorrect
      * @throws SQLException
      */
+    @Override
     public User update(User updatedUser, String username, String password)
                     throws EntityNotFoundException, SQLException, UnauthorisedAction {
         // check authorisation
@@ -216,6 +220,7 @@ public class UserDao implements Dao<String, User> {
      * @throws EntityNotFoundException when user is not found in the database
      * @throws SQLException
      */
+    @Override
     public User upgrade(User user) throws EntityNotFoundException, SQLException {
         // construct & execute query
         PreparedStatement stmt = connection
@@ -237,6 +242,7 @@ public class UserDao implements Dao<String, User> {
      * @throws UnauthorisedAction when credentials are incorrect
      * @throws SQLException
      */
+    @Override
     public User login(String username, String password)
                     throws EntityNotFoundException, SQLException, UnauthorisedAction {
         // check if the user exists in the database first
@@ -263,6 +269,7 @@ public class UserDao implements Dao<String, User> {
      * @throws IOException when an error occurs during converting stream to bytes
      * @throws SQLException
      */
+    @Override
     public User updateProfileImg(String username, InputStream profileImg)
                     throws SQLException, EntityNotFoundException, IOException {
         // construct & execute query

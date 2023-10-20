@@ -3,11 +3,11 @@ package test;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.UnauthorisedAction;
@@ -18,7 +18,7 @@ import dev.alabbad.models.User;
 
 public class TestPostDao {
     static int testCount;
-    static Connection connection;;
+    DB db;
 
     @BeforeClass
     public static void beforeAll() {
@@ -26,10 +26,11 @@ public class TestPostDao {
     }
 
     @Before
-    public void beforeEach() throws SQLException {
-        System.out.println("\n--> Test " + ++TestUserDao.testCount);
-        this.connection = DB.connect(":memory:");
-        Model.init(connection);
+    public void beforeEach() throws DatabaseConnectionException {
+        System.out.println("\n--> Test " + ++TestPostDao.testCount);
+        this.db = new DB();
+        this.db.connect("jdbc:sqlite::memory:");
+        Model.init(this.db.getConnection());
         Model.getUserDao().createTable();
     }
 
@@ -43,7 +44,7 @@ public class TestPostDao {
 
     @Test
     public void createPostTableTest_Faild() throws SQLException {
-        DB.getConnection().close();
+        this.db.getConnection().close();
         assertFalse(Model.getPostDao().createTable());
     }
 

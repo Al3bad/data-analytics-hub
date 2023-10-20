@@ -7,11 +7,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.DB;
@@ -21,7 +21,7 @@ import dev.alabbad.models.VIPUser;
 
 public class TestUserDao {
     static int testCount;
-    static Connection connection;;
+    DB db;
 
     @BeforeClass
     public static void beforeAll() {
@@ -29,10 +29,11 @@ public class TestUserDao {
     }
 
     @Before
-    public void beforeEach() throws SQLException {
+    public void beforeEach() throws DatabaseConnectionException {
         System.out.println("\n--> Test " + ++TestUserDao.testCount);
-        this.connection = DB.connect(":memory:");
-        Model.init(connection);
+        this.db = new DB();
+        this.db.connect("jdbc:sqlite::memory:");
+        Model.init(this.db.getConnection());
         Model.getUserDao().createTable();
     }
 
@@ -46,7 +47,7 @@ public class TestUserDao {
 
     @Test
     public void createUserTableTest_Faild() throws SQLException {
-        DB.getConnection().close();
+        this.db.getConnection().close();
         assertFalse(Model.getUserDao().createTable());
     }
 

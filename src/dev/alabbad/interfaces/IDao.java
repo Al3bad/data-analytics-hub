@@ -1,16 +1,17 @@
-package dev.alabbad.models;
+package dev.alabbad.interfaces;
 
 import java.sql.SQLException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.models.User;
 
 /**
- * The interface for data access objects
+ * The common interface for all data access objects
  *
  * @author Abdullah Alabbad
  * @version 1.0.0
  */
-public interface Dao<A, T> {
+public interface IDao<A, T> {
     public boolean createTable();
 
     public T get(A id) throws SQLException, EntityNotFoundException;

@@ -3,6 +3,7 @@ package dev.alabbad.DataAnalyticsHub;
 import java.sql.SQLException;
 
 import dev.alabbad.controllers.LoginFormController;
+import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
@@ -18,9 +19,11 @@ import javafx.stage.Stage;
  * Flow of the main GUI program
  *
  * @author Abdullah Alabbad
- * @version 0.0.1
+ * @version 1.0.0
  */
 public class DataAnalyticsHub extends Application {
+    private DB db;
+
     /**
      * Overriden method to start the javafx application
      *
@@ -38,7 +41,7 @@ public class DataAnalyticsHub extends Application {
         // Show stage
         AppState.getInstance().getStage().show();
         // Problem with database;
-        if (initModel("app.db") == false) {
+        if (initModel("jdbc:sqlite:app.db") == false) {
             new DialogView("Error", "Program is not properly setup! Please contact the developer. [DB]", "OK");
             AppState.getInstance().getStage().close();
         }
@@ -55,21 +58,22 @@ public class DataAnalyticsHub extends Application {
     /**
      * Initialise the database
      *
-     * @param sqliteFilename the filename for sqlite database
+     * @param url the filename for sqlite database
      * @return status
      */
-    public Boolean initModel(String sqliteFilename) {
-        // Connect to DB
+    private Boolean initModel(String url) {
         try {
-            Model.init(DB.connect(sqliteFilename));
-        } catch (SQLException e) {
+            // Connect to DB
+            this.db = new DB();
+            this.db.connect(url);
+            Model.init(this.db.getConnection());
+        } catch (DatabaseConnectionException e) {
             return false;
         }
-        // Create user table if it doesn't exist
+
         try {
             // NOTE: always make sure admin user exist in the system (this is for demo only)
             Model.getUserDao().insert(new AdminUser("admin", "admin", "Abdullah", "Alabbad"));
-            // DB.insertUser("admin", "admin", "Abdullah", "Alabbad", true);
         } catch (SQLException e) {
             System.out.println("Admin user already exists");
         } catch (EntityNotFoundException e) {
@@ -81,12 +85,12 @@ public class DataAnalyticsHub extends Application {
     /**
      * Cleanup after quiting the application
      */
-    public void cleanup() {
+    private void cleanup() {
         System.out.println("Cleaning up!");
         // Close connection
         try {
-            if (DB.getConnection() != null) {
-                DB.getConnection().close();
+            if (this.db != null && this.db.getConnection() != null) {
+                this.db.getConnection().close();
             }
         } catch (SQLException e) {
         }

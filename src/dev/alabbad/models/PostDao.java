@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IDao;
+import dev.alabbad.interfaces.IDaoHelpers;
+import dev.alabbad.interfaces.IPostDao;
 
 /**
  * The data access object for the posts
@@ -18,7 +21,7 @@ import dev.alabbad.exceptions.UnauthorisedAction;
  * @author Abdullah Alabbad
  * @version 1.0.0
  */
-public class PostDao implements Dao<Integer, Post> {
+public class PostDao implements IDao<Integer, Post>, IDaoHelpers, IPostDao {
     private Connection connection;
 
     public PostDao(Connection connection) {
@@ -87,6 +90,7 @@ public class PostDao implements Dao<Integer, Post> {
      * `likes` nor `shares`
      * @throws SQLException
      */
+    @Override
     public ArrayList<Post> getSome(String sortBy, String author, int limit)
                     throws InvalidArgumentException, SQLException {
         // all posts for all users or posts for a specific user?
@@ -196,6 +200,7 @@ public class PostDao implements Dao<Integer, Post> {
      * @return true
      * @throws SQLException
      */
+    @Override
     public Boolean deleteAll(String postAuthor) throws SQLException {
         // construct & execute query
         PreparedStatement stmt = connection.prepareStatement("DELETE FROM post WHERE LOWER(author) = LOWER(?)");
@@ -239,7 +244,8 @@ public class PostDao implements Dao<Integer, Post> {
      * @return ID number
      * @throws SQLException when no ID is found
      */
-    private int getLastInsertedRowID() throws SQLException {
+    @Override
+    public int getLastInsertedRowID() throws SQLException {
         ResultSet rs = connection.createStatement().executeQuery("SELECT last_insert_rowid() as id");
         if (!rs.next()) {
             throw new SQLException("Last inserted ID is not found!");
