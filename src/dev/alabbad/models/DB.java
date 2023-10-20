@@ -17,6 +17,7 @@ public class DB implements IDatabase<Connection> {
     public static final int SQLITE_CONSTRAINT = 19;
     private Connection connection;
 
+    @Override
     public Connection getConnection() {
         return this.connection;
     }

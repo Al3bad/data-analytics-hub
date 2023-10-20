@@ -3,6 +3,7 @@ package test;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IDatabase;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
@@ -18,7 +20,7 @@ import dev.alabbad.models.User;
 
 public class TestPostDao {
     static int testCount;
-    DB db;
+    IDatabase<Connection> db;
 
     @BeforeClass
     public static void beforeAll() {

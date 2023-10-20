@@ -7,10 +7,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IDatabase;
 import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AdminUser;
@@ -21,7 +23,7 @@ import dev.alabbad.models.VIPUser;
 
 public class TestUserDao {
     static int testCount;
-    DB db;
+    IDatabase<Connection> db;
 
     @BeforeClass
     public static void beforeAll() {

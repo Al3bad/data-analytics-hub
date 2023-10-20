@@ -9,5 +9,7 @@ import dev.alabbad.exceptions.DatabaseConnectionException;
  * @version 1.0.0
  */
 public interface IDatabase<T> {
+    public T getConnection();
+
     public T connect(String url) throws DatabaseConnectionException;
 }

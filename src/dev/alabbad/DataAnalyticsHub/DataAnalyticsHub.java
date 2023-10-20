@@ -1,10 +1,12 @@
 package dev.alabbad.DataAnalyticsHub;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import dev.alabbad.controllers.LoginFormController;
 import dev.alabbad.exceptions.DatabaseConnectionException;
 import dev.alabbad.exceptions.EntityNotFoundException;
+import dev.alabbad.interfaces.IDatabase;
 import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
@@ -22,7 +24,7 @@ import javafx.stage.Stage;
  * @version 1.0.0
  */
 public class DataAnalyticsHub extends Application {
-    private DB db;
+    private IDatabase<Connection> db;
 
     /**
      * Overriden method to start the javafx application
