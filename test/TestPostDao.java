@@ -13,6 +13,7 @@ import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
 import dev.alabbad.exceptions.UnauthorisedAction;
 import dev.alabbad.interfaces.IDatabase;
+import dev.alabbad.models.AdminUser;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
@@ -137,7 +138,8 @@ public class TestPostDao {
     // --> Posts: Delete all
     // ==================================================
     @Test
-    public void deleteAllPostTest() throws SQLException, EntityNotFoundException, InvalidArgumentException {
+    public void deleteAllPostTest()
+                    throws SQLException, EntityNotFoundException, InvalidArgumentException, UnauthorisedAction {
         Model.getPostDao().insert(new Post(10, "Hello World!", "username", 509, 623, "10/10/2022 12:12"));
         Model.getPostDao().insert(new Post(20, "Hello World!", "xv", 84425, 23520, "10/10/2022 12:12"));
         Model.getPostDao().insert(new Post(30, "Hello World!", "test", 83, 59, "10/10/2022 12:12"));
@@ -145,7 +147,7 @@ public class TestPostDao {
         Model.getPostDao().insert(new Post(50, "Hello World!", "hello", 946, 682, "10/10/2022 12:12"));
 
         // delete a post
-        Model.getPostDao().deleteAll("xv");
+        Model.getPostDao().deleteAll(new User("xv", "firstname", "lastname"), new AdminUser("admin", "admin", "admin"));
 
         // assert
         assertEquals(0, Model.getPostDao().getSome("likes", "xv", 10).size());

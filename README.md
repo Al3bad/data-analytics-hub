@@ -57,4 +57,18 @@ There are two ways to run the program:
 
 ```bash
 ./run.sh
+
 ```
+
+# Appendix A - Admin User
+
+The login information for the default admin user is:
+
+- Username: `admin`
+- Password: `admin`
+
+# Appendix B - Class Diagram
+
+> NOTE: Not all classes are included in the class diagram. This is just an abstract digram.
+
+![Abstract Class Diagram](./images/class-diagram.png)
