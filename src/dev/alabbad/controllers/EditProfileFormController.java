@@ -3,6 +3,7 @@ package dev.alabbad.controllers;
 import java.sql.SQLException;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IInputControl;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
@@ -11,6 +12,7 @@ import dev.alabbad.models.User;
 import dev.alabbad.utils.Parser;
 import dev.alabbad.views.AlertView;
 import dev.alabbad.views.ExtendedPasswordField;
+import dev.alabbad.views.ExtendedTextField;
 import dev.alabbad.views.MainScene;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,7 +22,7 @@ import javafx.scene.input.MouseEvent;
  * Implementation of edit profile form
  *
  * @author Abdullah Alabbad
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class EditProfileFormController extends SignupFormController {
     // TextField IDs & Labels
@@ -30,11 +32,11 @@ public class EditProfileFormController extends SignupFormController {
     public EditProfileFormController() {
         super();
         this.setAlignment(Pos.CENTER);
-        this.textFieldElements.remove(PASSWORD);
-        this.textFieldElements.put(CURRENT_PASSWORD,
-                        new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true)));
-        this.textFieldElements.put(NEW_PASSWORD,
-                        new ExtendedPasswordField<String>((val) -> Parser.parsePassword(val, true)));
+        this.inputControlElements.remove(PASSWORD);
+        this.inputControlElements.put(CURRENT_PASSWORD,
+                new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true)));
+        this.inputControlElements.put(NEW_PASSWORD,
+                new ExtendedPasswordField<String>((val) -> Parser.parsePassword(val, true)));
         this.setupForm();
         this.fillinForm();
     }
@@ -44,9 +46,9 @@ public class EditProfileFormController extends SignupFormController {
      */
     private void fillinForm() {
         User loggedinUser = AppState.getInstance().getUser();
-        this.textFieldElements.get(USERNAME).setText(loggedinUser.getUsername());
-        this.textFieldElements.get(FNAME).setText(loggedinUser.getFirstName());
-        this.textFieldElements.get(LNAME).setText(loggedinUser.getLastName());
+        ((ExtendedTextField) this.inputControlElements.get(USERNAME)).setText(loggedinUser.getUsername());
+        ((ExtendedTextField) this.inputControlElements.get(FNAME)).setText(loggedinUser.getFirstName());
+        ((ExtendedTextField) this.inputControlElements.get(LNAME)).setText(loggedinUser.getLastName());
         this.primaryBtn.setText("Edit");
     }
 
@@ -63,15 +65,15 @@ public class EditProfileFormController extends SignupFormController {
 
         // get values from text fields
         String username = AppState.getInstance().getUser().getUsername();
-        String newUsername = (String) this.textFieldElements.get(USERNAME).getParsedVal();
-        String password = (String) this.textFieldElements.get(CURRENT_PASSWORD).getParsedVal();
-        String newPassword = (String) this.textFieldElements.get(NEW_PASSWORD).getParsedVal();
-        String fname = (String) this.textFieldElements.get(FNAME).getParsedVal();
-        String lname = (String) this.textFieldElements.get(LNAME).getParsedVal();
+        String newUsername = (String) ((IInputControl) this.inputControlElements.get(USERNAME)).getParsedVal();
+        String password = (String) ((IInputControl) this.inputControlElements.get(CURRENT_PASSWORD)).getParsedVal();
+        String newPassword = (String) ((IInputControl) this.inputControlElements.get(NEW_PASSWORD)).getParsedVal();
+        String fname = (String) ((IInputControl) this.inputControlElements.get(FNAME)).getParsedVal();
+        String lname = (String) ((IInputControl) this.inputControlElements.get(LNAME)).getParsedVal();
 
         try {
             User updatedUser = Model.getUserDao().update(new User(newUsername, newPassword, fname, lname), username,
-                            password);
+                    password);
             this.beforeContainer.getChildren().setAll(new AlertView("User has been successfully created!", "success"));
             // set the updated user
             AppState.getInstance().setUser(updatedUser);
@@ -84,7 +86,7 @@ public class EditProfileFormController extends SignupFormController {
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
-                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+                        .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
             } else {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             }

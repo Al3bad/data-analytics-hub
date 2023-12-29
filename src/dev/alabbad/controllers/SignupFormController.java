@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
+import dev.alabbad.interfaces.IInputControl;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.DB;
 import dev.alabbad.models.Model;
@@ -17,13 +18,14 @@ import dev.alabbad.views.PortalScene;
 import dev.alabbad.views.PrimaryButton;
 import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.input.MouseEvent;
 
 /**
  * Implementation of the signup form
  *
  * @author Abdullah Alabbad
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class SignupFormController extends FormController {
     // TextField IDs & Labels
@@ -33,11 +35,11 @@ public class SignupFormController extends FormController {
     protected final static String LNAME = "Last Name";
 
     public SignupFormController() {
-        super(createTextFieldElements(), new PrimaryButton("Signup"), new SecondaryButton("Login"));
+        super(createInputElements(), new PrimaryButton("Signup"), new SecondaryButton("Login"));
     }
 
-    public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
-        LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
+    public static LinkedHashMap<String, Control> createInputElements() {
+        LinkedHashMap<String, Control> textFieldElements = new LinkedHashMap<String, Control>();
         textFieldElements.put(USERNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
         textFieldElements.put(FNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
         textFieldElements.put(LNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
@@ -57,10 +59,10 @@ public class SignupFormController extends FormController {
         }
 
         // get values from input fields
-        String username = (String) this.textFieldElements.get(USERNAME).getParsedVal();
-        String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
-        String fname = (String) this.textFieldElements.get(FNAME).getParsedVal();
-        String lname = (String) this.textFieldElements.get(LNAME).getParsedVal();
+        String username = (String) ((IInputControl) this.inputControlElements.get(USERNAME)).getParsedVal();
+        String password = (String) ((IInputControl) this.inputControlElements.get(PASSWORD)).getParsedVal();
+        String fname = (String) ((IInputControl) this.inputControlElements.get(FNAME)).getParsedVal();
+        String lname = (String) ((IInputControl) this.inputControlElements.get(LNAME)).getParsedVal();
 
         // Insert user to db
         try {
@@ -71,11 +73,11 @@ public class SignupFormController extends FormController {
             AppState.getInstance().switchScene(new Scene(new MainScene()), true);
         } catch (EntityNotFoundException e) {
             this.beforeContainer.getChildren().setAll(
-                            new AlertView("Couldn't get user after signup! Please contact the developer!", "error"));
+                    new AlertView("Couldn't get user after signup! Please contact the developer!", "error"));
         } catch (SQLException e) {
             if (e.getErrorCode() == DB.SQLITE_CONSTRAINT) {
                 this.beforeContainer.getChildren()
-                                .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
+                        .setAll(new AlertView("Username is already taken! Please use another one.", "error"));
             } else {
                 this.beforeContainer.getChildren().setAll(new AlertView("Something wrong happend!", "error"));
             }

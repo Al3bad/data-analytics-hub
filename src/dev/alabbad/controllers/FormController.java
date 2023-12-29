@@ -1,20 +1,22 @@
 package dev.alabbad.controllers;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.InvalidFormException;
 import dev.alabbad.exceptions.ParseValueException;
+import dev.alabbad.interfaces.IInputControl;
 import dev.alabbad.views.AlertView;
-import dev.alabbad.views.ExtendedTextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
 
 /**
  * The abstract base class for form controller. It construct the the form
@@ -22,7 +24,7 @@ import javafx.scene.layout.VBox;
  * messages if any input is not valid
  *
  * @author Abdullah Alabbad
- * @version 1.0.0
+ * @version 2.0.0
  */
 public abstract class FormController extends VBox {
     protected VBox beforeContainer = new VBox();
@@ -31,20 +33,21 @@ public abstract class FormController extends VBox {
     protected Button secondaryBtn;
     protected VBox afterContainer = new VBox();
 
-    // This linked hash map holds all text field for the contructed form. The reason
+    // This linked hash map holds all input control for the contructed form. The
+    // reason
     // why linked hash map is used to to respect the order element when they're
     // added
-    protected LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<>();
+    protected LinkedHashMap<String, Control> inputControlElements = new LinkedHashMap<>();
 
-    public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn) {
-        this.textFieldElements = textFields;
+    public FormController(LinkedHashMap<String, Control> inputControls, Button primaryBtn) {
+        this.inputControlElements = inputControls;
         this.primaryBtn = primaryBtn;
 
         this.setupForm();
     }
 
-    public FormController(LinkedHashMap<String, ExtendedTextField> textFields, Button primaryBtn, Button secondaryBtn) {
-        this.textFieldElements = textFields;
+    public FormController(LinkedHashMap<String, Control> inputControls, Button primaryBtn, Button secondaryBtn) {
+        this.inputControlElements = inputControls;
         this.primaryBtn = primaryBtn;
         this.secondaryBtn = secondaryBtn;
 
@@ -64,16 +67,8 @@ public abstract class FormController extends VBox {
         inputs.setSpacing(8);
         inputs.setId("inputGroup");
 
-        for (String id : this.textFieldElements.keySet()) {
-            VBox inputContainer = new VBox();
-            Label label = new Label(id);
-            TextField textField = this.textFieldElements.get(id);
-            textField.setId(id);
-            textField.getStylesheets().add("/css/input.css");
-            textField.getStyleClass().add("input");
-            textField.onKeyPressedProperty().set(event -> this.onKeyPressed(event));
-            inputContainer.getChildren().addAll(label, textField);
-            inputs.getChildren().add(inputContainer);
+        for (String id : this.inputControlElements.keySet()) {
+            inputs.getChildren().add(createInput(id, this.inputControlElements.get(id)));
         }
 
         // construct buttons
@@ -91,53 +86,68 @@ public abstract class FormController extends VBox {
         this.getChildren().setAll(inputs, this.beforeContainer, this.btnGroup, this.afterContainer);
     }
 
+    protected VBox createInput(String label, Control inputNode) {
+        VBox inputContainer = new VBox();
+        Label _label = new Label(label);
+        inputNode.setId(label);
+        inputNode.getStylesheets().add("/css/input.css");
+        inputNode.getStyleClass().add("input");
+        inputNode.onKeyPressedProperty().set(event -> this.onKeyPressed(event));
+        inputContainer.getChildren().addAll(_label, inputNode);
+        return inputContainer;
+    }
+
     /**
-     * Reset styles for all text fields in the form
+     * Reset styles for all input controls in the form
      */
-    protected void resetTextFieldStyles() {
-        for (TextField textField : this.textFieldElements.values()) {
-            textField.getStyleClass().remove("error");
+    protected void resetInputControlsStyles() {
+        for (Control inputControl : this.inputControlElements.values()) {
+            inputControl.getStyleClass().remove("error");
         }
     }
 
     /**
-     * Add error styles for the text fields with invalid values
+     * Add error styles for the input controls with invalid values
      *
      * @param errors
      */
-    protected void setTextFieldErrorStyles(HashMap<String, String> errors) {
-        for (String textFieldId : errors.keySet()) {
-            if (this.textFieldElements.get(textFieldId) != null) {
-                this.textFieldElements.get(textFieldId).getStyleClass().add("error");
+    protected void setInputControlsErrorStyles(HashMap<String, String> errors) {
+        for (String inputControlId : errors.keySet()) {
+            if (this.inputControlElements.get(inputControlId) != null) {
+                this.inputControlElements.get(inputControlId).getStyleClass().add("error");
             }
         }
     }
 
     /**
-     * Reset styles content of text fields in the form
+     * Reset styles content of input controls in the form
      */
-    protected void resetTextFields() {
-        this.resetTextFieldStyles();
-        for (TextField textField : this.textFieldElements.values()) {
-            textField.setText("");
+    protected void resetInputControls() {
+        this.resetInputControlsStyles();
+        for (Control inputControl : this.inputControlElements.values()) {
+            if (inputControl instanceof TextField) {
+                ((TextField) inputControl).setText("");
+            } else if (inputControl instanceof DatePicker) {
+                ((DatePicker) inputControl).setValue(LocalDate.now());
+            }
         }
     }
 
     /**
-     * Validate the values typed in each text field in the form
+     * Validate the values typed in each input control in the form
      *
      * @param container for the alert element to display the error messages if any
      * @return true if the form is valid, false, otherwise
      */
     protected Boolean validateForm(VBox container) {
         // Validate & parse form
-        this.resetTextFieldStyles();
+        this.resetInputControlsStyles();
 
         try {
             return this.parseForm();
         } catch (InvalidFormException e) {
             // change border color of the text input to red
-            this.setTextFieldErrorStyles(e.getErrors());
+            this.setInputControlsErrorStyles(e.getErrors());
             String formattedErrors = "Invalid form!\n";
             for (String fieldId : e.getErrors().keySet()) {
                 String errorMsg = e.getErrors().get(fieldId);
@@ -149,21 +159,23 @@ public abstract class FormController extends VBox {
     }
 
     /**
-     * Parse the value in each text field in the form by called in the parser
+     * Parse the value in each input control in the form by called in the parser
      *
-     * @return true if no errors in the text fields, false, otherwise
+     * @return true if no errors in the input controls, false, otherwise
      * @throws InvalidFormException when the form is invalid
      */
     private Boolean parseForm() throws InvalidFormException {
         HashMap<String, String> errors = new HashMap<String, String>();
-        for (String textFieldId : this.textFieldElements.keySet()) {
+        for (String inputControlId : this.inputControlElements.keySet()) {
             try {
-                if ((TextField) this.textFieldElements.get(textFieldId) instanceof PasswordField) {
-                    System.out.println("It's a PasswordField");
+                if (this.inputControlElements.get(inputControlId) instanceof IInputControl) {
+                    ((IInputControl) this.inputControlElements.get(inputControlId)).parse();
+                } else {
+                    System.out.println(
+                            "[Warning] Input controll cannot be parsed because it does not conform to IInputControl interface!");
                 }
-                this.textFieldElements.get(textFieldId).parse();
             } catch (ParseValueException e) {
-                errors.put(textFieldId, e.getMessage());
+                errors.put(inputControlId, e.getMessage());
             }
         }
 

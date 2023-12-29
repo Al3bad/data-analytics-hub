@@ -3,8 +3,22 @@
   -fx-background-color: #ffffff;
   -fx-border-width: 1;
   -fx-border-radius: 2;
+  -fx-max-width: infinity;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-inner-border: transparent;
+  -fx-inner-border-width: 0;
 }
 
 .input.error {
   -fx-border-color: #ab908cc0;
+}
+
+.date-picker .text-field {
+  -fx-background-color: transparent;
+}
+
+.date-picker .arrow-button {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent transparent transparent #00000022;
 }

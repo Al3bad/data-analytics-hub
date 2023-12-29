@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.UnauthorisedAction;
+import dev.alabbad.interfaces.IInputControl;
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.models.AppState;
 import dev.alabbad.models.Model;
@@ -17,13 +18,14 @@ import dev.alabbad.views.PortalScene;
 import dev.alabbad.views.PrimaryButton;
 import dev.alabbad.views.SecondaryButton;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.input.MouseEvent;
 
 /**
  * Implementation of the login form
  *
  * @author Abdullah Alabbad
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class LoginFormController extends FormController {
     // TextField IDs & Labels
@@ -31,7 +33,7 @@ public class LoginFormController extends FormController {
     private final static String PASSWORD = "Password";
 
     public LoginFormController() {
-        super(createTextFieldElements(), new PrimaryButton("Login"), new SecondaryButton("Signup"));
+        super(createInputElements(), new PrimaryButton("Login"), new SecondaryButton("Signup"));
     }
 
     /**
@@ -39,8 +41,8 @@ public class LoginFormController extends FormController {
      *
      * @return linked hash map containing the text field elements
      */
-    public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
-        LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
+    public static LinkedHashMap<String, Control> createInputElements() {
+        LinkedHashMap<String, Control> textFieldElements = new LinkedHashMap<String, Control>();
         textFieldElements.put(USERNAME, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false)));
         textFieldElements.put(PASSWORD, new ExtendedPasswordField<String>((val) -> Parser.parseStr(val, true)));
         return textFieldElements;
@@ -58,8 +60,8 @@ public class LoginFormController extends FormController {
         }
 
         // get values from input fields
-        String username = (String) this.textFieldElements.get(USERNAME).getParsedVal();
-        String password = (String) this.textFieldElements.get(PASSWORD).getParsedVal();
+        String username = (String) ((IInputControl) this.inputControlElements.get(USERNAME)).getParsedVal();
+        String password = (String) ((IInputControl) this.inputControlElements.get(PASSWORD)).getParsedVal();
 
         // Get user from DB
         try {
@@ -74,7 +76,7 @@ public class LoginFormController extends FormController {
             this.beforeContainer.getChildren().setAll(new AlertView("Incorrect username or password!", "error"));
         } catch (SQLException e) {
             this.beforeContainer.getChildren()
-                            .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
+                    .setAll(new AlertView("Something wrong happend! Please contact the developer!", "error"));
         }
     }
 

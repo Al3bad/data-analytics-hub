@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 
 import dev.alabbad.exceptions.EntityNotFoundException;
 import dev.alabbad.exceptions.InvalidArgumentException;
+import dev.alabbad.interfaces.IInputControl;
 import dev.alabbad.models.Model;
 import dev.alabbad.models.Post;
 import dev.alabbad.utils.Parser;
@@ -14,6 +15,7 @@ import dev.alabbad.views.ExtendedTextField;
 import dev.alabbad.views.PostView;
 import dev.alabbad.views.PrimaryButton;
 import javafx.geometry.Insets;
+import javafx.scene.control.Control;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -21,7 +23,7 @@ import javafx.scene.layout.VBox;
  * Implementation of get most liked posts form
  *
  * @author Abdullah Alabbad
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class GetMostLikedPostsFormController extends FormController {
     // TextField IDs & Labels
@@ -29,7 +31,7 @@ public class GetMostLikedPostsFormController extends FormController {
     protected final static String NUM_OF_POSTS = "Number of Posts";
 
     public GetMostLikedPostsFormController() {
-        super(createTextFieldElements(), new PrimaryButton("Get Most Liked Posts"));
+        super(createInputElements(), new PrimaryButton("Get Most Liked Posts"));
     }
 
     /**
@@ -37,8 +39,8 @@ public class GetMostLikedPostsFormController extends FormController {
      *
      * @return linked hash map containing the text field elements
      */
-    public static LinkedHashMap<String, ExtendedTextField> createTextFieldElements() {
-        LinkedHashMap<String, ExtendedTextField> textFieldElements = new LinkedHashMap<String, ExtendedTextField>();
+    public static LinkedHashMap<String, Control> createInputElements() {
+        LinkedHashMap<String, Control> textFieldElements = new LinkedHashMap<String, Control>();
         textFieldElements.put(AUTHOR, new ExtendedTextField<String>((val) -> Parser.parseStr(val, false, true)));
         textFieldElements.put(NUM_OF_POSTS, new ExtendedTextField<Integer>((val) -> Parser.parseInt(val, 0)));
         return textFieldElements;
@@ -57,14 +59,14 @@ public class GetMostLikedPostsFormController extends FormController {
         }
 
         try {
-            String author = (String) this.textFieldElements.get(AUTHOR).getParsedVal();
-            int limit = (int) this.textFieldElements.get(NUM_OF_POSTS).getParsedVal();
+            String author = (String) ((IInputControl) this.inputControlElements.get(AUTHOR)).getParsedVal();
+            int limit = (int) ((IInputControl) this.inputControlElements.get(NUM_OF_POSTS)).getParsedVal();
             this.onSubmitHandler(author, limit);
         } catch (InvalidArgumentException e) {
             this.afterContainer.getChildren().setAll(new AlertView(e.getMessage(), "error"));
         } catch (SQLException e) {
             this.afterContainer.getChildren()
-                            .setAll(new AlertView("Something wrong happend! Please contact the developer", "error"));
+                    .setAll(new AlertView("Something wrong happend! Please contact the developer", "error"));
         }
     }
 
@@ -72,9 +74,9 @@ public class GetMostLikedPostsFormController extends FormController {
      * Get the most liked posts from the model
      *
      * @param author filter by the author
-     * @param limit number of post
+     * @param limit  number of post
      * @throws InvalidArgumentException when an invalid argument is paassed to the
-     * model
+     *                                  model
      * @throws SQLException
      */
     protected void onSubmitHandler(String author, int limit) throws SQLException, InvalidArgumentException {
@@ -95,7 +97,7 @@ public class GetMostLikedPostsFormController extends FormController {
                 if (posts.size() == 0) {
                     // check if there are any posts posted by the specified author
                     this.afterContainer.getChildren()
-                                    .setAll(new AlertView("There no posts added by the specified author!", "info"));
+                            .setAll(new AlertView("There no posts added by the specified author!", "info"));
                 } else {
                     this.displayPosts(posts);
                 }
