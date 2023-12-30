@@ -1,9 +1,5 @@
 package dev.alabbad.views;
 
-// source:
-// - https://github.com/hemeroc/javafx-datetimepicker
-
-// For View
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.DatePicker;
@@ -15,13 +11,8 @@ import javafx.util.StringConverter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.FormatStyle;
-import java.util.Locale;
 
-// For Skin
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -32,17 +23,23 @@ import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-// For CustomBinding
-import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WritableValue;
-import java.util.function.Function;
-
 import dev.alabbad.exceptions.ParseValueException;
 import dev.alabbad.interfaces.IInputControl;
+import dev.alabbad.utils.CustomBinding;
 import dev.alabbad.utils.Parser;
 
+/**
+ * The DateTimePicker control is extension to DatePicker control that addes the
+ * capability to select both date and time.
+ *
+ * source:
+ * - https://github.com/hemeroc/javafx-datetimepicker
+ *
+ * The code was modified to fit the project's needs.
+ *
+ * @author Dominik Moser (https://github.com/hemeroc)
+ * @version x.x.x
+ */
 public class DateTimePicker extends DatePicker implements IInputControl<String> {
     private ObjectProperty<LocalDateTime> dateTimeValue = new SimpleObjectProperty<>(LocalDateTime.now());
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
@@ -139,6 +136,9 @@ public class DateTimePicker extends DatePicker implements IInputControl<String> 
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Skin<?> createDefaultSkin() {
         return new DateTimePickerSkin(this);
@@ -222,36 +222,4 @@ class DateTimePickerSkin extends DatePickerSkin {
         return popupContent;
     }
 
-}
-
-class CustomBinding {
-
-    public static <A, B> void bindBidirectional(Property<A> propertyA, Property<B> propertyB, Function<A, B> updateB,
-            Function<B, A> updateA) {
-        addFlaggedChangeListener(propertyA, propertyB, updateB);
-        addFlaggedChangeListener(propertyB, propertyA, updateA);
-    }
-
-    public static <A, B> void bind(Property<A> propertyA, Property<B> propertyB, Function<A, B> updateB) {
-        addFlaggedChangeListener(propertyA, propertyB, updateB);
-    }
-
-    private static <X, Y> void addFlaggedChangeListener(ObservableValue<X> propertyX, WritableValue<Y> propertyY,
-            Function<X, Y> updateY) {
-        propertyX.addListener(new ChangeListener<>() {
-            private boolean alreadyCalled = false;
-
-            @Override
-            public void changed(ObservableValue<? extends X> observable, X oldValue, X newValue) {
-                if (alreadyCalled)
-                    return;
-                try {
-                    alreadyCalled = true;
-                    propertyY.setValue(updateY.apply(newValue));
-                } finally {
-                    alreadyCalled = false;
-                }
-            }
-        });
-    }
 }

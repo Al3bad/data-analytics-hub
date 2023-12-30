@@ -1,9 +1,5 @@
 package dev.alabbad.views;
 
-// source:
-// - https://github.com/hemeroc/javafx-datetimepicker
-
-// For spinner
 import javafx.animation.AnimationTimer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -16,6 +12,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import static javafx.scene.input.MouseButton.PRIMARY;
 
+/**
+ * A spinner control for the time.
+ *
+ * source:
+ * - https://github.com/hemeroc/javafx-datetimepicker
+ *
+ * @author Dominik Moser (https://github.com/hemeroc)
+ * @version x.x.x
+ */
 class HourMinuteSpinner extends HBox {
 
     private final SpinnerValueFactory.IntegerSpinnerValueFactory integerSpinnerValueFactory;
@@ -81,6 +86,9 @@ class HourMinuteSpinner extends HBox {
         private static final long STEP = 1000L * 1000L * 100; // 0.5 sec
         private final AnimationTimer timer = new AnimationTimer() {
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public void handle(long now) {
                 if (now - startTimestamp >= nextStep) {
@@ -98,6 +106,9 @@ class HourMinuteSpinner extends HBox {
             spinnerValueFactory = integerSpinnerValueFactory;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void handle(MouseEvent event) {
             if (event.getButton() == PRIMARY) {
