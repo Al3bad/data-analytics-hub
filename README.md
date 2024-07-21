@@ -8,6 +8,20 @@
 
 [Neovim](https://neovim.io) editor was mainly used to develop this program. During the development, the program was compiled and tested through the command line with java SDK. But this project was also adapted to be compiled and run using [Intellij IDEA IDE](https://www.jetbrains.com/idea/).
 
+# Showcase
+
+Login scene
+
+![Login](./images/login.png)
+
+Get most liked posts
+
+![Most Liked Posts](./images/posts.png)
+
+Add new post
+
+![Add New Post](./images/form.png)
+
 # Requirements
 
 - Java SDK 20
@@ -79,4 +93,4 @@ The login information for the default admin user is:
 
 ![Abstract Class Diagram](./images/class-diagram.png)
 
-This app was build using MVC architecture. The model has all the main object definitions as well as the business logic. Two data access layers were implemented: `UserDao` and `PostDao`. These two objects exeucte the SQL queries to the SQLite database and return any results to the controllers.The views were built in both java and FXML. The controllers basically bridge the view and the model. So, all form submissions, event handling and validations happen in the controllers. `AppState` class is a singleton which is used as a global state for the application. It stores the logged in user, the stage object, and a method to switch scenes. The project was developed to adhere to SOLID priniciples of object-oriented programming.
+This app was build using MVC architecture. The model has all the main object definitions as well as the business logic. Two data access layers were implemented: `UserDao` and `PostDao`. These two objects execute the SQL queries to the SQLite database and return any results to the controllers.The views were built in both java and FXML. The controllers basically bridge the view and the model. So, all form submissions, event handling and validations happen in the controllers. `AppState` class is a singleton which is used as a global state for the application. It stores the logged in user, the stage object, and a method to switch scenes. The project was developed to adhere to SOLID principles of object-oriented programming.
